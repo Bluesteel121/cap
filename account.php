@@ -1,0 +1,84 @@
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - CNLRRS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/YOUR_FONT_AWESOME_KIT.js" crossorigin="anonymous"></script>
+</head>
+<body class="h-screen flex relative">
+
+    <!-- Back to Home Button -->
+    <a href="index.php" class="absolute top-4 left-4 bg-gray-200 text-gray-800 px-4 py-2 rounded-lg shadow-md hover:bg-gray-300">
+        ← Back to Home
+    </a>
+
+    <!-- Left Section (User Role Selection) -->
+    <div class="w-1/2 bg-[#115D5B] text-white flex flex-col justify-center items-center p-8">
+        <h1 class="text-2xl font-bold mb-6">Welcome to CNLRRS</h1>
+        <div class="flex space-x-6">
+            <!-- Admin Button -->
+            <button onclick="redirectToLogin('admin')" class="flex flex-col items-center">
+                <div class="bg-white w-[113.61px] h-[96px] p-4 rounded-lg shadow-lg flex flex-col items-center justify-center">
+                    <img src="Images/adminlogo.png" alt="Logo 1" class="h-16">
+                    <i class="fas fa-user-cog text-[#115D5B] text-4xl"></i>
+                </div>
+                <p class="mt-2 text-lg font-semibold">Admin</p>
+            </button>
+
+            <!-- Farmer Button -->
+            <button onclick="redirectToLogin('farmer')" class="flex flex-col items-center">
+                <div class="bg-white p-4 rounded-lg shadow-lg">
+                    <img src="Images/farmerlogo.png" alt="Logo 1" class="h-16">
+                    <i class="fas fa-users text-[#115D5B] text-4xl"></i>
+                </div>
+                <p class="mt-2 text-lg font-semibold">Farmers</p>
+            </button>
+
+            <!-- Client Button -->
+            <button onclick="redirectToLogin('client')" class="flex flex-col items-center">
+                <div class="bg-white w-[113.61px] h-[96px] p-4 rounded-lg shadow-lg">
+                    <img src="Images/customer.png" alt="Logo 1" class="h-16">
+                    <i class="fas fa-handshake text-[#115D5B] text-4xl"></i>
+                </div>
+                <p class="mt-2 text-lg font-semibold">Client</p>
+            </button>
+        </div>
+    </div>
+
+    <!-- Right Section (Contact & Info) -->
+    <div class="w-1/2 bg-[#1E3A34] text-white flex flex-col justify-center p-8">
+        <div class="flex justify-center space-x-4 mb-4">
+            <img src="Images/Banner.png" alt="Logo 1" class="h-16">
+            <img src="Images/Banner.png" alt="Logo 1" class="h-16">
+        </div>
+        <h2 class="text-xl font-bold">DEPARTMENT OF AGRICULTURE RFO 5</h2>
+        <h3 class="text-lg font-semibold">CAMARINES NORTE LOWLAND RAINFED RESEARCH STATION</h3>
+        <div class="mt-4 space-y-2">
+            <p><i class="fas fa-map-marker-alt text-green-400"></i> Calasgasan, Daet, Camarines Norte</p>
+            <p><i class="fas fa-envelope text-green-400"></i> cndclrrs@gmail.com</p>
+            <p><i class="fas fa-user text-green-400"></i> Engr. Belich B. Frias</p>
+        </div>
+    </div>
+
+    <!-- JavaScript to Redirect Users -->
+    <script>
+        function redirectToLogin(role) {
+            if (role === "admin") {
+                window.location.href = "adminlogin.php"; // Replace with your admin login page
+            } else if (role === "farmer") {
+                window.location.href = "farmerlogin.php"; // Replace with your farmer login page
+            } else if (role === "client") {
+                window.location.href = "clientlogin.php"; // Replace with your client login page
+            }
+        }
+    </script>
+
+</body>
+</html>
