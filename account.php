@@ -55,10 +55,10 @@
     <!-- Right Section (Contact & Info) -->
     <div class="w-1/2 bg-[#1E3A34] text-white flex flex-col justify-center p-8">
         <div class="flex justify-center space-x-4 mb-4">
-            <img src="Images/Banner.png" alt="Logo 1" class="h-16">
-            <img src="Images/Banner.png" alt="Logo 1" class="h-16">
+            <img src="Images/logo1.png"  alt="Logo 1" class="h-40">
+            <img src="Images/logo2.png" alt="Logo 1" class="h-40">
         </div>
-        <h2 class="text-xl font-bold">DEPARTMENT OF AGRICULTURE RFO 5</h2>
+        <h2 class=" justify-center text-xl font-bold ">DEPARTMENT OF AGRICULTURE RFO 5</h2>
         <h3 class="text-lg font-semibold">CAMARINES NORTE LOWLAND RAINFED RESEARCH STATION</h3>
         <div class="mt-4 space-y-2">
             <p><i class="fas fa-map-marker-alt text-green-400"></i> Calasgasan, Daet, Camarines Norte</p>
