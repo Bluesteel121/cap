@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - CNLRRS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/YOUR_FONT_AWESOME_KIT.js" crossorigin="anonymous"></script>
+</head>
+<body class="bg-green-500 flex justify-center items-center h-screen">
+
+    <!-- Back to Home Button -->
+    <a href="account.php" class="absolute top-4 left-4 bg-gray-200 text-gray-800 px-4 py-2 rounded-lg shadow-md hover:bg-gray-300">
+        ← Back 
+    </a>
+
+    <!-- Main Container -->
+    <div id="main-container" class="bg-white p-8 rounded-lg shadow-lg text-center w-96">
+        <img src="Images/logo.png" alt="Logo" class="mx-auto h-16">
+        <h2 class="text-2xl font-bold mt-4">ADMINISTRATOR</h2>
+        <p class="text-gray-500 mt-2">Admin</p>
+
+        <button onclick="showSection('developers')" class="bg-green-500 text-white w-full py-2 mt-4 rounded-lg hover:bg-green-700">Developers</button>
+        <button onclick="showSection('staff')" class="bg-green-500 text-white w-full py-2 mt-2 rounded-lg hover:bg-green-700">Staff</button>
+    </div>
+
+    <!-- Developers Login Section -->
+    <div id="developers-container" class="bg-white p-8 rounded-lg shadow-lg text-center w-96 hidden">
+        <img src="Images/logo.png" alt="Logo" class="mx-auto h-16">
+        <h2 class="text-2xl font-bold mt-4">Developers</h2>
+        <p class="text-gray-500 mt-2">Admin</p>
+
+        <form class="space-y-4 mt-4" onsubmit="return validateForm(event)">
+            <input type="text" name="username" placeholder="Username" class="border w-full px-4 py-2 rounded-lg" required>
+            <input type="password" name="password" placeholder="Password" class="border w-full px-4 py-2 rounded-lg" required>
+            <input type="hidden" name="role" value="developer">
+            <div class="error-message text-red-500 text-sm hidden"></div>
+            <button type="submit" class="bg-green-500 text-white w-full py-2 rounded-lg hover:bg-green-700">
+                Login
+            </button>
+        </form>
+    </div>
+
+    <!-- Staff Login Section -->
+    <div id="staff-container" class="bg-white p-8 rounded-lg shadow-lg text-center w-96 hidden">
+        <img src="Images/logo.png" alt="Logo" class="mx-auto h-16">
+        <h2 class="text-2xl font-bold mt-4">Staff</h2>
+        <p class="text-gray-500 mt-2">Admin</p>
+
+        <form class="space-y-4 mt-4" onsubmit="return validateForm(event)">
+            <input type="text" name="username" placeholder="Username" class="border w-full px-4 py-2 rounded-lg" required>
+            <input type="password" name="password" placeholder="Password" class="border w-full px-4 py-2 rounded-lg" required>
+            <input type="hidden" name="role" value="staff">
+            <div class="error-message text-red-500 text-sm hidden"></div>
+            <button type="submit" class="bg-green-500 text-white w-full py-2 rounded-lg hover:bg-green-700">
+                Login
+            </button>
+        </form>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+    function showSection(section) {
+        document.getElementById("main-container").classList.add("hidden");
+        document.getElementById("developers-container").classList.add("hidden");
+        document.getElementById("staff-container").classList.add("hidden");
+
+        if (section === "developers") {
+            document.getElementById("developers-container").classList.remove("hidden");
+        } else if (section === "staff") {
+            document.getElementById("staff-container").classList.remove("hidden");
+        }
+    }
+
+    async function validateForm(event) {
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form);
+        const submitBtn = form.querySelector('button[type="submit"]');
+        
+        // Show loading state
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = 'Authenticating...';
+
+        try {
+            const response = await fetch('login.php', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.status === 'success') {
+                window.location.href = data.redirect;
+            } else {
+                showError(form, data.message || 'Authentication failed');
+            }
+        } catch (error) {
+            showError(form, 'Network error. Please try again.');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Login';
+        }
+    }
+
+    function showError(form, message) {
+        const errorDiv = form.querySelector('.error-message');
+        errorDiv.textContent = message;
+        errorDiv.classList.remove('hidden');
+        
+        setTimeout(() => {
+            errorDiv.classList.add('hidden');
+        }, 5000);
+    }
+    </script>
+</body>
+</html>
