@@ -1,3 +1,44 @@
+<?php
+session_start();
+include "connect.php"; 
+
+header("Content-Type: application/json");
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $input = json_decode(file_get_contents("php://input"), true);
+    $username = $input["username"] ?? "";
+    $password = $input["password"] ?? "";
+
+    error_log("Username: $username, Password: $password");
+
+    $stmt = $conn->prepare("SELECT * FROM users WHERE username = ? LIMIT 1");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows === 1) {
+        $row = $result->fetch_assoc();
+        
+        if ($password === $row["password"]) { // Use password_verify() if using hashed passwords
+            $_SESSION["username"] = $username;
+            echo json_encode(["success" => true, "message" => "Login successful"]);
+            exit();
+        } else {
+            echo json_encode(["success" => false, "message" => "Invalid password"]);
+            exit();
+        }
+    } else {
+        echo json_encode(["success" => false, "message" => "User not found"]);
+        exit();
+    }
+} else {
+    echo json_encode(["success" => false, "message" => "Invalid request"]);
+}
+
+$conn->close();
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
