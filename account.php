@@ -25,8 +25,8 @@
         <div class="flex space-x-6">
             <!-- Admin Button -->
             <button onclick="redirectToLogin('admin')" class="flex flex-col items-center">
-                <div class="bg-white w-[113.61px] h-[96px] p-4 rounded-lg shadow-lg flex flex-col items-center justify-center">
-                    <img src="Images/adminlogo.png" alt="Logo 1" class="h-16">
+                <div class="bg-white w-[150.61px] h-[140px] p-4 rounded-lg shadow-lg flex flex-col items-center justify-center">
+                    <img src="Images/adminlogo.png" alt="Logo 1" class="h-20">
                     <i class="fas fa-user-cog text-[#115D5B] text-4xl"></i>
                 </div>
                 <p class="mt-2 text-lg font-semibold">Admin</p>
@@ -34,8 +34,8 @@
 
             <!-- Farmer Button -->
             <button onclick="redirectToLogin('farmer')" class="flex flex-col items-center">
-                <div class="bg-white p-4 rounded-lg shadow-lg">
-                    <img src="Images/farmerlogo.png" alt="Logo 1" class="h-16">
+                <div class="bg-white w-[150.61px] h-[140px] p-4 rounded-lg shadow-lg flex flex-col items-center justify-center">
+                    <img src="Images/farmerlogo.png" alt="Logo 1" class="h-20">
                     <i class="fas fa-users text-[#115D5B] text-4xl"></i>
                 </div>
                 <p class="mt-2 text-lg font-semibold">Farmers</p>
@@ -43,8 +43,8 @@
 
             <!-- Client Button -->
             <button onclick="redirectToLogin('client')" class="flex flex-col items-center">
-                <div class="bg-white w-[113.61px] h-[96px] p-4 rounded-lg shadow-lg">
-                    <img src="Images/customer.png" alt="Logo 1" class="h-16">
+                <div class="bg-white w-[150.61px] h-[140px] p-4 rounded-lg shadow-lg flex flex-col items-center justify-center">
+                    <img src="Images/customer.png" alt="Logo 1" class="h-20">
                     <i class="fas fa-handshake text-[#115D5B] text-4xl"></i>
                 </div>
                 <p class="mt-2 text-lg font-semibold">Client</p>
@@ -58,13 +58,20 @@
             <img src="Images/logo1.png"  alt="Logo 1" class="h-40">
             <img src="Images/logo2.png" alt="Logo 1" class="h-40">
         </div>
-        <h2 class=" justify-center text-xl font-bold ">DEPARTMENT OF AGRICULTURE RFO 5</h2>
-        <h3 class="text-lg font-semibold">CAMARINES NORTE LOWLAND RAINFED RESEARCH STATION</h3>
-        <div class="mt-4 space-y-2">
-            <p><i class="fas fa-map-marker-alt text-green-400"></i> Calasgasan, Daet, Camarines Norte</p>
-            <p><i class="fas fa-envelope text-green-400"></i> cndclrrs@gmail.com</p>
-            <p><i class="fas fa-user text-green-400"></i> Engr. Belich B. Frias</p>
-        </div>
+            <h2 class="text-white font-bold text-xl mt-4">DEPARTMENT OF AGRICULTURE RFO 5</h2>
+            <h3 class="text-whhite font-bold text-lg">CAMARINES NORTE LOWLAND RAINFED RESEARCH STATION</h3>
+            <div class="mt-6 text-white text-center">
+                <p class="flex items-center justify-center gap-2">
+                    <span>&#128205;</span> Calasgasan, Daet, Camarines Norte
+                </p>
+                <p class="flex items-center justify-center gap-2 mt-2">
+                    <span>&#128231;</span> dacnlrrs@gmail.com
+                </p>
+                <p class="flex items-center justify-center gap-2 mt-2">
+                    <span>&#128100;</span> Engr. Bella B. Frias<br>
+                    <span class="text-sm">Superintendent/Agricultural Center Chief III</span>
+                </p>
+            </div>
     </div>
 
     <!-- JavaScript to Redirect Users -->
