@@ -44,3 +44,11 @@
 [2025-03-26 13:44:17] Existing User - Username: john, Role: staff
 [2025-03-26 13:44:17] Query result rows: 0
 [2025-03-26 13:44:17] No matching user found for Username: dave, Role: staff
+[2025-03-26 14:31:44] Database Connection Status: Connected
+[2025-03-26 14:31:45] Attempting login - Username: dave, Role: dev
+[2025-03-26 14:31:45] Total users in database: 1
+[2025-03-26 14:31:45] Existing User - Username: dave, Role: dev
+[2025-03-26 14:31:45] Query result rows: 1
+[2025-03-26 14:31:45] Stored Password: pass
+[2025-03-26 14:31:45] Submitted Password: pass
+[2025-03-26 14:31:45] Password match. Redirecting to index.php
