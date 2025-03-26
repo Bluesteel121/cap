@@ -2,15 +2,15 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Ensure no output before headers
+
 ob_start();
 
 session_start();
 
-// Enhanced debugging function
+
 function debugLog($message) {
     error_log($message);
-    // Optional file logging
+   
     file_put_contents('login_detailed_debug.log', date('[Y-m-d H:i:s] ') . $message . PHP_EOL, FILE_APPEND);
 }
 
@@ -21,23 +21,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST["password"] ?? "";
     $role = $_POST["role"] ?? "";
 
-    // Verbose database debugging
+    
     debugLog("Database Connection Status: " . ($conn ? "Connected" : "Failed"));
     debugLog("Attempting login - Username: $username, Role: $role");
 
     try {
-        // Check all existing users for debugging
+        
         $all_users_query = "SELECT * FROM accounts";
         $all_users_result = $conn->query($all_users_query);
         
         debugLog("Total users in database: " . $all_users_result->num_rows);
         
-        // Log all existing usernames and roles
+       
         while ($user = $all_users_result->fetch_assoc()) {
             debugLog("Existing User - Username: " . $user['username'] . ", Role: " . $user['role']);
         }
 
-        // Prepare statement with more flexible matching
+        
         $stmt = $conn->prepare("SELECT * FROM accounts WHERE username = ? AND role = ?");
         if ($stmt === false) {
             throw new Exception("Prepare failed: " . $conn->error);
@@ -52,7 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($result->num_rows === 1) {
             $row = $result->fetch_assoc();
             
-            // Detailed password checking
+           
             debugLog("Stored Password: " . $row["password"]);
             debugLog("Submitted Password: " . $password);
 
