@@ -1,36 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,16 +7,20 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Replace with actual Font Awesome kit -->
     <script src="https://kit.fontawesome.com/your_actual_kit.js" crossorigin="anonymous"></script>
+    <script>
+        function openLogoutModal() {
+            document.getElementById('logout-modal').classList.remove('hidden');
+        }
+        function closeLogoutModal() {
+            document.getElementById('logout-modal').classList.add('hidden');
+        }
+        function confirmLogout() {
+            window.location.href = 'account.php'; // Change this to your logout URL
+        }
+    </script>
 </head>
 <body class="bg-[#144D42] flex">
-   
-<!-- Back Button -->
-    <a href="account.php" class="absolute top-4 left-4 bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300">
-        ← Back 
-    </a>
-
-
-<!-- Sidebar -->
+    <!-- Sidebar -->
     <div class="w-1/4 bg-white p-6 h-screen flex flex-col justify-between">
         <div>
             <div class="flex flex-col items-center text-center">
@@ -72,7 +43,7 @@
                     <li class="flex items-center gap-2 cursor-pointer text-gray-700 hover:text-black">
                         &#128100; Profile
                     </li>
-                    <li class="flex items-center gap-2 cursor-pointer text-gray-700 hover:text-red-500">
+                    <li class="flex items-center gap-2 cursor-pointer text-gray-700 hover:text-red-500" onclick="openLogoutModal()">
                         &#128682; Logout
                     </li>
                 </ul>
@@ -85,7 +56,7 @@
     
     <!-- Main Content -->
     <div class="w-3/4 p-6">
-        <div class="bg-[#0F3D3A] p-6 rounded-lg border border-green-700">
+        <div class="bg-[#0F3D3A] p-10 rounded-lg border border-green-700 w-full max-w-6xl mx-auto h-[615px]  overflow-y-auto">
             <div class="grid grid-cols-3 gap-6 text-white text-center font-bold">
                 <div>
                     <h3 class="border-b pb-2">Customer Request</h3>
@@ -99,6 +70,18 @@
                     <h3 class="border-b pb-2">Farmer</h3>
                     <div class="bg-gray-300 h-64 rounded-lg mt-4"></div>
                 </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Logout Modal -->
+    <div id="logout-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+            <h2 class="text-lg font-bold">Confirm Logout</h2>
+            <p class="mt-2">Are you sure you want to logout?</p>
+            <div class="mt-4 flex justify-center gap-4">
+                <button onclick="confirmLogout()" class="bg-red-500 text-white px-4 py-2 rounded">Yes</button>
+                <button onclick="closeLogoutModal()" class="bg-gray-300 px-4 py-2 rounded">No</button>
             </div>
         </div>
     </div>

@@ -44,3 +44,60 @@
 [2025-03-26 13:44:17] Existing User - Username: john, Role: staff
 [2025-03-26 13:44:17] Query result rows: 0
 [2025-03-26 13:44:17] No matching user found for Username: dave, Role: staff
+[2025-03-26 14:33:37] Database Connection Status: Connected
+[2025-03-26 14:33:37] Attempting login - Username: dave, Role: dev
+[2025-03-26 14:33:37] Total users in database: 1
+[2025-03-26 14:33:37] Existing User - Username: dave, Role: dev
+[2025-03-26 14:33:37] Query result rows: 1
+[2025-03-26 14:33:37] Stored Password: pass
+[2025-03-26 14:33:37] Submitted Password: pass
+[2025-03-26 14:33:37] Password match. Redirecting to index.php
+[2025-03-26 14:44:02] Database Connection Status: Connected
+[2025-03-26 14:44:02] Attempting login - Username: dave, Role: dev
+[2025-03-26 14:44:02] Total users in database: 1
+[2025-03-26 14:44:02] Existing User - Username: dave, Role: dev
+[2025-03-26 14:44:02] Query result rows: 1
+[2025-03-26 14:44:02] Stored Password: pass
+[2025-03-26 14:44:02] Submitted Password: pass
+[2025-03-26 14:44:02] Password match. Redirecting to index.php
+[2025-03-26 14:45:06] Database Connection Status: Connected
+[2025-03-26 14:45:06] Attempting login - Username: dave, Role: dev
+[2025-03-26 14:45:06] Total users in database: 1
+[2025-03-26 14:45:06] Existing User - Username: dave, Role: dev
+[2025-03-26 14:45:06] Query result rows: 1
+[2025-03-26 14:45:06] Stored Password: pass
+[2025-03-26 14:45:06] Submitted Password: pass
+[2025-03-26 14:45:06] Password match. Redirecting to index.php
+[2025-03-26 14:46:03] Database Connection Status: Connected
+[2025-03-26 14:46:03] Attempting login - Username: john, Role: staff
+[2025-03-26 14:46:03] Total users in database: 1
+[2025-03-26 14:46:03] Existing User - Username: dave, Role: dev
+[2025-03-26 14:46:03] Query result rows: 0
+[2025-03-26 14:46:03] No matching user found for Username: john, Role: staff
+[2025-03-26 14:53:22] Database Connection Status: Connected
+[2025-03-26 14:53:22] Attempting login - Username: john, Role: staff
+[2025-03-26 14:53:22] Total users in database: 2
+[2025-03-26 14:53:22] Existing User - Username: dave, Role: dev
+[2025-03-26 14:53:22] Existing User - Username: john, Role: staff
+[2025-03-26 14:53:22] Query result rows: 1
+[2025-03-26 14:53:22] Stored Password: pass
+[2025-03-26 14:53:22] Submitted Password: pass
+[2025-03-26 14:53:22] Password match. Redirecting to index.php
+[2025-03-26 15:13:10] Database Connection Status: Connected
+[2025-03-26 15:13:10] Attempting login - Username: dave, Role: dev
+[2025-03-26 15:13:10] Total users in database: 2
+[2025-03-26 15:13:10] Existing User - Username: dave, Role: dev
+[2025-03-26 15:13:10] Existing User - Username: john, Role: staff
+[2025-03-26 15:13:10] Query result rows: 1
+[2025-03-26 15:13:10] Stored Password: pass
+[2025-03-26 15:13:10] Submitted Password: pasas
+[2025-03-26 15:13:10] Password mismatch for user: dave
+[2025-03-26 15:13:23] Database Connection Status: Connected
+[2025-03-26 15:13:23] Attempting login - Username: dave, Role: dev
+[2025-03-26 15:13:23] Total users in database: 2
+[2025-03-26 15:13:23] Existing User - Username: dave, Role: dev
+[2025-03-26 15:13:23] Existing User - Username: john, Role: staff
+[2025-03-26 15:13:23] Query result rows: 1
+[2025-03-26 15:13:23] Stored Password: pass
+[2025-03-26 15:13:23] Submitted Password: pass
+[2025-03-26 15:13:23] Password match. Redirecting to index.php
