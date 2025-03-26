@@ -11,14 +11,15 @@ function debugLog($message) {
 
 include "connect.php"; 
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+// Login Logic
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] === 'login') {
     $email = $_POST["email"] ?? "";
     $password = $_POST["password"] ?? "";
 
     debugLog("Attempting login - Email: $email");
 
     try {
-        // Use prepared statement with password hashing (recommended)
+        // Use prepared statement for login
         $stmt = $conn->prepare("SELECT * FROM client_acc WHERE email = ?");
         if ($stmt === false) {
             throw new Exception("Prepare failed: " . $conn->error);
@@ -60,37 +61,55 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 }
+
+// Registration Logic
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] === 'register') {
+    $company = $_POST["company"] ?? "";
+    $email = $_POST["email"] ?? "";
+    $contact = $_POST["contact"] ?? "";
+    $phone = $_POST["phone"] ?? "";
+    $password = $_POST["password"] ?? "";
+
+    debugLog("Attempting registration - Email: $email");
+
+    try {
+        // Check if email already exists
+        $check_stmt = $conn->prepare("SELECT * FROM client_acc WHERE email = ?");
+        $check_stmt->bind_param("s", $email);
+        $check_stmt->execute();
+        $check_result = $check_stmt->get_result();
+
+        if ($check_result->num_rows > 0) {
+            debugLog("Registration failed - Email already exists: $email");
+            $_SESSION['registration_error'] = "Email already exists";
+            header("Location: clientlogin.php");
+            exit();
+        }
+
+        // Prepare insert statement
+        $insert_stmt = $conn->prepare("INSERT INTO client_acc (email, password, phone_number, company_name, contact_person) VALUES (?, ?, ?, ?, ?)");
+        if ($insert_stmt === false) {
+            throw new Exception("Prepare failed: " . $conn->error);
+        }
+
+        $insert_stmt->bind_param("sssss", $email, $password, $phone, $company, $contact);
+        
+        if ($insert_stmt->execute()) {
+            debugLog("Registration successful for: $email");
+            $_SESSION['registration_success'] = "Account created successfully. Please log in.";
+            header("Location: clientlogin.php");
+            exit();
+        } else {
+            throw new Exception("Execute failed: " . $insert_stmt->error);
+        }
+    } catch (Exception $e) {
+        debugLog("Registration Exception: " . $e->getMessage());
+        $_SESSION['registration_error'] = "An error occurred during registration";
+        header("Location: clientlogin.php");
+        exit();
+    }
+}
 ?>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -98,11 +117,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Client Login/Signup - CNLRRS</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Replace with actual Font Awesome kit -->
     <script src="https://kit.fontawesome.com/your_actual_kit.js" crossorigin="anonymous"></script>
 </head>
 <body class="h-screen flex relative">
-
     <!-- Back Button -->
     <a href="account.php" class="absolute top-4 left-4 bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300">
         ← Back 
@@ -112,16 +129,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="m-auto bg-white p-8 rounded-lg shadow-lg w-96">
         <img src="Images/logo.png" alt="Logo" class="mx-auto h-16 mb-4">
         
+        <!-- Error/Success Messages -->
+        <?php
+        if (isset($_SESSION['login_error'])) {
+            echo "<div class='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4' role='alert'>" . 
+                 htmlspecialchars($_SESSION['login_error']) . 
+                 "</div>";
+            unset($_SESSION['login_error']);
+        }
+        if (isset($_SESSION['registration_error'])) {
+            echo "<div class='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4' role='alert'>" . 
+                 htmlspecialchars($_SESSION['registration_error']) . 
+                 "</div>";
+            unset($_SESSION['registration_error']);
+        }
+        if (isset($_SESSION['registration_success'])) {
+            echo "<div class='bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4' role='alert'>" . 
+                 htmlspecialchars($_SESSION['registration_success']) . 
+                 "</div>";
+            unset($_SESSION['registration_success']);
+        }
+        ?>
+        
         <!-- Login Form -->
         <div id="login-section">
             <h2 class="text-2xl font-bold text-center mb-4">Client Login</h2>
-            <form method="POST" action="clientlogin.php">
-    <input type="email" name="email" placeholder="Email" class="border w-full px-4 py-2 rounded-lg mt-2" required>
-    <input type="password" name="password" placeholder="Password" class="border w-full px-4 py-2 rounded-lg mt-2" required>
-    <button type="submit" class="bg-green-500 text-white w-full py-2 mt-4 rounded-lg hover:bg-green-700">
-        Login
-    </button>
-</form>
+            <form id="login-form" method="POST" action="clientlogin.php">
+                <input type="hidden" name="action" value="login">
+                <input type="email" name="email" placeholder="Email" class="border w-full px-4 py-2 rounded-lg mt-2" required>
+                <input type="password" name="password" placeholder="Password" class="border w-full px-4 py-2 rounded-lg mt-2" required>
+                <button type="submit" class="bg-green-500 text-white w-full py-2 mt-4 rounded-lg hover:bg-green-700">
+                    Login
+                </button>
+            </form>
             <p class="mt-4 text-center">
                 New client? 
                 <a href="#" onclick="showSection('signup')" class="text-green-500 hover:underline">Create Account</a>
@@ -131,12 +171,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <!-- Signup Form -->
         <div id="signup-section" class="hidden">
             <h2 class="text-2xl font-bold text-center mb-4">Client Registration</h2>
-            <form id="signup-form" class="space-y-4">
-                <input type="text" name="company" placeholder="Company Name" class="w-full p-2 border rounded" required>
-                <input type="email" name="email" placeholder="Email" class="w-full p-2 border rounded" required>
-                <input type="text" name="contact" placeholder="Contact Person" class="w-full p-2 border rounded" required>
-                <input type="tel" name="phone" placeholder="Phone Number" class="w-full p-2 border rounded" required>
-                <input type="password" name="password" placeholder="Password" class="w-full p-2 border rounded" required>
+            <form id="signup-form" method="POST" action="clientlogin.php">
+                <input type="hidden" name="action" value="register">
+                <input type="text" name="company" placeholder="Company Name" class="w-full p-2 border rounded mb-2" required>
+                <input type="email" name="email" placeholder="Email" class="w-full p-2 border rounded mb-2" required>
+                <input type="text" name="contact" placeholder="Contact Person" class="w-full p-2 border rounded mb-2" required>
+                <input type="tel" name="phone" placeholder="Phone Number" class="w-full p-2 border rounded mb-2" required>
+                <input type="password" name="password" placeholder="Password" class="w-full p-2 border rounded mb-2" required>
                 <button type="submit" class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">
                     Register
                 </button>
@@ -159,31 +200,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             signup.classList.add('hidden');
             login.classList.remove('hidden');
-        }
-    }
-
-    // Add form submission handlers
-    document.getElementById('login-form').addEventListener('submit', handleLogin);
-    document.getElementById('signup-form').addEventListener('submit', handleSignup);
-
-    async function handleLogin(e) {
-        e.preventDefault();
-        // Add login logic similar to admin login
-    }
-
-    async function handleSignup(e) {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-        
-        try {
-            const response = await fetch('register_client.php', {
-                method: 'POST',
-                body: formData
-            });
-            
-            // Handle response
-        } catch (error) {
-            console.error('Error:', error);
         }
     }
     </script>
