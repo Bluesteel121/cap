@@ -14,9 +14,18 @@
 [2025-03-26 16:42:53] Login successful for: example@gmail.com
 [2025-03-26 16:46:31] Attempting login - Email: example@gmail.com
 [2025-03-26 16:46:31] Login successful for: example@gmail.com
+<<<<<<< HEAD
 [2025-03-26 18:07:35] Attempting farmer login - Email: nemz@gmail.com
 [2025-03-26 18:07:35] Login successful for: nemz@gmail.com
 [2025-03-26 18:08:27] Attempting farmer registration - Email: rex@gmail.com
 [2025-03-26 18:08:27] Registration successful for: rex@gmail.com
 [2025-03-26 18:08:35] Attempting farmer login - Email: rex@gmail.com
 [2025-03-26 18:08:35] Login successful for: rex@gmail.com
+=======
+[2025-03-26 16:41:26] Attempting login - Email: Kent@corps.com
+[2025-03-26 16:41:26] Login successful for: Kent@corps.com
+[2025-03-26 17:48:04] Attempting login - Email: Kent@corps.com
+[2025-03-26 17:48:04] Login successful for: Kent@corps.com
+[2025-03-26 17:51:02] Attempting login - Email: Kent@corps.com
+[2025-03-26 17:51:02] Login successful for: Kent@corps.com
+>>>>>>> 527b819be5b64c2f7627d570c953b307cb2e2463
