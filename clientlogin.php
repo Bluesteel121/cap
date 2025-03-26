@@ -2,7 +2,6 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-ob_start();
 session_start();
 
 function debugLog($message) {
@@ -19,42 +18,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     debugLog("Attempting login - Email: $email");
 
     try {
-        // Prepare statement to check email and password
-        $stmt = $conn->prepare("SELECT * FROM client_acc WHERE email = ? AND password = ?");
+        // Use prepared statement with password hashing (recommended)
+        $stmt = $conn->prepare("SELECT * FROM client_acc WHERE email = ?");
         if ($stmt === false) {
             throw new Exception("Prepare failed: " . $conn->error);
         }
 
-        $stmt->bind_param("ss", $email, $password);
+        $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
 
         if ($result->num_rows === 1) {
             $row = $result->fetch_assoc();
             
-            // Create session with user's email
-            $_SESSION["email"] = $email;
-            
-            debugLog("Login successful for: $email");
-            
-            ob_clean();
-            header("Location: adminpage.php");
-            exit();
+            // Verify password (use password_verify if using password_hash)
+            if ($password === $row['password']) {
+                // Create session with user's email
+                $_SESSION["email"] = $email;
+                
+                debugLog("Login successful for: $email");
+                
+                // Ensure no output before header redirect
+                header("Location: index.php");
+                exit();
+            } else {
+                debugLog("Login failed for email: $email - Invalid password");
+                $_SESSION['login_error'] = "Invalid email or password";
+                header("Location: clientlogin.php");
+                exit();
+            }
         } else {
-            debugLog("Login failed for email: $email");
+            debugLog("Login failed for email: $email - Email not found");
             $_SESSION['login_error'] = "Invalid email or password";
-            header("Location: adminlogin.php");
+            header("Location: clientlogin.php");
             exit();
         }
     } catch (Exception $e) {
         debugLog("Exception: " . $e->getMessage());
         $_SESSION['login_error'] = "An error occurred during login";
-        header("Location: adminlogin.php");
+        header("Location: clientlogin.php");
         exit();
     }
 }
 ?>
-
 
 
 
@@ -109,13 +115,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <!-- Login Form -->
         <div id="login-section">
             <h2 class="text-2xl font-bold text-center mb-4">Client Login</h2>
-            <form id="login-form" class="space-y-4">
-                <input type="email" name="email" placeholder="Email" class="w-full p-2 border rounded" required>
-                <input type="password" name="password" placeholder="Password" class="w-full p-2 border rounded" required>
-                <button type="submit" class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">
-                    Login
-                </button>
-            </form>
+            <form method="POST" action="clientlogin.php">
+    <input type="email" name="email" placeholder="Email" class="border w-full px-4 py-2 rounded-lg mt-2" required>
+    <input type="password" name="password" placeholder="Password" class="border w-full px-4 py-2 rounded-lg mt-2" required>
+    <button type="submit" class="bg-green-500 text-white w-full py-2 mt-4 rounded-lg hover:bg-green-700">
+        Login
+    </button>
+</form>
             <p class="mt-4 text-center">
                 New client? 
                 <a href="#" onclick="showSection('signup')" class="text-green-500 hover:underline">Create Account</a>
