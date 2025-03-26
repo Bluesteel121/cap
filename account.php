@@ -21,7 +21,7 @@
 
     <!-- Left Section (User Role Selection) -->
     <div class="w-1/2 bg-[#115D5B] text-white flex flex-col justify-center items-center p-8">
-        <h1 class="text-2xl font-bold mb-6">Welcome to CNLRRS</h1>
+        <h1 class="text-4xl border-red-900 font-bold mb-6">WELCOME TO CNLRRS</h1>
         <div class="flex space-x-6">
             <!-- Admin Button -->
             <button onclick="redirectToLogin('admin')" class="flex flex-col items-center">
