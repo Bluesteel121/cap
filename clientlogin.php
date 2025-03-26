@@ -1,4 +1,59 @@
+<?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
+ob_start();
+session_start();
+
+function debugLog($message) {
+    error_log($message);
+    file_put_contents('login_debug.log', date('[Y-m-d H:i:s] ') . $message . PHP_EOL, FILE_APPEND);
+}
+
+include "connect.php"; 
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $email = $_POST["email"] ?? "";
+    $password = $_POST["password"] ?? "";
+
+    debugLog("Attempting login - Email: $email");
+
+    try {
+        // Prepare statement to check email and password
+        $stmt = $conn->prepare("SELECT * FROM client_acc WHERE email = ? AND password = ?");
+        if ($stmt === false) {
+            throw new Exception("Prepare failed: " . $conn->error);
+        }
+
+        $stmt->bind_param("ss", $email, $password);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows === 1) {
+            $row = $result->fetch_assoc();
+            
+            // Create session with user's email
+            $_SESSION["email"] = $email;
+            
+            debugLog("Login successful for: $email");
+            
+            ob_clean();
+            header("Location: adminpage.php");
+            exit();
+        } else {
+            debugLog("Login failed for email: $email");
+            $_SESSION['login_error'] = "Invalid email or password";
+            header("Location: adminlogin.php");
+            exit();
+        }
+    } catch (Exception $e) {
+        debugLog("Exception: " . $e->getMessage());
+        $_SESSION['login_error'] = "An error occurred during login";
+        header("Location: adminlogin.php");
+        exit();
+    }
+}
+?>
 
 
 
