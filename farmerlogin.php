@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
                 debugLog("Login successful for: $email");
                 
                 // Ensure no output before header redirect
-                header("Location: index.php");
+                header("Location: farmerpage.php");
                 exit();
             } else {
                 debugLog("Login failed for email: $email - Invalid password");
