@@ -12,3 +12,35 @@
 [2025-03-25 16:54:54] Existing User - Username: dave, Role: dev
 [2025-03-25 16:54:54] Query result rows: 0
 [2025-03-25 16:54:54] No matching user found for Username: dave, Role: staff
+[2025-03-26 13:44:00] Database Connection Status: Connected
+[2025-03-26 13:44:00] Attempting login - Username: dave, Role: dev
+[2025-03-26 13:44:00] Total users in database: 2
+[2025-03-26 13:44:00] Existing User - Username: dave, Role: dev
+[2025-03-26 13:44:00] Existing User - Username: john, Role: staff
+[2025-03-26 13:44:00] Query result rows: 1
+[2025-03-26 13:44:00] Stored Password: pass
+[2025-03-26 13:44:00] Submitted Password: pass
+[2025-03-26 13:44:00] Password match. Redirecting to index.php
+[2025-03-26 13:44:07] Database Connection Status: Connected
+[2025-03-26 13:44:07] Attempting login - Username: john, Role: staff
+[2025-03-26 13:44:07] Total users in database: 2
+[2025-03-26 13:44:07] Existing User - Username: dave, Role: dev
+[2025-03-26 13:44:07] Existing User - Username: john, Role: staff
+[2025-03-26 13:44:07] Query result rows: 1
+[2025-03-26 13:44:07] Stored Password: pass
+[2025-03-26 13:44:07] Submitted Password: pass
+[2025-03-26 13:44:07] Password match. Redirecting to index.php
+[2025-03-26 13:44:13] Database Connection Status: Connected
+[2025-03-26 13:44:13] Attempting login - Username: john, Role: dev
+[2025-03-26 13:44:13] Total users in database: 2
+[2025-03-26 13:44:13] Existing User - Username: dave, Role: dev
+[2025-03-26 13:44:13] Existing User - Username: john, Role: staff
+[2025-03-26 13:44:13] Query result rows: 0
+[2025-03-26 13:44:13] No matching user found for Username: john, Role: dev
+[2025-03-26 13:44:17] Database Connection Status: Connected
+[2025-03-26 13:44:17] Attempting login - Username: dave, Role: staff
+[2025-03-26 13:44:17] Total users in database: 2
+[2025-03-26 13:44:17] Existing User - Username: dave, Role: dev
+[2025-03-26 13:44:17] Existing User - Username: john, Role: staff
+[2025-03-26 13:44:17] Query result rows: 0
+[2025-03-26 13:44:17] No matching user found for Username: dave, Role: staff
