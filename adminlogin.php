@@ -93,6 +93,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - CNLRRS</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Add Font Awesome for eye icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="bg-green-500 flex justify-center items-center h-screen">
 
@@ -125,7 +127,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <form method="POST" action="adminlogin.php">
             <input type="text" name="username" placeholder="Username" class="border w-full px-4 py-2 rounded-lg mt-2" required>
-            <input type="password" name="password" placeholder="Password" class="border w-full px-4 py-2 rounded-lg mt-2" required>
+            
+            <div class="relative mt-2">
+                <input type="password" name="password" id="devPassword" placeholder="Password" class="border w-full px-4 py-2 rounded-lg pr-10" required>
+                <button type="button" onclick="togglePassword('devPassword', 'devToggleIcon')" class="absolute right-3 top-3 text-gray-500">
+                    <i class="far fa-eye" id="devToggleIcon"></i>
+                </button>
+            </div>
+            
             <input type="hidden" name="role" value="dev">
             <button type="submit" class="bg-green-500 text-white w-full py-2 mt-4 rounded-lg hover:bg-green-700">Login</button>
         </form>
@@ -138,7 +147,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <form method="POST" action="adminlogin.php">
             <input type="text" name="username" placeholder="Username" class="border w-full px-4 py-2 rounded-lg mt-2" required>
-            <input type="password" name="password" placeholder="Password" class="border w-full px-4 py-2 rounded-lg mt-2" required>
+            
+            <div class="relative mt-2">
+                <input type="password" name="password" id="staffPassword" placeholder="Password" class="border w-full px-4 py-2 rounded-lg pr-10" required>
+                <button type="button" onclick="togglePassword('staffPassword', 'staffToggleIcon')" class="absolute right-3 top-3 text-gray-500">
+                    <i class="far fa-eye" id="staffToggleIcon"></i>
+                </button>
+            </div>
+            
             <input type="hidden" name="role" value="staff">
             <button type="submit" class="bg-green-500 text-white w-full py-2 mt-4 rounded-lg hover:bg-green-700">Login</button>
         </form>
@@ -154,6 +170,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             document.getElementById("developers-container").classList.remove("hidden");
         } else if (section === "staff") {
             document.getElementById("staff-container").classList.remove("hidden");
+        }
+    }
+
+    function togglePassword(passwordFieldId, iconId) {
+        const passwordField = document.getElementById(passwordFieldId);
+        const icon = document.getElementById(iconId);
+        
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            passwordField.type = "password";
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
         }
     }
     </script>

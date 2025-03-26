@@ -117,7 +117,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Client Login/Signup - CNLRRS</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://kit.fontawesome.com/your_actual_kit.js" crossorigin="anonymous"></script>
+    <!-- Add Font Awesome for eye icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="h-screen flex relative">
     <!-- Back Button -->
@@ -157,7 +158,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
             <form id="login-form" method="POST" action="clientlogin.php">
                 <input type="hidden" name="action" value="login">
                 <input type="email" name="email" placeholder="Email" class="border w-full px-4 py-2 rounded-lg mt-2" required>
-                <input type="password" name="password" placeholder="Password" class="border w-full px-4 py-2 rounded-lg mt-2" required>
+                
+                <div class="relative mt-2">
+                    <input type="password" name="password" id="loginPassword" placeholder="Password" class="border w-full px-4 py-2 rounded-lg pr-10" required>
+                    <button type="button" onclick="togglePassword('loginPassword', 'loginToggleIcon')" class="absolute right-3 top-3 text-gray-500">
+                        <i class="far fa-eye" id="loginToggleIcon"></i>
+                    </button>
+                </div>
+                
                 <button type="submit" class="bg-green-500 text-white w-full py-2 mt-4 rounded-lg hover:bg-green-700">
                     Login
                 </button>
@@ -177,7 +185,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
                 <input type="email" name="email" placeholder="Email" class="w-full p-2 border rounded mb-2" required>
                 <input type="text" name="contact" placeholder="Contact Person" class="w-full p-2 border rounded mb-2" required>
                 <input type="tel" name="phone" placeholder="Phone Number" class="w-full p-2 border rounded mb-2" required>
-                <input type="password" name="password" placeholder="Password" class="w-full p-2 border rounded mb-2" required>
+                
+                <div class="relative mb-2">
+                    <input type="password" name="password" id="signupPassword" placeholder="Password" class="w-full p-2 border rounded pr-10" required>
+                    <button type="button" onclick="togglePassword('signupPassword', 'signupToggleIcon')" class="absolute right-3 top-3 text-gray-500">
+                        <i class="far fa-eye" id="signupToggleIcon"></i>
+                    </button>
+                </div>
+                
                 <button type="submit" class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">
                     Register
                 </button>
@@ -200,6 +215,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         } else {
             signup.classList.add('hidden');
             login.classList.remove('hidden');
+        }
+    }
+
+    function togglePassword(passwordFieldId, iconId) {
+        const passwordField = document.getElementById(passwordFieldId);
+        const icon = document.getElementById(iconId);
+        
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            passwordField.type = "password";
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
         }
     }
     </script>
