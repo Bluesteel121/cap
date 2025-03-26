@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin_CNLRRS</title>
+    <title>Adminpage</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Replace with actual Font Awesome kit -->
     <script src="https://kit.fontawesome.com/your_actual_kit.js" crossorigin="anonymous"></script>
