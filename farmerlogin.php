@@ -124,8 +124,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Client Login/Signup - CNLRRS</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Replace with actual Font Awesome kit -->
-    <script src="https://kit.fontawesome.com/your_actual_kit.js" crossorigin="anonymous"></script>
+    <!-- Add Font Awesome for eye icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="h-screen flex relative">
 
@@ -143,7 +143,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <h2 class="text-2xl font-bold text-center mb-4">Farmer Login</h2>
             <form id="login-form" class="space-y-4">
                 <input type="email" name="email" placeholder="Email" class="w-full p-2 border rounded" required>
-                <input type="password" name="password" placeholder="Password" class="w-full p-2 border rounded" required>
+                
+                <!-- Password field with eye icon -->
+                <div class="relative">
+                    <input type="password" name="password" id="password" placeholder="Password" class="w-full p-2 border rounded" required>
+                    <button type="button" onclick="togglePassword()" class="absolute right-3 top-3 text-gray-500">
+                        <i class="far fa-eye" id="toggleIcon"></i>
+                    </button>
+                </div>
+                
                 <button type="submit" class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">
                     Login
                 </button>
@@ -156,13 +164,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <!-- Signup Form -->
         <div id="signup-section" class="hidden">
-            <h2 class="text-2xl font-bold text-center mb-4">Client Registration</h2>
+            <h2 class="text-2xl font-bold text-center mb-4">Farmer Registration</h2>
             <form id="signup-form" class="space-y-4">
-                <input type="text" name="company" placeholder="Company Name" class="w-full p-2 border rounded" required>
                 <input type="email" name="email" placeholder="Email" class="w-full p-2 border rounded" required>
-                <input type="text" name="contact" placeholder="Contact Person" class="w-full p-2 border rounded" required>
                 <input type="tel" name="phone" placeholder="Phone Number" class="w-full p-2 border rounded" required>
-                <input type="password" name="password" placeholder="Password" class="w-full p-2 border rounded" required>
+                
+                <!-- Password field with eye icon -->
+                <div class="relative">
+                    <input type="password" name="password" id="signupPassword" placeholder="Password" class="w-full p-2 border rounded" required>
+                    <button type="button" onclick="toggleSignupPassword()" class="absolute right-3 top-3 text-gray-500">
+                        <i class="far fa-eye" id="signupToggleIcon"></i>
+                    </button>
+                </div>
+                
                 <button type="submit" class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">
                     Register
                 </button>
@@ -185,6 +199,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             signup.classList.add('hidden');
             login.classList.remove('hidden');
+        }
+    }
+
+    // Toggle password visibility for login form
+    function togglePassword() {
+        const passwordField = document.getElementById('password');
+        const icon = document.getElementById('toggleIcon');
+        
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            passwordField.type = "password";
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    }
+
+    // Toggle password visibility for signup form
+    function toggleSignupPassword() {
+        const passwordField = document.getElementById('signupPassword');
+        const icon = document.getElementById('signupToggleIcon');
+        
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            passwordField.type = "password";
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
         }
     }
 
