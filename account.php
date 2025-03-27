@@ -58,8 +58,8 @@
             <img src="Images/logo1.png"  alt="Logo 1" class="h-40">
             <img src="Images/logo2.png" alt="Logo 1" class="h-40">
         </div>
-            <h2 class="text-white font-bold text-xl mt-4">DEPARTMENT OF AGRICULTURE RFO 5</h2>
-            <h3 class="text-whhite font-bold text-lg">CAMARINES NORTE LOWLAND RAINFED RESEARCH STATION</h3>
+            <h2 class="flex items-center justify-center text-white font-bold text-xl mt-4">DEPARTMENT OF AGRICULTURE RFO 5</h2>
+            <h3 class="flex items-center justify-center text-whhite font-bold text-lg">CAMARINES NORTE LOWLAND RAINFED RESEARCH STATION</h3>
             <div class="mt-6 text-white text-center">
                 <p class="flex items-center justify-center gap-2">
                     <span>&#128205;</span> Calasgasan, Daet, Camarines Norte
