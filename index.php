@@ -50,7 +50,7 @@
             <div class="container mx-auto flex justify-between items-center">
                 <!-- Logo and Title -->
                 <div class="flex items-center space-x-3">
-                    <img src="Images/logo.png" alt="CNLRRS Logo" class="h-10 w-20">
+                    <img src="Images/logo.png" alt="CNLRRS Logo" class="h-12 w-22">
                     <h1 class="text-lg font-bold">Camarines Norte Lowland Rainfed Research Station</h1>
                 </div>
     
