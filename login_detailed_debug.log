@@ -128,3 +128,28 @@
 [2025-03-26 17:48:41] Stored Password: pass
 [2025-03-26 17:48:41] Submitted Password: pass
 [2025-03-26 17:48:41] Password match. Redirecting to index.php
+[2025-03-27 02:55:32] Database Connection Status: Connected
+[2025-03-27 02:55:32] Attempting login - Username: dave, Role: dev
+[2025-03-27 02:55:32] Total users in database: 2
+[2025-03-27 02:55:32] Existing User - Username: dave, Role: dev
+[2025-03-27 02:55:32] Existing User - Username: john, Role: staff
+[2025-03-27 02:55:32] Query result rows: 1
+[2025-03-27 02:55:32] Stored Password: pass
+[2025-03-27 02:55:32] Submitted Password: pass
+[2025-03-27 02:55:32] Password match. Redirecting to index.php
+[2025-03-27 02:55:52] Database Connection Status: Connected
+[2025-03-27 02:55:52] Attempting login - Username: cfdkgflg, Role: dev
+[2025-03-27 02:55:52] Total users in database: 2
+[2025-03-27 02:55:52] Existing User - Username: dave, Role: dev
+[2025-03-27 02:55:52] Existing User - Username: john, Role: staff
+[2025-03-27 02:55:52] Query result rows: 0
+[2025-03-27 02:55:52] No matching user found for Username: cfdkgflg, Role: dev
+[2025-03-27 02:56:10] Database Connection Status: Connected
+[2025-03-27 02:56:10] Attempting login - Username: john, Role: staff
+[2025-03-27 02:56:10] Total users in database: 2
+[2025-03-27 02:56:10] Existing User - Username: dave, Role: dev
+[2025-03-27 02:56:10] Existing User - Username: john, Role: staff
+[2025-03-27 02:56:10] Query result rows: 1
+[2025-03-27 02:56:10] Stored Password: pass
+[2025-03-27 02:56:10] Submitted Password: pass
+[2025-03-27 02:56:10] Password match. Redirecting to index.php
