@@ -53,3 +53,15 @@
 [2025-03-27 02:54:29] Registration successful for: ibanamayie36@gmail.com
 [2025-03-27 02:54:40] Attempting farmer login - Email: ibanamayie36@gmail.com
 [2025-03-27 02:54:40] Login successful for: ibanamayie36@gmail.com
+[2025-03-31 17:38:32] Attempting farmer login - Email: Kent@corps.com
+[2025-03-31 17:38:32] Login failed for email: Kent@corps.com - Email not found
+[2025-03-31 17:38:41] Attempting farmer login - Email: Kent@corps.com
+[2025-03-31 17:38:41] Login failed for email: Kent@corps.com - Email not found
+[2025-03-31 17:38:56] Attempting farmer registration - Email: gey@gey.com
+[2025-03-31 17:38:56] Registration failed - Email already exists: gey@gey.com
+[2025-03-31 17:40:06] Attempting farmer registration - Email: Kent@corp.com
+[2025-03-31 17:40:06] Registration successful for: Kent@corp.com
+[2025-03-31 17:40:13] Attempting farmer login - Email: Kent@corp.com
+[2025-03-31 17:40:13] Login successful for: Kent@corp.com
+[2025-03-31 18:05:14] Attempting farmer login - Email: Kent@corp.com
+[2025-03-31 18:05:14] Login successful for: Kent@corp.com

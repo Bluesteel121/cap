@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Farmerpage</title>
+    <title>Pineapple Crops Price</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Replace with actual Font Awesome kit -->
-    <script src="https://kit.fontawesome.com/your_actual_kit.js" crossorigin="anonymous"></script>
     <script>
         function openLogoutModal() {
             document.getElementById('logout-modal').classList.remove('hidden');
@@ -19,60 +17,70 @@
         }
     </script>
 </head>
-<body class="bg-[#144D42] flex">
+<body class="flex">
     <!-- Sidebar -->
-    <div class="w-1/4 bg-white p-6 h-screen flex flex-col justify-between">
+    <aside class="w-1/4 bg-[#115D5B] p-6 h-screen flex flex-col justify-between text-white">
         <div>
             <div class="flex flex-col items-center text-center">
-                <img src="profile-pic.jpg" alt="Profile" class="w-20 h-20 rounded-full border mb-2">
+                <img src="profile.jpg" alt="Profile" class="w-20 h-20 rounded-full border mb-2">
                 <h2 class="font-bold">Ricardo Dela Cruz</h2>
-                <p class="text-sm text-gray-500">jpcn@gmail.com</p>
-                <p class="text-sm italic">Farmer</p>
+                <p class="text-sm">jpcn@gmail.com</p>
+                <p class="text-sm italic">Customer</p>
             </div>
-            <div class="mt-6">
-                <button class="w-full bg-[#115D5B] text-white py-2 px-4 rounded flex items-center gap-2">
-                    &#127968; Home
-                </button>
-                <ul class="mt-4 space-y-2">
-                    <li class="flex items-center gap-2 cursor-pointer text-gray-700 hover:text-black">
-                        &#128230; Inventory
-                    </li>
-                    <li class="flex items-center gap-2 cursor-pointer text-gray-700 hover:text-black">
-                        &#128276; Notifications
-                    </li>
-                    <li class="flex items-center gap-2 cursor-pointer text-gray-700 hover:text-black">
-                        &#128100; Profile
-                    </li>
-                    <li class="flex items-center gap-2 cursor-pointer text-gray-700 hover:text-red-500" onclick="openLogoutModal()">
-                        &#128682; Logout
-                    </li>
+            <nav class="mt-6">
+                <ul class="space-y-2">
+                    <li><a href="#" class="block p-2 bg-white text-green-700 rounded hover:bg-gray-300">Home</a></li>
+                    <li><a href="#" class="block p-2 hover:bg-white hover:text-green-700 rounded">Inventory</a></li>
+                    <li><a href="#" class="block p-2 hover:bg-white hover:text-green-700 rounded">Notifications</a></li>
+                    <li><a href="#" class="block p-2 hover:bg-white hover:text-green-700 rounded">Profile</a></li>
+                    <li><a href="#" class="block p-2 text-red-500 hover:text-red-700" onclick="openLogoutModal()">Logout</a></li>
                 </ul>
-            </div>
+            </nav>
         </div>
-        <footer class="text-center text-xs text-gray-500">
-            &copy; 2025 Camarines Norte Lowland Rainfed Research Station. All Rights Reserved.
-        </footer>
-    </div>
+        <footer class="text-center text-xs">&copy; 2025 Camarines Norte Lowland Rainfed Research Station</footer>
+    </aside>
     
     <!-- Main Content -->
-    <div class="w-3/4 p-6">
-        <div class="bg-[#0F3D3A] p-10 rounded-lg border border-green-700 w-full max-w-6xl mx-auto h-[615px]  overflow-y-auto">
-            <div class="grid grid-cols-3 gap-6 text-white text-center font-bold">
-                <div>
-                    <h3 class="border-b pb-2">Customer Request</h3>
-                    <div class="bg-gray-300 h-64 rounded-lg mt-4"></div>
-                </div>
-                <div>
-                    <h3 class="border-b pb-2">Customer</h3>
-                    <div class="bg-gray-300 h-64 rounded-lg mt-4"></div>
-                </div>
-                <div>
-                    <h3 class="border-b pb-2">Farmer</h3>
-                    <div class="bg-gray-300 h-64 rounded-lg mt-4"></div>
-                </div>
+    <main class="w-3/4 p-6 bg-white">
+        <header class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold text-green-700">Pineapple Crops Price</h1>
+            <button class="bg-blue-600 text-white px-4 py-2 rounded">Place Order</button>
+        </header>
+        
+        <div class="grid grid-cols-3 gap-6 text-white text-center font-bold mb-6">
+            <div class="bg-[#115D5B] p-4 rounded-lg">
+                <h3>Pineapple Crop</h3>
+                <p class="text-lg">₱50-60 Per Piece</p>
+            </div>
+            <div class="bg-[#115D5B] p-4 rounded-lg">
+                <h3>Pineapple Crop</h3>
+                <p class="text-lg">₱50-60 Per Liter</p>
+            </div>
+            <div class="bg-[#115D5B] p-4 rounded-lg">
+                <h3>Pineapple Crop</h3>
+                <p class="text-lg">₱50-60 Per Yard</p>
             </div>
         </div>
-    </div>
+        
+        <div class="bg-[#115D5B] p-6 rounded-lg border border-gray-300 overflow-y-auto">
+            <input type="text" placeholder="Search" class="w-full p-2 rounded mb-4 text-black border border-gray-400">
+            <table class="w-full text-black">
+                <thead>
+                    <tr class="bg-[#4CAF50] border-white-300 text-white">
+                        <th class="p-2">Farmer’s Name</th>
+                        <th class="p-2">Month Of Harvest</th>
+                        <th class="p-2">Possible Harvest</th>
+                        <th class="p-2">Quantity</th>
+                        <th class="p-2">Location</th>
+                        <th class="p-2">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data will be fetched from database -->
+                </tbody>
+            </table>
+        </div>
+    </main>
     
     <!-- Logout Modal -->
     <div id="logout-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
