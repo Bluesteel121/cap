@@ -13,19 +13,19 @@ include "connect.php";
 
 // Login Logic
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] === 'login') {
-    $email = $_POST["email"] ?? "";
+    $login_identifier = $_POST["login_identifier"] ?? ""; // This will be username or contact_num
     $password = $_POST["password"] ?? "";
 
-    debugLog("Attempting farmer login - Email: $email");
+    debugLog("Attempting farmer login - Identifier: $login_identifier");
 
     try {
-        // Use prepared statement for login
-        $stmt = $conn->prepare("SELECT * FROM farmer_acc WHERE email = ?");
+        // Modified query to check username or contact_num only
+        $stmt = $conn->prepare("SELECT * FROM farmer_acc WHERE username = ? OR contact_num = ?");
         if ($stmt === false) {
             throw new Exception("Prepare failed: " . $conn->error);
         }
 
-        $stmt->bind_param("s", $email);
+        $stmt->bind_param("ss", $login_identifier, $login_identifier);
         $stmt->execute();
         $result = $stmt->get_result();
 
@@ -34,23 +34,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
             
             // Verify password (use password_verify if using password_hash)
             if ($password === $row['password']) {
-                // Create session with user's email
-                $_SESSION["email"] = $email;
+                // Create session with user's email for backward compatibility
+                $_SESSION["email"] = $row['email']; 
+                // Also store username for future use
+                $_SESSION["username"] = $row['username'];
                 
-                debugLog("Login successful for: $email");
+                debugLog("Login successful for username: " . $row['username'] . " (using identifier: $login_identifier)");
                 
                 // Ensure no output before header redirect
                 header("Location: farmerpage.php");
                 exit();
             } else {
-                debugLog("Login failed for email: $email - Invalid password");
-                $_SESSION['login_error'] = "Invalid email or password";
+                debugLog("Login failed for identifier: $login_identifier - Invalid password");
+                $_SESSION['login_error'] = "Invalid username/contact or password";
                 header("Location: farmerlogin.php");
                 exit();
             }
         } else {
-            debugLog("Login failed for email: $email - Email not found");
-            $_SESSION['login_error'] = "Invalid email or password";
+            debugLog("Login failed for identifier: $login_identifier - Identifier not found");
+            $_SESSION['login_error'] = "Invalid username/contact or password";
             header("Location: farmerlogin.php");
             exit();
         }
@@ -66,18 +68,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] === 'register') {
     $email = $_POST["email"] ?? "";
     $contact = $_POST["contact"] ?? "";
+    $username = $_POST["username"] ?? "";
     $password = $_POST["password"] ?? "";
 
-    debugLog("Attempting farmer registration - Email: $email");
+    debugLog("Attempting farmer registration - Email: $email, Username: $username");
 
     try {
-        // Check if email already exists
-        $check_stmt = $conn->prepare("SELECT * FROM farmer_acc WHERE email = ?");
-        $check_stmt->bind_param("s", $email);
+        // Check if username or contact_num already exists
+        $check_stmt = $conn->prepare("SELECT * FROM farmer_acc WHERE username = ? OR contact_num = ?");
+        $check_stmt->bind_param("ss", $username, $contact);
         $check_stmt->execute();
         $check_result = $check_stmt->get_result();
 
         if ($check_result->num_rows > 0) {
+            debugLog("Registration failed - Username or contact number already exists");
+            $_SESSION['registration_error'] = "Username or contact number already exists";
+            header("Location: farmerlogin.php");
+            exit();
+        }
+
+        // Also check email separately
+        $email_check = $conn->prepare("SELECT * FROM farmer_acc WHERE email = ?");
+        $email_check->bind_param("s", $email);
+        $email_check->execute();
+        $email_result = $email_check->get_result();
+
+        if ($email_result->num_rows > 0) {
             debugLog("Registration failed - Email already exists: $email");
             $_SESSION['registration_error'] = "Email already exists";
             header("Location: farmerlogin.php");
@@ -85,16 +101,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         }
 
         // Prepare insert statement for farmer_acc
-        $insert_stmt = $conn->prepare("INSERT INTO farmer_acc (email, contact_num, password) VALUES (?, ?, ?)");
+        $insert_stmt = $conn->prepare("INSERT INTO farmer_acc (email, username, contact_num, password) VALUES (?, ?, ?, ?)");
         if ($insert_stmt === false) {
             throw new Exception("Prepare failed: " . $conn->error);
         }
 
-        $insert_stmt->bind_param("sss", $email, $contact, $password);
+        $insert_stmt->bind_param("ssss", $email, $username, $contact, $password);
         
         if ($insert_stmt->execute()) {
-            debugLog("Registration successful for: $email");
-            $_SESSION['registration_success'] = "Account created successfully. Please log in.";
+            debugLog("Registration successful for: $username (Email: $email)");
+            $_SESSION['registration_success'] = "Account created successfully. Please log in with your username or contact number.";
             header("Location: farmerlogin.php");
             exit();
         } else {
