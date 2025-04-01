@@ -27,10 +27,10 @@
                 <p class="text-sm">jpcn@gmail.com</p>
                 <p class="text-sm italic">Customer</p>
             </div>
-            <nav class="mt-6">
+            <nav class="mt-6 ">
                 <ul class="space-y-2">
                     <li><a href="#" class="block p-2 bg-white text-green-700 rounded hover:bg-gray-300">Home</a></li>
-                    <li><a href="#" class="block p-2 hover:bg-white hover:text-green-700 rounded">Inventory</a></li>
+                    <li><a href="#" class="block p-2 hover:bg-white hover:text-green-700 rounded">Order</a></li>
                     <li><a href="#" class="block p-2 hover:bg-white hover:text-green-700 rounded">Notifications</a></li>
                     <li><a href="#" class="block p-2 hover:bg-white hover:text-green-700 rounded">Profile</a></li>
                     <li><a href="#" class="block p-2 text-red-500 hover:text-red-700" onclick="openLogoutModal()">Logout</a></li>
@@ -47,32 +47,48 @@
             <button class="bg-blue-600 text-white px-4 py-2 rounded">Place Order</button>
         </header>
         
-        <div class="grid grid-cols-3 gap-6 text-white text-center font-bold mb-6">
-            <div class="bg-[#115D5B] p-4 rounded-lg">
-                <h3>Pineapple Crop</h3>
-                <p class="text-lg">₱50-60 Per Piece</p>
-            </div>
-            <div class="bg-[#115D5B] p-4 rounded-lg">
-                <h3>Pineapple Crop</h3>
-                <p class="text-lg">₱50-60 Per Liter</p>
-            </div>
-            <div class="bg-[#115D5B] p-4 rounded-lg">
-                <h3>Pineapple Crop</h3>
-                <p class="text-lg">₱50-60 Per Yard</p>
-            </div>
+        <div class="grid grid-cols-3 gap-6 text-white font-bold mb-6">
+    <div class="bg-[#115D5B] p-4 rounded-lg flex items-center">
+        <img src="Images\pineapple-fruit.jpg" alt="Pineapple Fruit" class="w-16 h-16 rounded-lg mr-4">
+        <div>
+            <h3>Pineapple Fruit</h3>
+            <p class="text-lg">₱50-60 Per Piece</p>
         </div>
+    </div>
+    <div class="bg-[#115D5B] p-4 rounded-lg flex items-center">
+        <img src="Images\pineapple-juice.jpg" alt="Pineapple Juice" class="w-16 h-16 rounded-lg mr-4">
+        <div>
+            <h3>Pineapple Juice</h3>
+            <p class="text-lg">₱50-60 Per Liter</p>
+        </div>
+    </div>
+    <div class="bg-[#115D5B] p-4 rounded-lg flex items-center">
+        <img src="Images\pineapple-fiber2.png" alt="Pineapple Fiber" class="w-16 h-16 rounded-lg mr-4">
+        <div>
+            <h3>Pineapple Fiber</h3>
+            <p class="text-lg">₱50-60 Per Yard</p>
+        </div>
+    </div>
+</div>
+
         
+       
+       
         <div class="bg-[#115D5B] p-6 rounded-lg border border-gray-300 overflow-y-auto">
-            <input type="text" placeholder="Search" class="w-full p-2 rounded mb-4 text-black border border-gray-400">
-            <table class="w-full text-black">
+        <div class="flex justify-center">
+    <input type="text" placeholder="Search" 
+        class="bg-[#103635] w-3/4 p-3 rounded-full mb-4 text-white border border-[#4CAF50] mt-4 focus:border-green-700 focus:ring-2 focus:ring-green-700 focus:outline-none text-center">
+</div>
+
+            <table class="w-full text-black  mt-10">
                 <thead>
-                    <tr class="bg-[#4CAF50] border-white-300 text-white">
-                        <th class="p-2">Farmer’s Name</th>
+                    <tr class="bg-[#4CAF50] border-white-300 text-white rounded-lg">
+                        <th class="p-2 rounded-l-lg">Farmer’s Name</th>
                         <th class="p-2">Month Of Harvest</th>
                         <th class="p-2">Possible Harvest</th>
                         <th class="p-2">Quantity</th>
                         <th class="p-2">Location</th>
-                        <th class="p-2">Status</th>
+                        <th class="p-2 rounded-r-lg">Status</th>
                     </tr>
                 </thead>
                 <tbody>
