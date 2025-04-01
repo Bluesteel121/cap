@@ -28,10 +28,11 @@ function sanitizeInput($data) {
 
 // Login Logic
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] === 'login') {
-    $username = sanitizeInput($_POST["username"] ?? "");
-    $password = $_POST["password"] ?? ""; // Don't sanitize password as it may contain special characters
+    $login_identifier = sanitizeInput($_POST["login_identifier"] ?? "");
+    // Accept password as is, no validation or sanitization whatsoever
+    $password = isset($_POST["password"]) ? $_POST["password"] : "";
 
-    debugLog("Attempting farmer login - Username: $username");
+    debugLog("Attempting farmer login - Identifier: $login_identifier");
 
     try {
         // Check if the database connection is established
@@ -39,13 +40,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
             throw new Exception("Database connection not established");
         }
         
-        // Use prepared statement for login with username
-        $stmt = $conn->prepare("SELECT * FROM farmer_acc WHERE username = ?");
+        // Use prepared statement for login with username or contact number
+        $stmt = $conn->prepare("SELECT * FROM farmer_acc WHERE username = ? OR contact_num = ?");
         if ($stmt === false) {
             throw new Exception("Prepare failed: " . $conn->error);
         }
 
-        $stmt->bind_param("s", $username);
+        $stmt->bind_param("ss", $login_identifier, $login_identifier);
         $stmt->execute();
         $result = $stmt->get_result();
 
@@ -64,20 +65,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
                     $_SESSION["user_id"] = $row['id'];
                 }
                 
-                debugLog("Login successful for username: $username");
+                debugLog("Login successful for identifier: $login_identifier");
                 
                 // Ensure no output before header redirect
                 header("Location: farmerpage.php");
                 exit();
             } else {
-                debugLog("Login failed for username: $username - Invalid password");
-                $_SESSION['login_error'] = "Invalid username or password";
+                debugLog("Login failed for identifier: $login_identifier - Invalid password");
+                $_SESSION['login_error'] = "Invalid username/contact or password";
                 header("Location: farmerlogin.php");
                 exit();
             }
         } else {
-            debugLog("Login failed for username: $username - Username not found");
-            $_SESSION['login_error'] = "Invalid username or password";
+            debugLog("Login failed for identifier: $login_identifier - User not found");
+            $_SESSION['login_error'] = "Invalid username/contact or password";
             header("Location: farmerlogin.php");
             exit();
         }
@@ -93,7 +94,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] === 'register') {
     $contact = sanitizeInput($_POST["contact"] ?? "");
     $username = sanitizeInput($_POST["username"] ?? "");
-    $password = $_POST["password"] ?? ""; // Don't sanitize password
+    // Accept password as is with no restrictions
+    $password = isset($_POST["password"]) ? $_POST["password"] : "";
 
     debugLog("Attempting farmer registration - Username: $username");
 
@@ -101,6 +103,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         // Check if the database connection is established
         if (!isset($conn) || $conn->connect_error) {
             throw new Exception("Database connection not established");
+        }
+        
+        // Validate contact number must be exactly 11 digits
+        if (strlen($contact) != 11) {
+            debugLog("Registration failed - Contact number must be exactly 11 digits: $contact");
+            $_SESSION['registration_error'] = "Contact number must be exactly 11 digits";
+            header("Location: farmerlogin.php");
+            exit();
         }
         
         // Check if username already exists
@@ -129,11 +139,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
             exit();
         }
 
-        // Password hashing (commented out for compatibility until ready to implement)
-        // $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-        $hashed_password = $password; // Currently storing as plain text (not recommended)
+        // Store password as-is with no hashing or validation
+        $hashed_password = $password;
 
-        // Prepare insert statement for farmer_acc (removed email field)
+        // Prepare insert statement for farmer_acc
         $insert_stmt = $conn->prepare("INSERT INTO farmer_acc (username, contact_num, password) VALUES (?, ?, ?)");
         if ($insert_stmt === false) {
             throw new Exception("Prepare failed: " . $conn->error);
@@ -143,7 +152,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         
         if ($insert_stmt->execute()) {
             debugLog("Registration successful for: $username");
-            $_SESSION['registration_success'] = "Account created successfully. Please log in with your username and password.";
+            $_SESSION['registration_success'] = "Account created successfully. Please log in with your username/contact and password.";
             header("Location: farmerlogin.php");
             exit();
         } else {
@@ -204,17 +213,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         <!-- Login Form -->
         <div id="login-section">
             <h2 class="text-2xl font-bold text-center mb-4">Farmer Login</h2>
-            <form id="login-form" method="POST" action="farmerlogin.php" autocomplete="off">
+            <form id="login-form" method="POST" action="farmerlogin.php" autocomplete="off" novalidate>
                 <input type="hidden" name="action" value="login">
                 <div class="mb-4">
-                    <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
-                    <input type="text" id="username" name="username" placeholder="Enter your username" class="border w-full px-4 py-2 rounded-lg focus:ring-green-500 focus:border-green-500" required>
+                    <label for="login_identifier" class="block text-sm font-medium text-gray-700 mb-1">Username or Contact Number</label>
+                    <input type="text" id="login_identifier" name="login_identifier" placeholder="Enter username or contact number" class="border w-full px-4 py-2 rounded-lg focus:ring-green-500 focus:border-green-500" required>
                 </div>
                 
                 <div class="mb-4">
                     <label for="loginPassword" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
                     <div class="relative">
-                        <input type="password" name="password" id="loginPassword" placeholder="Enter your password" class="border w-full px-4 py-2 rounded-lg pr-10 focus:ring-green-500 focus:border-green-500" required>
+                        <input type="password" name="password" id="loginPassword" placeholder="Enter your password" class="border w-full px-4 py-2 rounded-lg pr-10 focus:ring-green-500 focus:border-green-500">
                         <button type="button" onclick="togglePassword('loginPassword', 'loginToggleIcon')" class="absolute right-3 top-3 text-gray-500">
                             <i class="far fa-eye" id="loginToggleIcon"></i>
                         </button>
@@ -234,7 +243,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         <!-- Signup Form (Email field removed) -->
         <div id="signup-section" class="hidden">
             <h2 class="text-2xl font-bold text-center mb-4">Farmer Registration</h2>
-            <form id="signup-form" method="POST" action="farmerlogin.php" autocomplete="off">
+            <form id="signup-form" method="POST" action="farmerlogin.php" autocomplete="off" novalidate>
                 <input type="hidden" name="action" value="register">
                 
                 <div class="mb-3">
@@ -244,18 +253,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
                 
                 <div class="mb-3">
                     <label for="contact" class="block text-sm font-medium text-gray-700 mb-1">Contact Number</label>
-                    <input type="tel" id="contact" name="contact" placeholder="Enter your contact number" class="w-full p-2 border rounded focus:ring-green-500 focus:border-green-500" required>
+                    <input type="tel" id="contact" name="contact" placeholder="Enter your contact number" class="w-full p-2 border rounded focus:ring-green-500 focus:border-green-500" pattern="[0-9]{11}" required>
+                    <p class="text-xs text-gray-500 mt-1">Must be exactly 11 digits</p>
                 </div>
                 
                 <div class="mb-3">
                     <label for="signupPassword" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
                     <div class="relative">
-                        <input type="password" name="password" id="signupPassword" placeholder="Create a password" class="w-full p-2 border rounded pr-10 focus:ring-green-500 focus:border-green-500" required minlength="6">
+                        <input type="password" name="password" id="signupPassword" placeholder="Create a password" class="w-full p-2 border rounded pr-10 focus:ring-green-500 focus:border-green-500">
                         <button type="button" onclick="togglePassword('signupPassword', 'signupToggleIcon')" class="absolute right-3 top-3 text-gray-500">
                             <i class="far fa-eye" id="signupToggleIcon"></i>
                         </button>
                     </div>
-                    <p class="text-xs text-gray-500 mt-1">Password must be at least 6 characters long</p>
                 </div>
                 
                 <button type="submit" class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition-colors duration-200">
@@ -270,6 +279,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     </div>
 
     <script>
+    // Disable any browser validation
+    document.addEventListener('DOMContentLoaded', function() {
+        // Disable HTML5 validation
+        document.getElementById('login-form').setAttribute('novalidate', '');
+        document.getElementById('signup-form').setAttribute('novalidate', '');
+        
+        // Override submit behavior to prevent any validation
+        document.getElementById('signup-form').addEventListener('submit', function(e) {
+            // Allow form submission without any client-side validation
+        });
+    });
+
     function showSection(section) {
         const login = document.getElementById('login-section');
         const signup = document.getElementById('signup-section');

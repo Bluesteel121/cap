@@ -74,3 +74,11 @@
 [2025-04-01 16:06:56] Attempting farmer login - Identifier: 
 [2025-04-01 16:06:56] Exception: Unknown column 'username' in 'where clause'
 >>>>>>> 8de100813277025e88a854cb9bae615149ae1a55
+[2025-04-01 16:53:07] Attempting farmer registration - Username: bbnos
+[2025-04-01 16:53:07] Registration failed - Contact number must be exactly 11 digits: 098989898989
+[2025-04-01 16:53:26] Attempting farmer registration - Username: bbnos
+[2025-04-01 16:53:26] Registration successful for: bbnos
+[2025-04-01 16:54:20] Attempting farmer login - Identifier: 09989898989
+[2025-04-01 16:54:20] Login successful for identifier: 09989898989
+[2025-04-01 16:54:38] Attempting farmer login - Identifier: bbnos
+[2025-04-01 16:54:38] Login successful for identifier: bbnos
