@@ -82,3 +82,11 @@
 [2025-04-01 16:54:20] Login successful for identifier: 09989898989
 [2025-04-01 16:54:38] Attempting farmer login - Identifier: bbnos
 [2025-04-01 16:54:38] Login successful for identifier: bbnos
+[2025-04-01 16:58:14] Attempting farmer registration - Username: 
+[2025-04-01 16:58:14] Registration failed - Contact number must be exactly 11 digits: sadasdasdasdasd
+[2025-04-01 17:00:17] Attempting farmer login - Identifier: yes
+[2025-04-01 17:00:17] Login failed for identifier: yes - User not found
+[2025-04-01 17:00:21] Attempting farmer login - Identifier: adasdas
+[2025-04-01 17:00:21] Login failed for identifier: adasdas - User not found
+[2025-04-01 17:00:26] Attempting farmer login - Identifier: sadaweqe
+[2025-04-01 17:00:26] Login failed for identifier: sadaweqe - User not found
