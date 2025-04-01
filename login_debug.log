@@ -65,3 +65,7 @@
 [2025-03-31 17:40:13] Login successful for: Kent@corp.com
 [2025-03-31 18:05:14] Attempting farmer login - Email: Kent@corp.com
 [2025-03-31 18:05:14] Login successful for: Kent@corp.com
+[2025-04-01 16:14:03] Attempting farmer registration - Username: nemz
+[2025-04-01 16:14:03] Registration successful for: nemz
+[2025-04-01 16:14:12] Attempting farmer login - Username: nemz
+[2025-04-01 16:14:12] Login successful for username: nemz
