@@ -29,10 +29,10 @@
             </div>
             <nav class="mt-6 ">
                 <ul class="space-y-2">
-                    <li><a href="#" class="block p-2 bg-white text-green-700 rounded hover:bg-gray-300">Home</a></li>
-                    <li><a href="#" class="block p-2 hover:bg-white hover:text-green-700 rounded">Order</a></li>
-                    <li><a href="#" class="block p-2 hover:bg-white hover:text-green-700 rounded">Notifications</a></li>
-                    <li><a href="#" class="block p-2 hover:bg-white hover:text-green-700 rounded">Profile</a></li>
+                    <li><a href="#" class="block p-2 bg-[#CAEED5] text-green-700 rounded hover:bg-gray-300">Home</a></li>
+                    <li><a href="#" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Order</a></li>
+                    <li><a href="#" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Notifications</a></li>
+                    <li><a href="#" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Profile</a></li>
                     <li><a href="#" class="block p-2 text-red-500 hover:text-red-700" onclick="openLogoutModal()">Logout</a></li>
                 </ul>
             </nav>
@@ -77,7 +77,7 @@
         <div class="bg-[#115D5B] p-6 rounded-lg border border-gray-300 overflow-y-auto">
         <div class="flex justify-center">
     <input type="text" placeholder="Search" 
-        class="bg-[#103635] w-3/4 p-3 rounded-full mb-4 text-white border border-[#4CAF50] mt-4 focus:border-green-700 focus:ring-2 focus:ring-green-700 focus:outline-none text-center">
+        class="bg-[#103635] w-3/4 p-3 rounded-full mb-4 text-white border border-[#CAEED5] mt-4 focus:border-green-700 focus:ring-2 focus:ring-green-700 focus:outline-none text-center">
 </div>
 
             <table class="w-full text-black  mt-10">
