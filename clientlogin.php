@@ -92,8 +92,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
             exit();
         }
 
-        // Prepare insert statement
-        $insert_stmt = $conn->prepare("INSERT INTO client_acc (email, password, phone_number, username, contact_person) VALUES (?, ?, ?, ?, ?)");
+        // Prepare insert statement - Changed contact_person to full_name
+        $insert_stmt = $conn->prepare("INSERT INTO client_acc (email, password, phone_number, username, full_name) VALUES (?, ?, ?, ?, ?)");
         if ($insert_stmt === false) {
             throw new Exception("Prepare failed: " . $conn->error);
         }
