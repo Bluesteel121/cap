@@ -92,8 +92,40 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Data will be fetched from database -->
-                </tbody>
+    <?php
+    // Database connection
+    $conn = new mysqli("localhost", "username", "password", "database_name");
+
+    // Check connection
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+
+    // Fetch all rows from the harvests table
+    $sql = "SELECT farmer_name, month_of_harvest, possible_harvest, quantity, location, status FROM harvests";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            echo "<tr class='border-b'>
+                <td class='p-2'>{$row['farmer_name']}</td>
+                <td class='p-2'>{$row['month_of_harvest']}</td>
+                <td class='p-2'>{$row['possible_harvest']}</td>
+                <td class='p-2'>{$row['quantity']} kg</td>
+                <td class='p-2'>{$row['location']}</td>
+                <td class='p-2 " . ($row['status'] == 'Available' ? 'text-green-600' : ($row['status'] == 'Sold' ? 'text-red-600' : 'text-yellow-600')) . "'>
+                    {$row['status']}
+                </td>
+            </tr>";
+        }
+    } else {
+        echo "<tr><td colspan='6' class='p-2 text-center'>No Data Available</td></tr>";
+    }
+
+    $conn->close();
+    ?>
+</tbody>
+
             </table>
         </div>
     </main>
