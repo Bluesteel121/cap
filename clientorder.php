@@ -46,9 +46,59 @@ if ($result->num_rows > 0) {
 }
 
 $stmt->close();
+
+// Get all provinces from the location database, ordered alphabetically
+$provinces_query = "SELECT DISTINCT province FROM location ORDER BY province ASC";
+$provinces_result = $conn->query($provinces_query);
+$provinces = [];
+if ($provinces_result && $provinces_result->num_rows > 0) {
+    while($row = $provinces_result->fetch_assoc()) {
+        $provinces[] = $row['province'];
+    }
+}
+
+// AJAX handlers for dynamic dropdowns
+if (isset($_GET['action'])) {
+    if ($_GET['action'] == 'get_municipalities' && isset($_GET['province'])) {
+        $province = $_GET['province'];
+        $municipalities_query = "SELECT DISTINCT municipality FROM location WHERE province = ? ORDER BY municipality ASC";
+        $stmt = $conn->prepare($municipalities_query);
+        $stmt->bind_param("s", $province);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        $municipalities = [];
+        if ($result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+                $municipalities[] = $row['municipality'];
+            }
+        }
+        
+        echo json_encode($municipalities);
+        exit;
+    }
+    
+    if ($_GET['action'] == 'get_barangays' && isset($_GET['province']) && isset($_GET['municipality'])) {
+        $province = $_GET['province'];
+        $municipality = $_GET['municipality'];
+        $barangays_query = "SELECT DISTINCT barangay FROM location WHERE province = ? AND municipality = ? ORDER BY barangay ASC";
+        $stmt = $conn->prepare($barangays_query);
+        $stmt->bind_param("ss", $province, $municipality);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        $barangays = [];
+        if ($result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+                $barangays[] = $row['barangay'];
+            }
+        }
+        
+        echo json_encode($barangays);
+        exit;
+    }
+}
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -57,6 +107,69 @@ $stmt->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Confirmation</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // When province selection changes
+            $('#province').change(function() {
+                var province = $(this).val();
+                if (province) {
+                    // Clear municipality and barangay dropdowns
+                    $('#municipality').html('<option value="">Select Municipality</option>');
+                    $('#barangay').html('<option value="">Select Barangay</option>');
+                    
+                    // AJAX request to get municipalities for selected province
+                    $.ajax({
+                        url: 'clientorder.php',
+                        type: 'GET',
+                        data: {
+                            'action': 'get_municipalities',
+                            'province': province
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                            if (data.length > 0) {
+                                // Populate municipality dropdown
+                                $.each(data, function(key, value) {
+                                    $('#municipality').append('<option value="' + value + '">' + value + '</option>');
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+            
+            // When municipality selection changes
+            $('#municipality').change(function() {
+                var province = $('#province').val();
+                var municipality = $(this).val();
+                if (province && municipality) {
+                    // Clear barangay dropdown
+                    $('#barangay').html('<option value="">Select Barangay</option>');
+                    
+                    // AJAX request to get barangays for selected province and municipality
+                    $.ajax({
+                        url: 'clientorder.php',
+                        type: 'GET',
+                        data: {
+                            'action': 'get_barangays',
+                            'province': province,
+                            'municipality': municipality
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                            if (data.length > 0) {
+                                // Populate barangay dropdown
+                                $.each(data, function(key, value) {
+                                    $('#barangay').append('<option value="' + value + '">' + value + '</option>');
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    </script>
 </head>
 <body class="min-h-screen bg-white">
 
@@ -108,14 +221,17 @@ $stmt->close();
                 </select>
 
                 <h2 class="font-bold mt-4">Customer Address</h2>
-                <select class="w-full border p-2 rounded mt-2">
-                    <option>Province</option>
+                <select id="province" class="w-full border p-2 rounded mt-2">
+                    <option value="">Select Province</option>
+                    <?php foreach ($provinces as $province): ?>
+                        <option value="<?php echo htmlspecialchars($province); ?>"><?php echo htmlspecialchars($province); ?></option>
+                    <?php endforeach; ?>
                 </select>
-                <select class="w-full border p-2 rounded mt-2">
-                    <option>Municipality</option>
+                <select id="municipality" class="w-full border p-2 rounded mt-2">
+                    <option value="">Select Municipality</option>
                 </select>
-                <select class="w-full border p-2 rounded mt-2">
-                    <option>Barangay</option>
+                <select id="barangay" class="w-full border p-2 rounded mt-2">
+                    <option value="">Select Barangay</option>
                 </select>
                 <input type="text" placeholder="Purok/Zone/Street" class="w-full border p-2 rounded mt-2">
             </div>
