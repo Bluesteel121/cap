@@ -93,15 +93,14 @@
                 </thead>
                 <tbody>
     <?php
-    // Database connection
-    $conn = new mysqli("localhost", "username", "password", "database_name");
+ 
+    $conn = new mysqli("localhost", "root", "", "capstone");
 
-    // Check connection
+ 
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
     }
 
-    // Fetch all rows from the harvests table
     $sql = "SELECT farmer_name, month_of_harvest, possible_harvest, quantity, location, status FROM harvests";
     $result = $conn->query($sql);
 
