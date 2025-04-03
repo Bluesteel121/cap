@@ -3,22 +3,21 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 session_start();
-
 function debugLog($message) {
     error_log($message);
     file_put_contents('login_debug.log', date('[Y-m-d H:i:s] ') . $message . PHP_EOL, FILE_APPEND);
 }
 
-// Try/catch block to handle potential connection errors gracefully
+
 try {
     include "connect.php";
 } catch (Exception $e) {
-    // Handle connection error with a user-friendly message
+    
     $_SESSION['login_error'] = "Database connection error. Please try again later.";
     debugLog("Database connection error: " . $e->getMessage());
 }
 
-// Function to sanitize input data
+
 function sanitizeInput($data) {
     $data = trim($data);
     $data = stripslashes($data);
@@ -53,13 +52,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         if ($result->num_rows === 1) {
             $row = $result->fetch_assoc();
             
-            // Ideally, switch to password_verify when ready to implement password hashing
-            // if (password_verify($password, $row['password'])) {
-            if ($password === $row['password']) { // Current plain text comparison
-                // Regenerate session ID for security
+           
+            if ($password === $row['password']) { 
                 session_regenerate_id(true);
                 
-                // Store username and user ID if available
+               
                 $_SESSION["username"] = $row['username'];
                 if (isset($row['id'])) {
                     $_SESSION["user_id"] = $row['id'];
@@ -67,7 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
                 
                 debugLog("Login successful for identifier: $login_identifier");
                 
-                // Ensure no output before header redirect
+               
                 header("Location: farmerpage.php");
                 exit();
             } else {
