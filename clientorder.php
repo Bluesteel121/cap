@@ -1,3 +1,55 @@
+<?php
+// Start the session if it's not already started
+session_start();
+
+// Database connection
+$conn = new mysqli("localhost", "root", "", "capstone");
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Check if user is logged in
+if (!isset($_SESSION['username']) && !isset($_SESSION['email'])) {
+    // Redirect to login page if not logged in
+    header("Location: account.php");
+    exit();
+}
+
+// Get the login identifier (either username or email)
+$login_identifier = isset($_SESSION['username']) ? $_SESSION['username'] : $_SESSION['email'];
+
+// Get user data from database using the login identifier
+if (isset($_SESSION['username'])) {
+    $sql = "SELECT full_name, email FROM client_acc WHERE username = ?";
+} else {
+    $sql = "SELECT full_name, email FROM client_acc WHERE email = ?";
+}
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $login_identifier);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    $user_data = $result->fetch_assoc();
+    $full_name = $user_data['full_name'];
+    $email = $user_data['email'];
+    // Setting a default user type
+    $user_type = "Client"; 
+} else {
+    // Handle case where user data is not found
+    $full_name = "User";
+    $email = $login_identifier; // Show the login identifier as email if full name not found
+    $user_type = "User";
+}
+
+$stmt->close();
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,9 +64,9 @@
     <aside class="w-1/4 bg-[#115D5B] p-6 h-screen text-white fixed top-0 left-0 overflow-y-auto">
         <div class="flex flex-col items-center text-center">
             <img src="profile.jpg" alt="Profile" class="w-20 h-20 rounded-full border mb-2">
-            <h2 class="font-bold">Ricardo Dela Cruz</h2>
-            <p class="text-sm">pajcn@gmail.com</p>
-            <p class="text-sm italic">Farmer</p>
+            <h2 class="font-bold"><?php echo htmlspecialchars($full_name); ?></h2>
+            <p class="text-sm"><?php echo htmlspecialchars($email); ?></p>
+            <p class="text-sm italic"><?php echo htmlspecialchars($user_type); ?></p>
         </div>
         <nav class="mt-6">
             <ul class="space-y-2">
