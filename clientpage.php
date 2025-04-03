@@ -130,18 +130,18 @@ $stmt->close();
         class="bg-[#103635] w-3/4 p-3 rounded-full mb-4 text-white border border-[#CAEED5] mt-4 focus:border-green-700 focus:ring-2 focus:ring-green-700 focus:outline-none text-center">
 </div>
 
-            <table class="w-full text-black  mt-10">
-                <thead>
-                    <tr class="bg-[#4CAF50] border-white-300 text-white rounded-lg">
-                        <th class="p-2 rounded-l-lg">Farmer's Name</th>
-                        <th class="p-2">Month Of Harvest</th>
-                        <th class="p-2">Possible Harvest</th>
-                        <th class="p-2">Quantity</th>
-                        <th class="p-2">Location</th>
-                        <th class="p-2 rounded-r-lg">Status</th>
-                    </tr>
-                </thead>
-                <tbody>
+<table class="w-full mt-10">
+    <thead>
+        <tr class="bg-[#4CAF50] border-white-300 text-white rounded-lg">
+            <th class="p-2 rounded-l-lg">Farmer's Name</th>
+            <th class="p-2">Month Of Harvest</th>
+            <th class="p-2">Possible Harvest</th>
+            <th class="p-2">Quantity</th>
+            <th class="p-2">Location</th>
+            <th class="p-2 rounded-r-lg">Status</th>
+        </tr>
+    </thead>
+    <tbody>
     <?php
  
     $conn = new mysqli("localhost", "root", "", "capstone");
@@ -157,26 +157,25 @@ $stmt->close();
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
             echo "<tr class='border-b'>
-                <td class='p-2'>{$row['farmer_name']}</td>
-                <td class='p-2'>{$row['month_of_harvest']}</td>
-                <td class='p-2'>{$row['possible_harvest']}</td>
-                <td class='p-2'>{$row['quantity']} kg</td>
-                <td class='p-2'>{$row['location']}</td>
-                <td class='p-2 " . ($row['status'] == 'Available' ? 'text-green-600' : ($row['status'] == 'Sold' ? 'text-red-600' : 'text-yellow-600')) . "'>
+                <td class='p-2 text-white font-bold text-center'>{$row['farmer_name']}</td>
+                <td class='p-2 text-white font-bold text-center'>{$row['month_of_harvest']}</td>
+                <td class='p-2 text-white font-bold text-center'>{$row['possible_harvest']}</td>
+                <td class='p-2 text-white font-bold text-center'>{$row['quantity']} kg</td>
+                <td class='p-2 text-white font-bold text-center'>{$row['location']}</td>
+                <td class='p-2 text-center font-bold " . ($row['status'] == 'Available' ? 'text-green-400' : ($row['status'] == 'Sold' ? 'text-red-400' : 'text-yellow-400')) . "'>
                     {$row['status']}
                 </td>
             </tr>";
         }
     } else {
-        echo "<tr><td colspan='6' class='p-2 text-center'>No Data Available</td></tr>";
+        echo "<tr><td colspan='6' class='p-2 text-center text-white font-bold'>No Data Available</td></tr>";
     }
 
     $conn->close();
     ?>
-</tbody>
-
-            </table>
-        </div>
+    </tbody>
+    </table>
+    </div>
     </main>
     
     <!-- Logout Modal -->
