@@ -90,3 +90,15 @@
 [2025-04-01 17:00:21] Login failed for identifier: adasdas - User not found
 [2025-04-01 17:00:26] Attempting farmer login - Identifier: sadaweqe
 [2025-04-01 17:00:26] Login failed for identifier: sadaweqe - User not found
+[2025-04-03 15:07:33] Attempting login - User input: nemz
+[2025-04-03 15:07:33] Login successful for user: nemz
+[2025-04-03 15:07:33] Attempting login - User input: nemz
+[2025-04-03 15:07:33] Login successful for user: nemz
+[2025-04-03 15:11:23] Attempting registration - Email: example@yahoo.com
+[2025-04-03 15:11:23] Registration successful for: example@yahoo.com
+[2025-04-03 15:11:23] Attempting registration - Email: example@yahoo.com
+[2025-04-03 15:11:23] Registration failed - Email already exists: example@yahoo.com
+[2025-04-03 15:11:42] Attempting login - User input: example@yahoo.com
+[2025-04-03 15:11:42] Login successful for user: example@yahoo.com
+[2025-04-03 15:11:55] Attempting login - User input: dave
+[2025-04-03 15:11:55] Login successful for user: dave

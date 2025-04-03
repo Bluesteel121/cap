@@ -3,22 +3,21 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 session_start();
-
 function debugLog($message) {
     error_log($message);
     file_put_contents('login_debug.log', date('[Y-m-d H:i:s] ') . $message . PHP_EOL, FILE_APPEND);
 }
 
-// Try/catch block to handle potential connection errors gracefully
+
 try {
     include "connect.php";
 } catch (Exception $e) {
-    // Handle connection error with a user-friendly message
+    
     $_SESSION['login_error'] = "Database connection error. Please try again later.";
     debugLog("Database connection error: " . $e->getMessage());
 }
 
-// Function to sanitize input data
+
 function sanitizeInput($data) {
     $data = trim($data);
     $data = stripslashes($data);
@@ -53,13 +52,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         if ($result->num_rows === 1) {
             $row = $result->fetch_assoc();
             
-            // Ideally, switch to password_verify when ready to implement password hashing
-            // if (password_verify($password, $row['password'])) {
-            if ($password === $row['password']) { // Current plain text comparison
-                // Regenerate session ID for security
+           
+            if ($password === $row['password']) { 
                 session_regenerate_id(true);
                 
-                // Store username and user ID if available
+               
                 $_SESSION["username"] = $row['username'];
                 if (isset($row['id'])) {
                     $_SESSION["user_id"] = $row['id'];
@@ -67,7 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
                 
                 debugLog("Login successful for identifier: $login_identifier");
                 
-                // Ensure no output before header redirect
+               
                 header("Location: farmerpage.php");
                 exit();
             } else {
@@ -234,50 +231,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
                     Login
                 </button>
             </form>
-            <p class="mt-4 text-center">
-                New farmer? 
-                <a href="#" onclick="showSection('signup')" class="text-green-500 hover:underline">Create Account</a>
-            </p>
         </div>
 
-        <!-- Signup Form (Email field removed) -->
-        <div id="signup-section" class="hidden">
-            <h2 class="text-2xl font-bold text-center mb-4">Farmer Registration</h2>
-            <form id="signup-form" method="POST" action="farmerlogin.php" autocomplete="off" novalidate>
-                <input type="hidden" name="action" value="register">
-                
-                <div class="mb-3">
-                    <label for="reg-username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
-                    <input type="text" id="reg-username" name="username" placeholder="Choose a username" class="w-full p-2 border rounded focus:ring-green-500 focus:border-green-500" required>
-                </div>
-                
-                <div class="mb-3">
-                    <label for="contact" class="block text-sm font-medium text-gray-700 mb-1">Contact Number</label>
-                    <input type="tel" id="contact" name="contact" placeholder="Enter your contact number" class="w-full p-2 border rounded focus:ring-green-500 focus:border-green-500" pattern="[0-9]{11}" required>
-                    <p class="text-xs text-gray-500 mt-1">Must be exactly 11 digits</p>
-                </div>
-                
-                <div class="mb-3">
-                    <label for="signupPassword" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                    <div class="relative">
-                        <input type="password" name="password" id="signupPassword" placeholder="Create a password" class="w-full p-2 border rounded pr-10 focus:ring-green-500 focus:border-green-500">
-                        <button type="button" onclick="togglePassword('signupPassword', 'signupToggleIcon')" class="absolute right-3 top-3 text-gray-500">
-                            <i class="far fa-eye" id="signupToggleIcon"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <button type="submit" class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition-colors duration-200">
-                    Register
-                </button>
-            </form>
-            <p class="mt-4 text-center">
-                Already have an account? 
-                <a href="#" onclick="showSection('login')" class="text-green-500 hover:underline">Login here</a>
-            </p>
-        </div>
-    </div>
-
+        
     <script>
     // Disable any browser validation
     document.addEventListener('DOMContentLoaded', function() {
