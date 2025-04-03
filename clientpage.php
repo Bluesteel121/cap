@@ -1,3 +1,53 @@
+<?php
+// Start the session if it's not already started
+session_start();
+
+// Database connection
+$conn = new mysqli("localhost", "root", "", "capstone");
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Check if user is logged in
+if (!isset($_SESSION['username']) && !isset($_SESSION['email'])) {
+    // Redirect to login page if not logged in
+    header("Location: login.php");
+    exit();
+}
+
+// Get the login identifier (either username or email)
+$login_identifier = isset($_SESSION['username']) ? $_SESSION['username'] : $_SESSION['email'];
+
+// Get user data from database using the login identifier
+if (isset($_SESSION['username'])) {
+    $sql = "SELECT full_name, email FROM client_acc WHERE username = ?";
+} else {
+    $sql = "SELECT full_name, email FROM client_acc WHERE email = ?";
+}
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $login_identifier);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    $user_data = $result->fetch_assoc();
+    $full_name = $user_data['full_name'];
+    $email = $user_data['email'];
+    // Setting a default user type
+    $user_type = "Client"; 
+} else {
+    // Handle case where user data is not found
+    $full_name = "User";
+    $email = $login_identifier; // Show the login identifier as email if full name not found
+    $user_type = "User";
+}
+
+$stmt->close();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,12 +69,13 @@
 </head>
 <body class="min-h-screen bg-white">
     <!-- Sidebar -->
-    <aside class="w-1/4 bg-[#115D5B] p-6 h-screen text-white fixed top-0 left-0 overflow-y-auto">
+    <aside class="w-1/4 bg-[#115D5B] p-6 h-screen flex flex-col justify-between text-white">
+    <div>
         <div class="flex flex-col items-center text-center">
             <img src="profile.jpg" alt="Profile" class="w-20 h-20 rounded-full border mb-2">
-            <h2 class="font-bold">Ricardo Dela Cruz</h2>
-            <p class="text-sm">pajcn@gmail.com</p>
-            <p class="text-sm italic">Farmer</p>
+            <h2 class="font-bold"><?php echo htmlspecialchars($full_name); ?></h2>
+            <p class="text-sm"><?php echo htmlspecialchars($email); ?></p>
+            <p class="text-sm italic"><?php echo htmlspecialchars($user_type); ?></p>
         </div>
         <nav class="mt-6">
             <ul class="space-y-2">
@@ -35,8 +86,19 @@
                 <li><a href="#" onclick="openLogoutModal()" class="block p-2 text-red-500 hover:text-red-700">Logout</a></li>
             </ul>
         </nav>
+            <nav class="mt-6 ">
+                <ul class="space-y-2">
+                    <li><a href="#" class="block p-2 bg-[#CAEED5] text-green-700 rounded hover:bg-gray-300">Home</a></li>
+                    <li><a href="clientorder.php" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Order</a></li>
+                    <li><a href="#" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Notifications</a></li>
+                    <li><a href="#" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Profile</a></li>
+                    <li><a href="#" class="block p-2 text-red-500 hover:text-red-700" onclick="openLogoutModal()">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+        <footer class="text-center text-xs">&copy; 2025 Camarines Norte Lowland Rainfed Research Station</footer>
     </aside>
-
+    
     <!-- Main Content -->
     <div class="pl-[25%] w-full">
         <main class="p-6 bg-white min-h-screen w-full">
@@ -74,6 +136,44 @@
                     <input type="text" placeholder="Search" 
                         class="bg-[#103635] w-3/4 p-3 rounded-full mb-4 text-white border border-[#CAEED5] mt-4 focus:border-green-700 focus:ring-2 focus:ring-green-700 focus:outline-none text-center">
                 </div>
+    <main class="w-3/4 p-6 bg-white">
+        <header class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold text-green-700">Pineapple Crops Price</h1>
+            <button class="bg-blue-600 text-white px-4 py-2 rounded">Place Order</button>
+        </header>
+        
+        <div class="grid grid-cols-3 gap-6 text-white font-bold mb-6">
+    <div class="bg-[#115D5B] p-4 rounded-lg flex items-center">
+        <img src="Images\pineapple-fruit.jpg" alt="Pineapple Fruit" class="w-16 h-16 rounded-lg mr-4">
+        <div>
+            <h3>Pineapple Fruit</h3>
+            <p class="text-lg">₱50-60 Per Piece</p>
+        </div>
+    </div>
+    <div class="bg-[#115D5B] p-4 rounded-lg flex items-center">
+        <img src="Images\pineapple-juice.jpg" alt="Pineapple Juice" class="w-16 h-16 rounded-lg mr-4">
+        <div>
+            <h3>Pineapple Juice</h3>
+            <p class="text-lg">₱50-60 Per Liter</p>
+        </div>
+    </div>
+    <div class="bg-[#115D5B] p-4 rounded-lg flex items-center">
+        <img src="Images\pineapple-fiber2.png" alt="Pineapple Fiber" class="w-16 h-16 rounded-lg mr-4">
+        <div>
+            <h3>Pineapple Fiber</h3>
+            <p class="text-lg">₱50-60 Per Yard</p>
+        </div>
+    </div>
+</div>
+
+        
+       
+       
+        <div class="bg-[#115D5B] p-6 rounded-lg border border-gray-300 overflow-y-auto">
+        <div class="flex justify-center">
+    <input type="text" placeholder="Search" 
+        class="bg-[#103635] w-3/4 p-3 rounded-full mb-4 text-white border border-[#CAEED5] mt-4 focus:border-green-700 focus:ring-2 focus:ring-green-700 focus:outline-none text-center">
+</div>
 
                 <table class="w-full text-center mt-10">
                     <thead>
@@ -93,6 +193,26 @@
                             if ($conn->connect_error) {
                                 die("Connection failed: " . $conn->connect_error);
                             }
+            <table class="w-full text-black  mt-10">
+                <thead>
+                    <tr class="bg-[#4CAF50] border-white-300 text-white rounded-lg">
+                        <th class="p-2 rounded-l-lg">Farmer's Name</th>
+                        <th class="p-2">Month Of Harvest</th>
+                        <th class="p-2">Possible Harvest</th>
+                        <th class="p-2">Quantity</th>
+                        <th class="p-2">Location</th>
+                        <th class="p-2 rounded-r-lg">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+    <?php
+ 
+    $conn = new mysqli("localhost", "root", "", "capstone");
+
+ 
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
 
                             $sql = "SELECT farmer_name, month_of_harvest, possible_harvest, quantity, location, status FROM harvests";
                             $result = $conn->query($sql);

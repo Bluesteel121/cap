@@ -110,3 +110,23 @@
 [2025-04-03 15:38:02] Login successful for user: blue@gmail.com
 [2025-04-03 16:13:09] Attempting login - User input: dave
 [2025-04-03 16:13:09] Login successful for user: dave
+[2025-04-03 16:34:40] Attempting login - User input: dave
+[2025-04-03 16:34:40] Login successful for user: dave
+[2025-04-03 16:34:45] Attempting farmer login - Identifier: dave
+[2025-04-03 16:34:45] Login failed for identifier: dave - User not found
+[2025-04-03 16:34:59] Attempting login - User input: dave
+[2025-04-03 16:34:59] Login successful for user: dave
+[2025-04-03 16:35:07] Attempting login - User input: dave
+[2025-04-03 16:35:07] Login successful for user: dave
+[2025-04-03 16:35:42] Attempting login - User input: dave
+[2025-04-03 16:35:42] Login successful for user: dave
+[2025-04-03 16:36:16] Attempting login - User input: dave
+[2025-04-03 16:36:16] Login successful for user: dave
+[2025-04-03 16:37:40] Attempting login - User input: dave
+[2025-04-03 16:37:40] Login successful for user: dave
+[2025-04-03 16:38:10] Attempting login - User input: dave
+[2025-04-03 16:38:10] Login successful for user: dave
+[2025-04-03 16:44:28] Attempting login - User input: dave
+[2025-04-03 16:44:28] Login successful for user: dave
+[2025-04-03 16:47:16] Attempting login - User input: dave
+[2025-04-03 16:47:16] Login successful for user: dave
