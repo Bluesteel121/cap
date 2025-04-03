@@ -29,8 +29,8 @@
             </div>
             <nav class="mt-6 ">
                 <ul class="space-y-2">
-                    <li><a href="#" class="block p-2 bg-[#CAEED5] text-green-700 rounded hover:bg-gray-300">Home</a></li>
-                    <li><a href="clientorder.php" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Order</a></li>
+                    <li><a href="clientpage.php" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Home</a></li>
+                    <li><a href="#" class="block p-2 bg-[#CAEED5] text-green-700 rounded hover:bg-gray-300">Order</a></li>
                     <li><a href="#" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Notifications</a></li>
                     <li><a href="#" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Profile</a></li>
                     <li><a href="#" class="block p-2 text-red-500 hover:text-red-700" onclick="openLogoutModal()">Logout</a></li>
@@ -46,29 +46,7 @@
             <h1 class="text-2xl font-bold text-green-700">Pineapple Crops Price</h1>
             <button class="bg-blue-600 text-white px-4 py-2 rounded">Place Order</button>
         </header>
-        
-        <div class="grid grid-cols-3 gap-6 text-white font-bold mb-6">
-    <div class="bg-[#115D5B] p-4 rounded-lg flex items-center">
-        <img src="Images\pineapple-fruit.jpg" alt="Pineapple Fruit" class="w-16 h-16 rounded-lg mr-4">
-        <div>
-            <h3>Pineapple Fruit</h3>
-            <p class="text-lg">₱50-60 Per Piece</p>
-        </div>
-    </div>
-    <div class="bg-[#115D5B] p-4 rounded-lg flex items-center">
-        <img src="Images\pineapple-juice.jpg" alt="Pineapple Juice" class="w-16 h-16 rounded-lg mr-4">
-        <div>
-            <h3>Pineapple Juice</h3>
-            <p class="text-lg">₱50-60 Per Liter</p>
-        </div>
-    </div>
-    <div class="bg-[#115D5B] p-4 rounded-lg flex items-center">
-        <img src="Images\pineapple-fiber2.png" alt="Pineapple Fiber" class="w-16 h-16 rounded-lg mr-4">
-        <div>
-            <h3>Pineapple Fiber</h3>
-            <p class="text-lg">₱50-60 Per Yard</p>
-        </div>
-    </div>
+       
 </div>
 
         

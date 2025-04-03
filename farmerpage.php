@@ -48,27 +48,8 @@
         </header>
         
         <div class="grid grid-cols-3 gap-6 text-white font-bold mb-6">
-    <div class="bg-[#115D5B] p-4 rounded-lg flex items-center">
-        <img src="Images\pineapple-fruit.jpg" alt="Pineapple Fruit" class="w-16 h-16 rounded-lg mr-4">
-        <div>
-            <h3>Pineapple Fruit</h3>
-            <p class="text-lg">₱50-60 Per Piece</p>
-        </div>
-    </div>
-    <div class="bg-[#115D5B] p-4 rounded-lg flex items-center">
-        <img src="Images\pineapple-juice.jpg" alt="Pineapple Juice" class="w-16 h-16 rounded-lg mr-4">
-        <div>
-            <h3>Pineapple Juice</h3>
-            <p class="text-lg">₱50-60 Per Liter</p>
-        </div>
-    </div>
-    <div class="bg-[#115D5B] p-4 rounded-lg flex items-center">
-        <img src="Images\pineapple-fiber2.png" alt="Pineapple Fiber" class="w-16 h-16 rounded-lg mr-4">
-        <div>
-            <h3>Pineapple Fiber</h3>
-            <p class="text-lg">₱50-60 Per Yard</p>
-        </div>
-    </div>
+  
+    
 </div>
 
         
