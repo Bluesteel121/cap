@@ -130,3 +130,11 @@
 [2025-04-03 16:44:28] Login successful for user: dave
 [2025-04-03 16:47:16] Attempting login - User input: dave
 [2025-04-03 16:47:16] Login successful for user: dave
+[2025-04-03 16:58:55] Attempting login - User input: dave
+[2025-04-03 16:58:55] Login successful for user: dave
+[2025-04-03 17:00:28] Attempting registration - Email: pogikent@123.com
+[2025-04-03 17:00:28] Registration successful for: pogikent@123.com
+[2025-04-03 17:00:44] Attempting login - User input: kentpogi@123.com
+[2025-04-03 17:00:44] Login failed for user: kentpogi@123.com - User not found
+[2025-04-03 17:01:12] Attempting login - User input: kentPogi
+[2025-04-03 17:01:12] Login successful for user: kentPogi
