@@ -19,29 +19,26 @@
 </head>
 <body class="flex">
     <!-- Sidebar -->
-    <aside class="w-1/4 bg-[#115D5B] p-6 h-screen flex flex-col justify-between text-white">
-        <div>
-            <div class="flex flex-col items-center text-center">
-                <img src="profile.jpg" alt="Profile" class="w-20 h-20 rounded-full border mb-2">
-                <h2 class="font-bold">Ricardo Dela Cruz</h2>
-                <p class="text-sm">jpcn@gmail.com</p>
-                <p class="text-sm italic">Customer</p>
-            </div>
-            <nav class="mt-6 ">
-                <ul class="space-y-2">
-                    <li><a href="#" class="block p-2 bg-[#CAEED5] text-green-700 rounded hover:bg-gray-300">Home</a></li>
-                    <li><a href="clientorder.php" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Order</a></li>
-                    <li><a href="#" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Notifications</a></li>
-                    <li><a href="#" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Profile</a></li>
-                    <li><a href="#" class="block p-2 text-red-500 hover:text-red-700" onclick="openLogoutModal()">Logout</a></li>
-                </ul>
-            </nav>
+    <aside class="w-1/4 bg-[#115D5B] p-6 h-screen text-white fixed top-0 left-0 overflow-y-auto">
+        <div class="flex flex-col items-center text-center">
+            <img src="profile.jpg" alt="Profile" class="w-20 h-20 rounded-full border mb-2">
+            <h2 class="font-bold">Ricardo Dela Cruz</h2>
+            <p class="text-sm">pajcn@gmail.com</p>
+            <p class="text-sm italic">Farmer</p>
         </div>
-        <footer class="text-center text-xs">&copy; 2025 Camarines Norte Lowland Rainfed Research Station</footer>
+        <nav class="mt-6">
+            <ul class="space-y-2">
+                <li><a href="#" class="block p-2 bg-[#CAEED5] text-green-700 rounded">Home</a></li>
+                <li><a href="clientorder.php" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Order</a></li>
+                <li><a href="#" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Notifications</a></li>
+                <li><a href="#" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Profile</a></li>
+                <li><a href="#" class="block p-2 text-red-500 hover:text-red-700">Logout</a></li>
+            </ul>
+        </nav>
     </aside>
-    
+
     <!-- Main Content -->
-    <main class="w-3/4 p-6 bg-white">
+    <main class="ml-[25%] p-6 bg-white min-h-screen">
         <header class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-bold text-green-700">Pineapple Crops Price</h1>
             <button class="bg-blue-600 text-white px-4 py-2 rounded">Place Order</button>
