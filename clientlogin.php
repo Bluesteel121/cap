@@ -13,19 +13,19 @@ include "connect.php";
 
 // Login Logic
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] === 'login') {
-    $email = $_POST["email"] ?? "";
+    $user_input = $_POST["user_input"] ?? ""; // Changed from email to user_input
     $password = $_POST["password"] ?? "";
 
-    debugLog("Attempting login - Email: $email");
+    debugLog("Attempting login - User input: $user_input");
 
     try {
-        // Use prepared statement for login
-        $stmt = $conn->prepare("SELECT * FROM client_acc WHERE email = ?");
+        // Use prepared statement for login that checks both email and username
+        $stmt = $conn->prepare("SELECT * FROM client_acc WHERE email = ? OR username = ?");
         if ($stmt === false) {
             throw new Exception("Prepare failed: " . $conn->error);
         }
 
-        $stmt->bind_param("s", $email);
+        $stmt->bind_param("ss", $user_input, $user_input);
         $stmt->execute();
         $result = $stmt->get_result();
 
@@ -35,22 +35,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
             // Verify password (use password_verify if using password_hash)
             if ($password === $row['password']) {
                 // Create session with user's email
-                $_SESSION["email"] = $email;
+                $_SESSION["email"] = $row['email'];
                 
-                debugLog("Login successful for: $email");
+                debugLog("Login successful for user: $user_input");
                 
                 // Ensure no output before header redirect
                 header("Location: clientpage.php");
                 exit();
             } else {
-                debugLog("Login failed for email: $email - Invalid password");
-                $_SESSION['login_error'] = "Invalid email or password";
+                debugLog("Login failed for user: $user_input - Invalid password");
+                $_SESSION['login_error'] = "Invalid username/email or password";
                 header("Location: clientlogin.php");
                 exit();
             }
         } else {
-            debugLog("Login failed for email: $email - Email not found");
-            $_SESSION['login_error'] = "Invalid email or password";
+            debugLog("Login failed for user: $user_input - User not found");
+            $_SESSION['login_error'] = "Invalid username/email or password";
             header("Location: clientlogin.php");
             exit();
         }
@@ -64,9 +64,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
 
 // Registration Logic
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] === 'register') {
-    $company = $_POST["company"] ?? "";
+    $username = $_POST["username"] ?? "";
     $email = $_POST["email"] ?? "";
-    $contact = $_POST["contact"] ?? "";
+    $fullname = $_POST["fullname"] ?? "";
     $phone = $_POST["phone"] ?? "";
     $password = $_POST["password"] ?? "";
 
@@ -74,25 +74,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
 
     try {
         // Check if email already exists
-        $check_stmt = $conn->prepare("SELECT * FROM client_acc WHERE email = ?");
-        $check_stmt->bind_param("s", $email);
+        $check_stmt = $conn->prepare("SELECT * FROM client_acc WHERE email = ? OR username = ?");
+        $check_stmt->bind_param("ss", $email, $username);
         $check_stmt->execute();
         $check_result = $check_stmt->get_result();
 
         if ($check_result->num_rows > 0) {
-            debugLog("Registration failed - Email already exists: $email");
-            $_SESSION['registration_error'] = "Email already exists";
+            $row = $check_result->fetch_assoc();
+            if ($row['email'] === $email) {
+                debugLog("Registration failed - Email already exists: $email");
+                $_SESSION['registration_error'] = "Email already exists";
+            } else {
+                debugLog("Registration failed - Username already exists: $username");
+                $_SESSION['registration_error'] = "Username already exists";
+            }
             header("Location: clientlogin.php");
             exit();
         }
 
         // Prepare insert statement
-        $insert_stmt = $conn->prepare("INSERT INTO client_acc (email, password, phone_number, company_name, contact_person) VALUES (?, ?, ?, ?, ?)");
+        $insert_stmt = $conn->prepare("INSERT INTO client_acc (email, password, phone_number, username, contact_person) VALUES (?, ?, ?, ?, ?)");
         if ($insert_stmt === false) {
             throw new Exception("Prepare failed: " . $conn->error);
         }
 
-        $insert_stmt->bind_param("sssss", $email, $password, $phone, $company, $contact);
+        $insert_stmt->bind_param("sssss", $email, $password, $phone, $username, $fullname);
         
         if ($insert_stmt->execute()) {
             debugLog("Registration successful for: $email");
@@ -117,9 +123,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Client Login/Signup - CNLRRS</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://kit.fontawesome.com/your_actual_kit.js" crossorigin="anonymous"></script>
+    <!-- Add Font Awesome for eye icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body class="h-screen flex relative">
+<body class="h-screen flex relative bg-gray-100">
     <!-- Back Button -->
     <a href="account.php" class="absolute top-4 left-4 bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300">
         ← Back 
@@ -154,11 +161,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         <!-- Login Form -->
         <div id="login-section">
             <h2 class="text-2xl font-bold text-center mb-4">Client Login</h2>
-            <form id="login-form" method="POST" action="clientlogin.php">
+            <form id="login-form" method="POST" action="clientlogin.php" autocomplete="off" novalidate>
                 <input type="hidden" name="action" value="login">
-                <input type="email" name="email" placeholder="Email" class="border w-full px-4 py-2 rounded-lg mt-2" required>
-                <input type="password" name="password" placeholder="Password" class="border w-full px-4 py-2 rounded-lg mt-2" required>
-                <button type="submit" class="bg-green-500 text-white w-full py-2 mt-4 rounded-lg hover:bg-green-700">
+                <div class="mb-4">
+                    <label for="user_input" class="block text-sm font-medium text-gray-700 mb-1">Username or Email</label>
+                    <input type="text" id="user_input" name="user_input" placeholder="Enter your username or email" class="border w-full px-4 py-2 rounded-lg focus:ring-green-500 focus:border-green-500" required>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="loginPassword" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <div class="relative">
+                        <input type="password" name="password" id="loginPassword" placeholder="Enter your password" class="border w-full px-4 py-2 rounded-lg pr-10 focus:ring-green-500 focus:border-green-500">
+                        <button type="button" onclick="togglePassword('loginPassword', 'loginToggleIcon')" class="absolute right-3 top-3 text-gray-500">
+                            <i class="far fa-eye" id="loginToggleIcon"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <button type="submit" class="bg-green-500 text-white w-full py-2 mt-4 rounded-lg hover:bg-green-700 transition-colors duration-200">
                     Login
                 </button>
             </form>
@@ -171,14 +191,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         <!-- Signup Form -->
         <div id="signup-section" class="hidden">
             <h2 class="text-2xl font-bold text-center mb-4">Client Registration</h2>
-            <form id="signup-form" method="POST" action="clientlogin.php">
+            <form id="signup-form" method="POST" action="clientlogin.php" autocomplete="off" novalidate>
                 <input type="hidden" name="action" value="register">
-                <input type="text" name="company" placeholder="Company Name" class="w-full p-2 border rounded mb-2" required>
-                <input type="email" name="email" placeholder="Email" class="w-full p-2 border rounded mb-2" required>
-                <input type="text" name="contact" placeholder="Contact Person" class="w-full p-2 border rounded mb-2" required>
-                <input type="tel" name="phone" placeholder="Phone Number" class="w-full p-2 border rounded mb-2" required>
-                <input type="password" name="password" placeholder="Password" class="w-full p-2 border rounded mb-2" required>
-                <button type="submit" class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">
+                
+                <div class="mb-3">
+                    <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Choose a username" class="w-full p-2 border rounded focus:ring-green-500 focus:border-green-500" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" class="w-full p-2 border rounded focus:ring-green-500 focus:border-green-500" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="fullname" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                    <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" class="w-full p-2 border rounded focus:ring-green-500 focus:border-green-500" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" placeholder="Enter phone number" class="w-full p-2 border rounded focus:ring-green-500 focus:border-green-500" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="signupPassword" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <div class="relative">
+                        <input type="password" name="password" id="signupPassword" placeholder="Create a password" class="w-full p-2 border rounded pr-10 focus:ring-green-500 focus:border-green-500">
+                        <button type="button" onclick="togglePassword('signupPassword', 'signupToggleIcon')" class="absolute right-3 top-3 text-gray-500">
+                            <i class="far fa-eye" id="signupToggleIcon"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <button type="submit" class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition-colors duration-200">
                     Register
                 </button>
             </form>
@@ -190,6 +236,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     </div>
 
     <script>
+    // Disable any browser validation
+    document.addEventListener('DOMContentLoaded', function() {
+        // Disable HTML5 validation
+        document.getElementById('login-form').setAttribute('novalidate', '');
+        document.getElementById('signup-form').setAttribute('novalidate', '');
+        
+        // Override submit behavior to prevent any validation
+        document.getElementById('signup-form').addEventListener('submit', function(e) {
+            // Allow form submission without any client-side validation
+        });
+    });
+
     function showSection(section) {
         const login = document.getElementById('login-section');
         const signup = document.getElementById('signup-section');
@@ -200,6 +258,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         } else {
             signup.classList.add('hidden');
             login.classList.remove('hidden');
+        }
+    }
+
+    function togglePassword(passwordFieldId, iconId) {
+        const passwordField = document.getElementById(passwordFieldId);
+        const icon = document.getElementById(iconId);
+        
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            passwordField.type = "password";
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
         }
     }
     </script>
