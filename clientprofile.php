@@ -182,7 +182,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
                 
                 // Redirect to refresh the page with new data
-                header("Location: client_profile_edit.php");
+                header("Location: clientprofile.php");
                 exit();
             } else {
                 $update_error = "Error updating profile: " . $conn->error;
@@ -231,15 +231,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <p class="text-sm"><?php echo htmlspecialchars($email); ?></p>
             <p class="text-sm italic"><?php echo htmlspecialchars($user_type); ?></p>
         </div>
-            <nav class="mt-6 ">
-                <ul class="space-y-2">
-                    <li><a href="clientpage.php" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Home</a></li>
-                    <li><a href="clientorder.php" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Order</a></li>
-                    <li><a href="#" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Notifications</a></li>
-                    <li><a href="#" class="block p-2 bg-[#CAEED5] text-green-700 rounded hover:bg-gray-300">Profile</a></li>
-                    <li><a href="#" class="block p-2 text-red-500 hover:text-red-700" onclick="openLogoutModal()">Logout</a></li>
-                </ul>
-            </nav>
+        <nav class="mt-6 ">
+    <ul class="space-y-2">
+        <li><a href="clientpage.php" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Home</a></li>
+        <li><a href="clientorder.php" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Order</a></li>
+        <li><a href="#" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Notifications</a></li>
+        <li><a href="clientprofile.php" class="block p-2 bg-[#CAEED5] text-green-700 rounded hover:bg-gray-300">Profile</a></li>
+        <li><a href="#" class="block p-2 text-red-500 hover:text-red-700" onclick="openLogoutModal()">Logout</a></li>
+    </ul>
+</nav>
         </div>
         <footer class="text-center text-xs">&copy; 2025 Camarines Norte Lowland Rainfed Research Station</footer>
     </aside>
