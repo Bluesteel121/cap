@@ -55,7 +55,7 @@ $stmt->close();
 
 // Function to display profile image
 function displayProfileImage($profile_pic) {
-    if ($profile_pic) {
+    if ($profile_pic && strlen($profile_pic) > 0) {
         // Convert the binary data to base64 for displaying inline
         $base64Image = base64_encode($profile_pic);
         $imageType = 'image/jpeg'; // Default image type
@@ -135,6 +135,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     // Get file content
                     $image_data = file_get_contents($file["tmp_name"]);
                     
+                    // Add profile_pic to SQL update
                     $sql_parts[] = "profile_pic = ?";
                     $param_types .= "b"; // binary data
                     $param_values[] = $image_data;
@@ -161,34 +162,43 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $param_types .= "s";
             $param_values[] = $login_identifier;
             
-            // Prepare and execute the statement
+            // Prepare the statement
             $stmt = $conn->prepare($sql);
             
-            // Bind parameters dynamically
-            $bind_params = array($param_types);
-            for ($i = 0; $i < count($param_values); $i++) {
-                $bind_params[] = &$param_values[$i];
-            }
-            call_user_func_array(array($stmt, 'bind_param'), $bind_params);
-            
-            if ($stmt->execute()) {
-                $update_message = "Profile updated successfully!";
+            if ($stmt) {
+                // Create a reference array for bind_param
+                $bind_params = array();
+                $bind_params[] = $param_types;
                 
-                // Update session variables if username or email changed
-                if ($login_identifier == $_SESSION['username'] && $new_username != $login_identifier) {
-                    $_SESSION['username'] = $new_username;
-                } else if ($login_identifier == $_SESSION['email'] && $new_email != $login_identifier) {
-                    $_SESSION['email'] = $new_email;
+                // Create references for the parameter values
+                for ($i = 0; $i < count($param_values); $i++) {
+                    $bind_params[] = &$param_values[$i];
                 }
                 
-                // Redirect to refresh the page with new data
-                header("Location: clientprofile.php");
-                exit();
+                // Call bind_param with the reference array
+                call_user_func_array(array($stmt, 'bind_param'), $bind_params);
+                
+                if ($stmt->execute()) {
+                    $update_message = "Profile updated successfully!";
+                    
+                    // Update session variables if username or email changed
+                    if ($login_identifier == $_SESSION['username'] && $new_username != $login_identifier) {
+                        $_SESSION['username'] = $new_username;
+                    } else if ($login_identifier == $_SESSION['email'] && $new_email != $login_identifier) {
+                        $_SESSION['email'] = $new_email;
+                    }
+                    
+                    // Redirect to refresh the page with new data
+                    header("Location: clientprofile.php");
+                    exit();
+                } else {
+                    $update_error = "Error executing update: " . $stmt->error;
+                }
+                
+                $stmt->close();
             } else {
-                $update_error = "Error updating profile: " . $conn->error;
+                $update_error = "Error preparing statement: " . $conn->error;
             }
-            
-            $stmt->close();
         }
     }
 }
@@ -212,12 +222,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             window.location.href = 'account.php'; // Change this to your logout URL
         }
         function previewImage(event) {
-            const reader = new FileReader();
-            reader.onload = function() {
-                const preview = document.getElementById('image-preview');
-                preview.src = reader.result;
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('image-preview');
+                    preview.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
             }
-            reader.readAsDataURL(event.target.files[0]);
         }
     </script>
 </head>
@@ -226,7 +239,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <aside class="w-1/4 bg-[#115D5B] p-6 h-screen flex flex-col justify-between text-white">
     <div>
         <div class="flex flex-col items-center text-center">
-            <img src="<?php echo htmlspecialchars($profileImageSrc); ?>" alt="Profile" class="w-20 h-20 rounded-full border mb-2 object-cover">
+            <img src="<?php echo htmlspecialchars($profileImageSrc); ?>" alt="Profile" class="w-20 h-20 rounded-full mb-2 object-cover bg-white">
             <h2 class="font-bold"><?php echo htmlspecialchars($full_name); ?></h2>
             <p class="text-sm"><?php echo htmlspecialchars($email); ?></p>
             <p class="text-sm italic"><?php echo htmlspecialchars($user_type); ?></p>
@@ -268,7 +281,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <!-- Profile Picture -->
                 <div class="flex flex-col items-center mb-6">
                     <h3 class="text-lg font-bold mb-2">Profile Picture</h3>
-                    <img id="image-preview" src="<?php echo htmlspecialchars($profileImageSrc); ?>" alt="Profile Preview" class="w-32 h-32 rounded-full object-cover border-2 border-white mb-4">
+                    <img id="image-preview" src="<?php echo htmlspecialchars($profileImageSrc); ?>" alt="Profile Preview" class="w-32 h-32 rounded-full object-cover border-2 border-white mb-4 bg-white">
                     
                     <input type="file" name="profile_pic" id="profile_pic" accept="image/*" 
                            class="block w-full text-sm text-white file:mr-4 file:py-2 file:px-4 
