@@ -145,7 +145,12 @@
 [2025-04-03 17:09:08] Attempting login - User input: dave
 [2025-04-03 17:09:08] Login successful for user: dave
 >>>>>>> f36ff5df0f4c721d44792b5af2a1799a19f6bef4
+<<<<<<< HEAD
 [2025-04-07 16:00:23] Attempting farmer login - Identifier: dave
 [2025-04-07 16:00:23] Login failed for identifier: dave - User not found
 [2025-04-07 16:00:49] Attempting login - User input: dave
 [2025-04-07 16:00:49] Login successful for user: dave
+=======
+[2025-04-06 06:47:00] Attempting login - User input: dave
+[2025-04-06 06:47:00] Login successful for user: dave
+>>>>>>> 47d09146e2cec7a818fefc4f41111ecb97f624aa
