@@ -14,21 +14,12 @@
 [2025-03-26 16:42:53] Login successful for: example@gmail.com
 [2025-03-26 16:46:31] Attempting login - Email: example@gmail.com
 [2025-03-26 16:46:31] Login successful for: example@gmail.com
-<<<<<<< HEAD
-[2025-03-26 18:07:35] Attempting farmer login - Email: nemz@gmail.com
-[2025-03-26 18:07:35] Login successful for: nemz@gmail.com
-[2025-03-26 18:08:27] Attempting farmer registration - Email: rex@gmail.com
-[2025-03-26 18:08:27] Registration successful for: rex@gmail.com
-[2025-03-26 18:08:35] Attempting farmer login - Email: rex@gmail.com
-[2025-03-26 18:08:35] Login successful for: rex@gmail.com
-=======
 [2025-03-26 16:41:26] Attempting login - Email: Kent@corps.com
 [2025-03-26 16:41:26] Login successful for: Kent@corps.com
 [2025-03-26 17:48:04] Attempting login - Email: Kent@corps.com
 [2025-03-26 17:48:04] Login successful for: Kent@corps.com
 [2025-03-26 17:51:02] Attempting login - Email: Kent@corps.com
 [2025-03-26 17:51:02] Login successful for: Kent@corps.com
->>>>>>> 527b819be5b64c2f7627d570c953b307cb2e2463
 [2025-03-26 18:15:50] Attempting farmer login - Email: nemz@gmail.com
 [2025-03-26 18:15:50] Login successful for: nemz@gmail.com
 [2025-03-26 18:17:13] Attempting farmer login - Email: Kent@corps.com
@@ -65,15 +56,8 @@
 [2025-03-31 17:40:13] Login successful for: Kent@corp.com
 [2025-03-31 18:05:14] Attempting farmer login - Email: Kent@corp.com
 [2025-03-31 18:05:14] Login successful for: Kent@corp.com
-<<<<<<< HEAD
-[2025-04-01 16:14:03] Attempting farmer registration - Username: nemz
-[2025-04-01 16:14:03] Registration successful for: nemz
-[2025-04-01 16:14:12] Attempting farmer login - Username: nemz
-[2025-04-01 16:14:12] Login successful for username: nemz
-=======
 [2025-04-01 16:06:56] Attempting farmer login - Identifier: 
 [2025-04-01 16:06:56] Exception: Unknown column 'username' in 'where clause'
->>>>>>> 8de100813277025e88a854cb9bae615149ae1a55
 [2025-04-01 16:53:07] Attempting farmer registration - Username: bbnos
 [2025-04-01 16:53:07] Registration failed - Contact number must be exactly 11 digits: 098989898989
 [2025-04-01 16:53:26] Attempting farmer registration - Username: bbnos
@@ -130,24 +114,23 @@
 [2025-04-03 16:44:28] Login successful for user: dave
 [2025-04-03 16:47:16] Attempting login - User input: dave
 [2025-04-03 16:47:16] Login successful for user: dave
-<<<<<<< HEAD
-[2025-04-03 16:58:55] Attempting login - User input: dave
-[2025-04-03 16:58:55] Login successful for user: dave
-[2025-04-03 17:00:28] Attempting registration - Email: pogikent@123.com
-[2025-04-03 17:00:28] Registration successful for: pogikent@123.com
-[2025-04-03 17:00:44] Attempting login - User input: kentpogi@123.com
-[2025-04-03 17:00:44] Login failed for user: kentpogi@123.com - User not found
-[2025-04-03 17:01:12] Attempting login - User input: kentPogi
-[2025-04-03 17:01:12] Login successful for user: kentPogi
-=======
 [2025-04-03 17:04:15] Attempting login - User input: dave
 [2025-04-03 17:04:15] Login successful for user: dave
 [2025-04-03 17:09:08] Attempting login - User input: dave
 [2025-04-03 17:09:08] Login successful for user: dave
->>>>>>> f36ff5df0f4c721d44792b5af2a1799a19f6bef4
+<<<<<<< HEAD
+[2025-04-07 16:00:23] Attempting farmer login - Identifier: dave
+[2025-04-07 16:00:23] Login failed for identifier: dave - User not found
+[2025-04-07 16:00:49] Attempting login - User input: dave
+[2025-04-07 16:00:49] Login successful for user: dave
+=======
 [2025-04-06 06:47:00] Attempting login - User input: dave
 [2025-04-06 06:47:00] Login successful for user: dave
+<<<<<<< HEAD
 [2025-04-07 16:32:56] Database connection error: No connection could be made because the target machine actively refused it
 [2025-04-07 16:33:29] Database connection error: No connection could be made because the target machine actively refused it
 [2025-04-07 16:34:50] Attempting login - User input: dave
 [2025-04-07 16:34:50] Login successful for user: dave
+=======
+>>>>>>> 47d09146e2cec7a818fefc4f41111ecb97f624aa
+>>>>>>> 014bad8aa5c64b147124f33b22a14c777e7fe6e2
