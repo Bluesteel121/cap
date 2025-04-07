@@ -91,13 +91,17 @@ $harvest_result = $stmt->get_result();
         }
 
         function filterTable() {
-            let input = document.getElementById('searchInput').value.toLowerCase();
-            let rows = document.querySelectorAll('.harvest-row');
-            rows.forEach(row => {
-                let content = row.innerText.toLowerCase();
-                row.style.display = content.includes(input) ? '' : 'none';
-            });
-        }
+    let input = document.getElementById('searchInput').value.toLowerCase();
+    let rows = document.querySelectorAll('.harvest-row');
+    
+    rows.forEach(row => {
+        // Get the text content of each column you want to search
+        let content = row.innerText.toLowerCase();
+        
+        // Check if any part of the content matches the input
+        row.style.display = content.includes(input) ? '' : 'none';
+    });
+}
     </script>
 </head>
 <body class="flex">
@@ -155,11 +159,12 @@ $harvest_result = $stmt->get_result();
             </div>
         </div>
 
-        <!-- Harvest Table -->
+        
+<!-- Harvest Table -->
 <div class="bg-[#115D5B] p-6 rounded-lg border border-gray-300 overflow-y-auto">
     <div class="flex justify-center">
-        <!-- search Bar -->
-        <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search"
+        <!--Search Bar -->
+        <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search by Name, Month, or Location"
             class="bg-[#103635] w-3/4 p-3 rounded-full mb-4 text-white border-[2.5px] border-[#4CAF50] mt-4 focus:border-green-700 focus:ring-2 focus:ring-green-700 focus:outline-none text-center">
     </div>
 
@@ -197,7 +202,8 @@ $harvest_result = $stmt->get_result();
         }
         ?>
     </div>
-    </div>
+</div>
+
 
     </main>
 
