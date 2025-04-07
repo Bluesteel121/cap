@@ -134,3 +134,9 @@
 =======
 >>>>>>> 47d09146e2cec7a818fefc4f41111ecb97f624aa
 >>>>>>> 014bad8aa5c64b147124f33b22a14c777e7fe6e2
+[2025-04-07 17:22:58] Attempting login - User input: dave
+[2025-04-07 17:22:58] Login successful for user: dave
+[2025-04-07 17:24:04] Attempting login - User input: daave
+[2025-04-07 17:24:04] Login failed for user: daave - User not found
+[2025-04-07 17:24:09] Attempting login - User input: dave
+[2025-04-07 17:24:09] Login successful for user: dave
