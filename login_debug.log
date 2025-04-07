@@ -142,3 +142,7 @@
 [2025-04-07 17:24:09] Login successful for user: dave
 [2025-04-07 17:26:05] Attempting login - User input: dave
 [2025-04-07 17:26:05] Login successful for user: dave
+[2025-04-07 18:30:58] Attempting login - User input: john
+[2025-04-07 18:30:58] Login failed for user: john - User not found
+[2025-04-07 18:31:18] Attempting login - User input: nemz
+[2025-04-07 18:31:18] Login successful for user: nemz
