@@ -37,8 +37,15 @@ $stmt->close();
 
 function displayProfileImage($profile_pic) {
     if ($profile_pic) {
-        $base64Image = base64_encode($profile_pic);
-        return "data:image/jpeg;base64,$base64Image";
+        // Check if profile_pic is a file path (starts with "images/")
+        if (is_string($profile_pic) && (strpos($profile_pic, 'images/') === 0 || strpos($profile_pic, 'profile.jpg') === 0)) {
+            // Return the path directly
+            return $profile_pic;
+        } else {
+            // Handle as binary data (old method)
+            $base64Image = base64_encode($profile_pic);
+            return "data:image/jpeg;base64,$base64Image";
+        }
     } else {
         return "profile.jpg";
     }

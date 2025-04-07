@@ -2,6 +2,23 @@
 // Start the session if it's not already started
 session_start();
 
+// Function to display profile image
+function displayProfileImage($profile_pic) {
+    if ($profile_pic) {
+        // Check if profile_pic is a file path (starts with "images/")
+        if (is_string($profile_pic) && (strpos($profile_pic, 'images/') === 0 || strpos($profile_pic, 'profile.jpg') === 0)) {
+            // Return the path directly
+            return $profile_pic;
+        } else {
+            // Handle as binary data (old method)
+            $base64Image = base64_encode($profile_pic);
+            return "data:image/jpeg;base64,$base64Image";
+        }
+    } else {
+        return "profile.jpg";
+    }
+}
+
 // Database connection
 $conn = new mysqli("localhost", "root", "", "capstone");
 
@@ -22,9 +39,9 @@ $login_identifier = isset($_SESSION['username']) ? $_SESSION['username'] : $_SES
 
 // Get user data from database using the login identifier
 if (isset($_SESSION['username'])) {
-    $sql = "SELECT full_name, email FROM client_acc WHERE username = ?";
+    $sql = "SELECT full_name, email, profile_pic FROM client_acc WHERE username = ?";
 } else {
-    $sql = "SELECT full_name, email FROM client_acc WHERE email = ?";
+    $sql = "SELECT full_name, email, profile_pic FROM client_acc WHERE email = ?";
 }
 
 $stmt = $conn->prepare($sql);
@@ -36,12 +53,14 @@ if ($result->num_rows > 0) {
     $user_data = $result->fetch_assoc();
     $full_name = $user_data['full_name'];
     $email = $user_data['email'];
+    $profile_pic = $user_data['profile_pic'];
     // Setting a default user type
     $user_type = "Client"; 
 } else {
     // Handle case where user data is not found
     $full_name = "User";
     $email = $login_identifier; // Show the login identifier as email if full name not found
+    $profile_pic = null;
     $user_type = "User";
 }
 
@@ -176,7 +195,7 @@ if (isset($_GET['action'])) {
     <!-- Sidebar -->
     <aside class="w-1/4 bg-[#115D5B] p-6 h-screen text-white fixed top-0 left-0 overflow-y-auto">
         <div class="flex flex-col items-center text-center">
-            <img src="profile.jpg" alt="Profile" class="w-20 h-20 rounded-full border mb-2">
+            <img src="<?php echo displayProfileImage($profile_pic); ?>" alt="Profile" class="w-20 h-20 rounded-full border mb-2">
             <h2 class="font-bold"><?php echo htmlspecialchars($full_name); ?></h2>
             <p class="text-sm"><?php echo htmlspecialchars($email); ?></p>
             <p class="text-sm italic"><?php echo htmlspecialchars($user_type); ?></p>
