@@ -22,9 +22,9 @@ $login_identifier = isset($_SESSION['username']) ? $_SESSION['username'] : $_SES
 
 // Get user data from database using the login identifier
 if (isset($_SESSION['username'])) {
-    $sql = "SELECT full_name, email FROM client_acc WHERE username = ?";
+    $sql = "SELECT full_name, email, profile_pic FROM client_acc WHERE username = ?";
 } else {
-    $sql = "SELECT full_name, email FROM client_acc WHERE email = ?";
+    $sql = "SELECT full_name, email, profile_pic FROM client_acc WHERE email = ?";
 }
 
 $stmt = $conn->prepare($sql);
@@ -36,16 +36,35 @@ if ($result->num_rows > 0) {
     $user_data = $result->fetch_assoc();
     $full_name = $user_data['full_name'];
     $email = $user_data['email'];
+    $profile_pic = $user_data['profile_pic'];
     // Setting a default user type
     $user_type = "Client"; 
 } else {
     // Handle case where user data is not found
     $full_name = "User";
     $email = $login_identifier; // Show the login identifier as email if full name not found
+    $profile_pic = null; // No profile picture
     $user_type = "User";
 }
 
 $stmt->close();
+
+// Function to display profile image
+function displayProfileImage($profile_pic) {
+    if ($profile_pic) {
+        // Convert the binary data to base64 for displaying inline
+        $base64Image = base64_encode($profile_pic);
+        $imageType = 'image/jpeg'; // Default image type, you might want to store the image type in the database as well
+        
+        return "data:$imageType;base64,$base64Image";
+    } else {
+        // Return the path to the default profile image
+        return "profile.jpg";
+    }
+}
+
+// Get the profile image source
+$profileImageSrc = displayProfileImage($profile_pic);
 ?>
 
 <!DOCTYPE html>
@@ -72,7 +91,7 @@ $stmt->close();
     <aside class="w-1/4 bg-[#115D5B] p-6 h-screen flex flex-col justify-between text-white">
     <div>
         <div class="flex flex-col items-center text-center">
-            <img src="profile.jpg" alt="Profile" class="w-20 h-20 rounded-full border mb-2">
+            <img src="<?php echo htmlspecialchars($profileImageSrc); ?>" alt="Profile" class="w-20 h-20 rounded-full border mb-2 object-cover">
             <h2 class="font-bold"><?php echo htmlspecialchars($full_name); ?></h2>
             <p class="text-sm"><?php echo htmlspecialchars($email); ?></p>
             <p class="text-sm italic"><?php echo htmlspecialchars($user_type); ?></p>

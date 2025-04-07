@@ -1,0 +1,351 @@
+<?php
+// Start the session if it's not already started
+session_start();
+
+// Database connection
+$conn = new mysqli("localhost", "root", "", "capstone");
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Check if user is logged in
+if (!isset($_SESSION['username']) && !isset($_SESSION['email'])) {
+    // Redirect to login page if not logged in
+    header("Location: account.php");
+    exit();
+}
+
+// Get the login identifier (either username or email)
+$login_identifier = isset($_SESSION['username']) ? $_SESSION['username'] : $_SESSION['email'];
+
+// Get user data from database using the login identifier
+if (isset($_SESSION['username'])) {
+    $sql = "SELECT full_name, email, username, phone_number, profile_pic FROM client_acc WHERE username = ?";
+} else {
+    $sql = "SELECT full_name, email, username, phone_number, profile_pic FROM client_acc WHERE email = ?";
+}
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $login_identifier);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    $user_data = $result->fetch_assoc();
+    $full_name = $user_data['full_name'];
+    $email = $user_data['email'];
+    $username = $user_data['username'];
+    $phone_number = $user_data['phone_number'];
+    $profile_pic = $user_data['profile_pic'];
+    // Setting a default user type
+    $user_type = "Client"; 
+} else {
+    // Handle case where user data is not found
+    $full_name = "User";
+    $email = $login_identifier;
+    $username = "";
+    $phone_number = "";
+    $profile_pic = null;
+    $user_type = "User";
+}
+
+$stmt->close();
+
+// Function to display profile image
+function displayProfileImage($profile_pic) {
+    if ($profile_pic) {
+        // Convert the binary data to base64 for displaying inline
+        $base64Image = base64_encode($profile_pic);
+        $imageType = 'image/jpeg'; // Default image type
+        
+        return "data:$imageType;base64,$base64Image";
+    } else {
+        // Return the path to the default profile image
+        return "profile.jpg";
+    }
+}
+
+// Get the profile image source
+$profileImageSrc = displayProfileImage($profile_pic);
+
+// Process form submission
+$update_message = "";
+$update_error = "";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Collect form data
+    $new_full_name = $_POST['full_name'];
+    $new_email = $_POST['email'];
+    $new_username = $_POST['username'];
+    $new_phone_number = $_POST['phone_number'];
+    $new_password = isset($_POST['password']) && !empty($_POST['password']) ? $_POST['password'] : null;
+    $confirm_password = isset($_POST['confirm_password']) ? $_POST['confirm_password'] : null;
+    
+    // Validate password if provided
+    if ($new_password !== null) {
+        if ($new_password !== $confirm_password) {
+            $update_error = "Passwords do not match!";
+        } else {
+            // Hash the password
+            $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+        }
+    }
+    
+    // Proceed with update if no errors
+    if (empty($update_error)) {
+        // Start building the SQL query
+        $sql_parts = [];
+        $param_types = "";
+        $param_values = [];
+        
+        // Add fields to update
+        $sql_parts[] = "full_name = ?";
+        $param_types .= "s";
+        $param_values[] = $new_full_name;
+        
+        $sql_parts[] = "email = ?";
+        $param_types .= "s";
+        $param_values[] = $new_email;
+        
+        $sql_parts[] = "username = ?";
+        $param_types .= "s";
+        $param_values[] = $new_username;
+        
+        $sql_parts[] = "phone_number = ?";
+        $param_types .= "s";
+        $param_values[] = $new_phone_number;
+        
+        // Add password if it was provided
+        if ($new_password !== null) {
+            $sql_parts[] = "password = ?";
+            $param_types .= "s";
+            $param_values[] = $hashed_password;
+        }
+        
+        // Process image upload if a file was provided
+        if (isset($_FILES["profile_pic"]) && $_FILES["profile_pic"]["size"] > 0) {
+            $file = $_FILES["profile_pic"];
+            
+            // Check if there's an error with the uploaded file
+            if ($file["error"] == 0) {
+                // Check file size (max 2MB)
+                if ($file["size"] <= 2000000) {
+                    // Get file content
+                    $image_data = file_get_contents($file["tmp_name"]);
+                    
+                    $sql_parts[] = "profile_pic = ?";
+                    $param_types .= "b"; // binary data
+                    $param_values[] = $image_data;
+                } else {
+                    $update_error = "File is too large. Maximum file size is 2MB.";
+                }
+            } else {
+                $update_error = "Error uploading file. Error code: " . $file["error"];
+            }
+        }
+        
+        // If still no errors, proceed with update
+        if (empty($update_error)) {
+            // Complete the SQL query
+            $sql = "UPDATE client_acc SET " . implode(", ", $sql_parts) . " WHERE ";
+            
+            // Determine which field to use for the WHERE clause
+            if (isset($_SESSION['username'])) {
+                $sql .= "username = ?";
+            } else {
+                $sql .= "email = ?";
+            }
+            
+            $param_types .= "s";
+            $param_values[] = $login_identifier;
+            
+            // Prepare and execute the statement
+            $stmt = $conn->prepare($sql);
+            
+            // Bind parameters dynamically
+            $bind_params = array($param_types);
+            for ($i = 0; $i < count($param_values); $i++) {
+                $bind_params[] = &$param_values[$i];
+            }
+            call_user_func_array(array($stmt, 'bind_param'), $bind_params);
+            
+            if ($stmt->execute()) {
+                $update_message = "Profile updated successfully!";
+                
+                // Update session variables if username or email changed
+                if ($login_identifier == $_SESSION['username'] && $new_username != $login_identifier) {
+                    $_SESSION['username'] = $new_username;
+                } else if ($login_identifier == $_SESSION['email'] && $new_email != $login_identifier) {
+                    $_SESSION['email'] = $new_email;
+                }
+                
+                // Redirect to refresh the page with new data
+                header("Location: client_profile_edit.php");
+                exit();
+            } else {
+                $update_error = "Error updating profile: " . $conn->error;
+            }
+            
+            $stmt->close();
+        }
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile - Pineapple Crops</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        function openLogoutModal() {
+            document.getElementById('logout-modal').classList.remove('hidden');
+        }
+        function closeLogoutModal() {
+            document.getElementById('logout-modal').classList.add('hidden');
+        }
+        function confirmLogout() {
+            window.location.href = 'account.php'; // Change this to your logout URL
+        }
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const preview = document.getElementById('image-preview');
+                preview.src = reader.result;
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    </script>
+</head>
+<body class="flex">
+    <!-- Sidebar -->
+    <aside class="w-1/4 bg-[#115D5B] p-6 h-screen flex flex-col justify-between text-white">
+    <div>
+        <div class="flex flex-col items-center text-center">
+            <img src="<?php echo htmlspecialchars($profileImageSrc); ?>" alt="Profile" class="w-20 h-20 rounded-full border mb-2 object-cover">
+            <h2 class="font-bold"><?php echo htmlspecialchars($full_name); ?></h2>
+            <p class="text-sm"><?php echo htmlspecialchars($email); ?></p>
+            <p class="text-sm italic"><?php echo htmlspecialchars($user_type); ?></p>
+        </div>
+            <nav class="mt-6 ">
+                <ul class="space-y-2">
+                    <li><a href="clientpage.php" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Home</a></li>
+                    <li><a href="clientorder.php" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Order</a></li>
+                    <li><a href="#" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Notifications</a></li>
+                    <li><a href="#" class="block p-2 bg-[#CAEED5] text-green-700 rounded hover:bg-gray-300">Profile</a></li>
+                    <li><a href="#" class="block p-2 text-red-500 hover:text-red-700" onclick="openLogoutModal()">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+        <footer class="text-center text-xs">&copy; 2025 Camarines Norte Lowland Rainfed Research Station</footer>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="w-3/4 p-6 bg-white">
+        <header class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold text-green-700">Edit Profile</h1>
+            <a href="clientpage.php" class="bg-blue-600 text-white px-4 py-2 rounded">Back to Home</a>
+        </header>
+        
+        <?php if (!empty($update_message)): ?>
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <span class="block sm:inline"><?php echo $update_message; ?></span>
+            </div>
+        <?php endif; ?>
+        
+        <?php if (!empty($update_error)): ?>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <span class="block sm:inline"><?php echo $update_error; ?></span>
+            </div>
+        <?php endif; ?>
+        
+        <div class="bg-[#115D5B] p-6 rounded-lg shadow-lg text-white">
+            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" enctype="multipart/form-data" class="space-y-6">
+                <!-- Profile Picture -->
+                <div class="flex flex-col items-center mb-6">
+                    <h3 class="text-lg font-bold mb-2">Profile Picture</h3>
+                    <img id="image-preview" src="<?php echo htmlspecialchars($profileImageSrc); ?>" alt="Profile Preview" class="w-32 h-32 rounded-full object-cover border-2 border-white mb-4">
+                    
+                    <input type="file" name="profile_pic" id="profile_pic" accept="image/*" 
+                           class="block w-full text-sm text-white file:mr-4 file:py-2 file:px-4 
+                                  file:rounded-full file:border-0 file:text-sm file:font-semibold
+                                  file:bg-green-50 file:text-green-700 hover:file:bg-green-100" 
+                           onchange="previewImage(event)">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-6">
+                    <!-- Full Name -->
+                    <div>
+                        <label for="full_name" class="block text-sm font-medium">Full Name</label>
+                        <input type="text" name="full_name" id="full_name" value="<?php echo htmlspecialchars($full_name); ?>" 
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring focus:ring-green-500 focus:ring-opacity-50 
+                                      bg-white text-gray-800 px-3 py-2">
+                    </div>
+                    
+                    <!-- Username -->
+                    <div>
+                        <label for="username" class="block text-sm font-medium">Username</label>
+                        <input type="text" name="username" id="username" value="<?php echo htmlspecialchars($username); ?>" 
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring focus:ring-green-500 focus:ring-opacity-50 
+                                      bg-white text-gray-800 px-3 py-2">
+                    </div>
+                    
+                    <!-- Email -->
+                    <div>
+                        <label for="email" class="block text-sm font-medium">Email</label>
+                        <input type="email" name="email" id="email" value="<?php echo htmlspecialchars($email); ?>" 
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring focus:ring-green-500 focus:ring-opacity-50 
+                                      bg-white text-gray-800 px-3 py-2">
+                    </div>
+                    
+                    <!-- Phone Number -->
+                    <div>
+                        <label for="phone_number" class="block text-sm font-medium">Phone Number</label>
+                        <input type="text" name="phone_number" id="phone_number" value="<?php echo htmlspecialchars($phone_number); ?>" 
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring focus:ring-green-500 focus:ring-opacity-50 
+                                      bg-white text-gray-800 px-3 py-2">
+                    </div>
+                    
+                    <!-- Password -->
+                    <div>
+                        <label for="password" class="block text-sm font-medium">New Password (leave blank to keep current)</label>
+                        <input type="password" name="password" id="password" 
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring focus:ring-green-500 focus:ring-opacity-50 
+                                      bg-white text-gray-800 px-3 py-2">
+                    </div>
+                    
+                    <!-- Confirm Password -->
+                    <div>
+                        <label for="confirm_password" class="block text-sm font-medium">Confirm New Password</label>
+                        <input type="password" name="confirm_password" id="confirm_password" 
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring focus:ring-green-500 focus:ring-opacity-50 
+                                      bg-white text-gray-800 px-3 py-2">
+                    </div>
+                </div>
+                
+                <div class="flex justify-center mt-6">
+                    <button type="submit" class="bg-green-500 text-white px-6 py-2 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+    
+    <!-- Logout Modal -->
+    <div id="logout-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+            <h2 class="text-lg font-bold">Confirm Logout</h2>
+            <p class="mt-2">Are you sure you want to logout?</p>
+            <div class="mt-4 flex justify-center gap-4">
+                <button onclick="confirmLogout()" class="bg-red-500 text-white px-4 py-2 rounded">Yes</button>
+                <button onclick="closeLogoutModal()" class="bg-gray-300 px-4 py-2 rounded">No</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

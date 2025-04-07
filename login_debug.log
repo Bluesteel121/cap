@@ -147,3 +147,7 @@
 >>>>>>> f36ff5df0f4c721d44792b5af2a1799a19f6bef4
 [2025-04-06 06:47:00] Attempting login - User input: dave
 [2025-04-06 06:47:00] Login successful for user: dave
+[2025-04-07 16:32:56] Database connection error: No connection could be made because the target machine actively refused it
+[2025-04-07 16:33:29] Database connection error: No connection could be made because the target machine actively refused it
+[2025-04-07 16:34:50] Attempting login - User input: dave
+[2025-04-07 16:34:50] Login successful for user: dave
