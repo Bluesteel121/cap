@@ -2,6 +2,9 @@
 // Start the session if it's not already started
 session_start();
 
+// Include GitHub upload function
+require_once 'github_upload.php'; // Save the previous function in this file
+
 // Database connection
 $conn = new mysqli("localhost", "root", "", "capstone");
 
@@ -56,11 +59,8 @@ $stmt->close();
 // Function to display profile image
 function displayProfileImage($profile_pic) {
     if ($profile_pic && strlen($profile_pic) > 0) {
-        // Convert the binary data to base64 for displaying inline
-        $base64Image = base64_encode($profile_pic);
-        $imageType = 'image/jpeg'; // Default image type
-        
-        return "data:$imageType;base64,$base64Image";
+        // Return the path to the image
+        return $profile_pic;
     } else {
         // Return the path to the default profile image
         return "profile.jpg";
@@ -132,13 +132,53 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($file["error"] == 0) {
                 // Check file size (max 2MB)
                 if ($file["size"] <= 2000000) {
-                    // Get file content
-                    $image_data = file_get_contents($file["tmp_name"]);
+                    // Get file extension
+                    $file_ext = strtolower(pathinfo($file["name"], PATHINFO_EXTENSION));
+                    $allowed_exts = array("jpg", "jpeg", "png", "gif");
                     
-                    // Add profile_pic to SQL update
-                    $sql_parts[] = "profile_pic = ?";
-                    $param_types .= "b"; // binary data
-                    $param_values[] = $image_data;
+                    if (in_array($file_ext, $allowed_exts)) {
+                        // Create unique filename
+                        $new_filename = "profile_" . $new_username . "_" . time() . "." . $file_ext;
+                        $local_upload_dir = "images/";
+                        $github_upload_dir = "images/";
+                        
+                        // Create local directory if it doesn't exist
+                        if (!file_exists($local_upload_dir)) {
+                            mkdir($local_upload_dir, 0777, true);
+                        }
+                        
+                        $local_path = $local_upload_dir . $new_filename;
+                        $github_path = $github_upload_dir . $new_filename;
+                        
+                        // Move the uploaded file to the local images directory
+                        if (move_uploaded_file($file["tmp_name"], $local_path)) {
+                            // Try to upload to GitHub
+                            $github_result = uploadToGitHub($local_path, $github_path);
+                            
+                            if ($github_result === true) {
+                                // GitHub upload successful
+                                // Add profile_pic path to SQL update
+                                $sql_parts[] = "profile_pic = ?";
+                                $param_types .= "s"; // string for file path
+                                $param_values[] = $github_path;
+                            } else {
+                                // GitHub upload failed, but we still have the local file
+                                // Log the error but continue with the local path
+                                error_log("GitHub upload failed: " . $github_result);
+                                
+                                $sql_parts[] = "profile_pic = ?";
+                                $param_types .= "s";
+                                $param_values[] = $local_path;
+                                
+                                // Add a warning to the user
+                                $update_message = "Profile will be updated, but GitHub sync failed. ";
+                            }
+                        } else {
+                            $update_error = "Failed to save the image.";
+                        }
+                    } else {
+                        $update_error = "Only JPG, JPEG, PNG & GIF files are allowed.";
+                    }
                 } else {
                     $update_error = "File is too large. Maximum file size is 2MB.";
                 }
@@ -179,7 +219,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 call_user_func_array(array($stmt, 'bind_param'), $bind_params);
                 
                 if ($stmt->execute()) {
-                    $update_message = "Profile updated successfully!";
+                    $update_message .= "Profile updated successfully!";
                     
                     // Update session variables if username or email changed
                     if ($login_identifier == $_SESSION['username'] && $new_username != $login_identifier) {
@@ -189,7 +229,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     }
                     
                     // Redirect to refresh the page with new data
-                    header("Location: clientprofile.php");
+                    header("Location: clientprofile.php?message=" . urlencode($update_message));
                     exit();
                 } else {
                     $update_error = "Error executing update: " . $stmt->error;
@@ -202,7 +242,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 }
+
+// Check for messages from redirects
+if (isset($_GET['message'])) {
+    $update_message = $_GET['message'];
+}
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
