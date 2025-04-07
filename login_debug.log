@@ -150,3 +150,9 @@
 [2025-04-07 18:33:56] Login failed for user: nemz - Invalid password
 [2025-04-07 18:34:04] Attempting login - User input: nemz
 [2025-04-07 18:34:04] Login failed for user: nemz - Invalid password
+[2025-04-07 18:41:42] Attempting login - User input: nemz@gmail.com
+[2025-04-07 18:41:42] Login failed for user: nemz@gmail.com - User not found
+[2025-04-07 18:41:58] Attempting login - User input: blue
+[2025-04-07 18:41:58] Login successful for user: blue
+[2025-04-07 18:42:20] Attempting login - User input: blue
+[2025-04-07 18:42:20] Login successful for user: blue
