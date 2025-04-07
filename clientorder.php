@@ -228,7 +228,7 @@ if (isset($_GET['action'])) {
                 <img src="image.png" alt="Map" class="w-full mt-2 rounded">
             </div>
 
-            <!-- Order Details -->
+            <!-- Order Detailsss -->
             <div class="border p-4 rounded-lg">
                 <h2 class="font-bold">Pineapple Fruit</h2>
                 <input type="number" placeholder="Quantity" class="w-full border p-2 rounded mt-2">
