@@ -149,47 +149,49 @@ $harvest_result = $stmt->get_result();
         </div>
 
         <!-- Harvest Table -->
-        <div class="bg-[#115D5B] p-6 rounded-lg border border-gray-300 overflow-y-auto">
-            <div class="flex justify-center">
-                <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search"
-                    class="bg-[#103635] w-3/4 p-3 rounded-full mb-4 text-white border-[2.5px] border-[#4CAF50] mt-4 focus:border-green-700 focus:ring-2 focus:ring-green-700 focus:outline-none text-center">
-            </div>
+<div class="bg-[#115D5B] p-6 rounded-lg border border-gray-300 overflow-y-auto">
+    <div class="flex justify-center">
+        <!-- search Bar -->
+        <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search"
+            class="bg-[#103635] w-3/4 p-3 rounded-full mb-4 text-white border-[2.5px] border-[#4CAF50] mt-4 focus:border-green-700 focus:ring-2 focus:ring-green-700 focus:outline-none text-center">
+    </div>
 
-            <div class="space-y-4 mt-10">
-                <?php
-                if ($harvest_result->num_rows > 0) {
-                    while ($row = $harvest_result->fetch_assoc()) {
-                        echo "<div class='harvest-row bg-[#103635] bg-opacity-50 border-[2.5px] border-[#4CAF50] p-4 rounded-lg shadow-md flex items-center justify-between'>
-                                <div>
-                                    <p class='font-bold text-white'>{$row['farmer_name']}</p>
-                                    <p class='font-bold text-sm text-[#4CAF50]'>{$row['month_of_harvest']}</p>
-                                </div>
-                                <div class='text-center'>
-                                    <p class='text-white'>{$row['possible_harvest']}</p>
-                                    <p class='text-sm text-gray-500'>Possible Harvest</p>
-                                </div>
-                                <div class='text-center'>
-                                    <p class='text-white'>{$row['quantity']} kg</p>
-                                    <p class='text-sm text-gray-500'>Quantity</p>
-                                </div>
-                                <div class='text-center'>
-                                    <p class='text-white'>{$row['location']}</p>
-                                    <p class='text-sm text-gray-500'>Location</p>
-                                </div>
-                                <div class='text-center'>
-                                    <span class='px-3 py-1 rounded-full text-white " . 
-                                    ($row['status'] == 'Available' ? 'bg-green-500' : ($row['status'] == 'Sold' ? 'bg-red-500' : 'bg-yellow-500')) . "'>
-                                        {$row['status']}
-                                    </span>
-                                </div>
-                            </div>";
-                    }
-                } else {
-                    echo "<div class='p-4 text-center text-gray-500 bg-white rounded-lg shadow-md'>No Data Available</div>";
-                }
-                ?>
-            </div>
-        </div>
+    <div class="space-y-4 mt-10">
+        <?php
+        if ($harvest_result->num_rows > 0) {
+            while ($row = $harvest_result->fetch_assoc()) {
+                echo "<div class='harvest-row bg-[#103635] bg-opacity-50 border-[2.5px] border-[#4CAF50] p-4 rounded-lg shadow-md flex items-center justify-between hover:bg-[#4CAF50] hover:bg-opacity-80'>
+                        <div>
+                            <p class='font-bold text-white'>{$row['farmer_name']}</p>
+                            <p class='font-bold text-sm text-[#4CAF50]'>{$row['month_of_harvest']}</p>
+                        </div>
+                        <div class='text-center'>
+                            <p class='text-white'>{$row['possible_harvest']}</p>
+                            <p class='text-sm text-gray-500'>Possible Harvest</p>
+                        </div>
+                        <div class='text-center'>
+                            <p class='text-white'>{$row['quantity']} kg</p>
+                            <p class='text-sm text-gray-500'>Quantity</p>
+                        </div>
+                        <div class='text-center'>
+                            <p class='text-white'>{$row['location']}</p>
+                            <p class='text-sm text-gray-500'>Location</p>
+                        </div>
+                        <div class='text-center'>
+                            <span class='px-3 py-1 rounded-full text-white " . 
+                            ($row['status'] == 'Available' ? 'bg-green-500' : ($row['status'] == 'Sold' ? 'bg-red-500' : 'bg-yellow-500')) . "'>
+                                {$row['status']}
+                            </span>
+                        </div>
+                    </div>";
+            }
+        } else {
+            echo "<div class='p-4 text-center text-gray-500 bg-white rounded-lg shadow-md'>No Data Available</div>";
+        }
+        ?>
+    </div>
+    </div>
+
     </main>
 
     <!-- Logout Modal -->
