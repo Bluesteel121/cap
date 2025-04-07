@@ -1,31 +1,20 @@
 <?php
-// Start the session if it's not already started
 session_start();
-
-// Database connection
 $conn = new mysqli("localhost", "root", "", "capstone");
 
-// Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Check if user is logged in
 if (!isset($_SESSION['username']) && !isset($_SESSION['email'])) {
-    // Redirect to login page if not logged in
     header("Location: account.php");
     exit();
 }
 
-// Get the login identifier (either username or email)
 $login_identifier = isset($_SESSION['username']) ? $_SESSION['username'] : $_SESSION['email'];
-
-// Get user data from database using the login identifier
-if (isset($_SESSION['username'])) {
-    $sql = "SELECT full_name, email FROM client_acc WHERE username = ?";
-} else {
-    $sql = "SELECT full_name, email FROM client_acc WHERE email = ?";
-}
+$sql = isset($_SESSION['username']) ?
+    "SELECT full_name, email, profile_pic FROM client_acc WHERE username = ?" :
+    "SELECT full_name, email, profile_pic FROM client_acc WHERE email = ?";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $login_identifier);
@@ -36,18 +25,27 @@ if ($result->num_rows > 0) {
     $user_data = $result->fetch_assoc();
     $full_name = $user_data['full_name'];
     $email = $user_data['email'];
-    // Setting a default user type
-    $user_type = "Client"; 
+    $profile_pic = $user_data['profile_pic'];
+    $user_type = "Client";
 } else {
-    // Handle case where user data is not found
     $full_name = "User";
-    $email = $login_identifier; // Show the login identifier as email if full name not found
+    $email = $login_identifier;
+    $profile_pic = null;
     $user_type = "User";
 }
-
 $stmt->close();
 
-// Real-time filtering by current month (January to December)
+function displayProfileImage($profile_pic) {
+    if ($profile_pic) {
+        $base64Image = base64_encode($profile_pic);
+        return "data:image/jpeg;base64,$base64Image";
+    } else {
+        return "profile.jpg";
+    }
+}
+$profileImageSrc = displayProfileImage($profile_pic);
+
+// Filter harvest data by current month and later months
 $currentMonth = date('F');
 $months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 $filteredMonths = array_slice($months, array_search($currentMonth, $months));
@@ -63,8 +61,9 @@ $stmt = $conn->prepare($sql);
 $params = array_merge($filteredMonths, $filteredMonths);
 $stmt->bind_param(str_repeat('s', count($params)), ...$params);
 $stmt->execute();
-$result = $stmt->get_result();
+$harvest_result = $stmt->get_result();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -99,7 +98,7 @@ $result = $stmt->get_result();
     <aside class="w-1/4 bg-[#115D5B] p-6 h-screen flex flex-col justify-between text-white fixed">
         <div>
             <div class="flex flex-col items-center text-center">
-                <img src="profile.jpg" alt="Profile" class="w-20 h-20 rounded-full border mb-2">
+                <img src="<?php echo htmlspecialchars($profileImageSrc); ?>" alt="Profile" class="w-20 h-20 rounded-full border mb-2 object-cover">
                 <h2 class="font-bold"><?php echo htmlspecialchars($full_name); ?></h2>
                 <p class="text-sm"><?php echo htmlspecialchars($email); ?></p>
                 <p class="text-sm italic"><?php echo htmlspecialchars($user_type); ?></p>
@@ -116,31 +115,32 @@ $result = $stmt->get_result();
         </div>
         <footer class="text-center text-xs">&copy; 2025 Camarines Norte Lowland Rainfed Research Station</footer>
     </aside>
-    
+
     <!-- Main Content -->
     <main class="w-3/4 p-6 bg-white ml-[25%]">
         <header class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-bold text-green-700">Pineapple Crops Price</h1>
             <button class="bg-blue-600 text-white px-4 py-2 rounded">Place Order</button>
         </header>
-        
+
+        <!-- Product Cards -->
         <div class="grid grid-cols-3 gap-6 text-white font-bold mb-6">
             <div class="bg-[#115D5B] p-4 rounded-lg flex items-center">
-                <img src="Images\pineapple-fruit.jpg" alt="Pineapple Fruit" class="w-16 h-16 rounded-lg mr-4">
+                <img src="Images/pineapple-fruit.jpg" alt="Pineapple Fruit" class="w-16 h-16 rounded-lg mr-4">
                 <div>
                     <h3>Pineapple Fruit</h3>
                     <p class="text-lg">₱50-60 Per Piece</p>
                 </div>
             </div>
             <div class="bg-[#115D5B] p-4 rounded-lg flex items-center">
-                <img src="Images\pineapple-juice.jpg" alt="Pineapple Juice" class="w-16 h-16 rounded-lg mr-4">
+                <img src="Images/pineapple-juice.jpg" alt="Pineapple Juice" class="w-16 h-16 rounded-lg mr-4">
                 <div>
                     <h3>Pineapple Juice</h3>
                     <p class="text-lg">₱50-60 Per Liter</p>
                 </div>
             </div>
             <div class="bg-[#115D5B] p-4 rounded-lg flex items-center">
-                <img src="Images\pineapple-fiber2.png" alt="Pineapple Fiber" class="w-16 h-16 rounded-lg mr-4">
+                <img src="Images/pineapple-fiber2.png" alt="Pineapple Fiber" class="w-16 h-16 rounded-lg mr-4">
                 <div>
                     <h3>Pineapple Fiber</h3>
                     <p class="text-lg">₱50-60 Per Yard</p>
@@ -148,21 +148,17 @@ $result = $stmt->get_result();
             </div>
         </div>
 
-     
-       
-
-        <!-- DiV -->
+        <!-- Harvest Table -->
         <div class="bg-[#115D5B] p-6 rounded-lg border border-gray-300 overflow-y-auto">
-               <!-- Search Bar -->
-        <div class="flex justify-center">
-            <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search"
-                class="bg-[#103635] w-3/4 p-3 rounded-full mb-4 text-white border-[2.5px] border-[#4CAF50] mt-4 focus:border-green-700 focus:ring-2 focus:ring-green-700 focus:outline-none text-center">
-        </div>   
-            <!-- Table -->
+            <div class="flex justify-center">
+                <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search"
+                    class="bg-[#103635] w-3/4 p-3 rounded-full mb-4 text-white border-[2.5px] border-[#4CAF50] mt-4 focus:border-green-700 focus:ring-2 focus:ring-green-700 focus:outline-none text-center">
+            </div>
+
             <div class="space-y-4 mt-10">
                 <?php
-                if ($result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) {
+                if ($harvest_result->num_rows > 0) {
+                    while ($row = $harvest_result->fetch_assoc()) {
                         echo "<div class='harvest-row bg-[#103635] bg-opacity-50 border-[2.5px] border-[#4CAF50] p-4 rounded-lg shadow-md flex items-center justify-between'>
                                 <div>
                                     <p class='font-bold text-white'>{$row['farmer_name']}</p>
@@ -191,12 +187,11 @@ $result = $stmt->get_result();
                 } else {
                     echo "<div class='p-4 text-center text-gray-500 bg-white rounded-lg shadow-md'>No Data Available</div>";
                 }
-                $conn->close();
                 ?>
             </div>
         </div>
     </main>
-    
+
     <!-- Logout Modal -->
     <div id="logout-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
         <div class="bg-white p-6 rounded-lg shadow-lg text-center">
