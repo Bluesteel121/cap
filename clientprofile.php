@@ -87,10 +87,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($new_password !== null) {
         if ($new_password !== $confirm_password) {
             $update_error = "Passwords do not match!";
-        } else {
-            // Hash the password
-            $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
         }
+        // Remove password hashing
     }
     
     // Proceed with update if no errors
@@ -117,11 +115,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $param_types .= "s";
         $param_values[] = $new_phone_number;
         
-        // Add password if it was provided
+        // Add password if it was provided - use plain text password
         if ($new_password !== null) {
             $sql_parts[] = "password = ?";
             $param_types .= "s";
-            $param_values[] = $hashed_password;
+            $param_values[] = $new_password; // Use plain text password instead of hashed
         }
         
         // Process image upload if a file was provided
