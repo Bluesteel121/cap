@@ -69,7 +69,7 @@ $stmt->close();
 </head>
 <body class="flex">
     <!-- Sidebar -->
-    <aside class="w-1/4 bg-[#115D5B] p-6 h-screen flex flex-col justify-between text-white">
+    <aside class="w-1/4 bg-[#115D5B] p-6 h-screen flex flex-col justify-between text-white fixed">
     <div>
         <div class="flex flex-col items-center text-center">
             <img src="profile.jpg" alt="Profile" class="w-20 h-20 rounded-full border mb-2">
@@ -77,21 +77,21 @@ $stmt->close();
             <p class="text-sm"><?php echo htmlspecialchars($email); ?></p>
             <p class="text-sm italic"><?php echo htmlspecialchars($user_type); ?></p>
         </div>
-            <nav class="mt-6 ">
-                <ul class="space-y-2">
-                    <li><a href="#" class="block p-2 bg-[#CAEED5] text-green-700 rounded hover:bg-gray-300">Home</a></li>
-                    <li><a href="clientorder.php" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Order</a></li>
-                    <li><a href="#" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Notifications</a></li>
-                    <li><a href="#" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Profile</a></li>
-                    <li><a href="#" class="block p-2 text-red-500 hover:text-red-700" onclick="openLogoutModal()">Logout</a></li>
-                </ul>
-            </nav>
-        </div>
-        <footer class="text-center text-xs">&copy; 2025 Camarines Norte Lowland Rainfed Research Station</footer>
-    </aside>
+        <nav class="mt-6">
+            <ul class="space-y-2">
+                <li><a href="#" class="block p-2 bg-[#CAEED5] text-green-700 rounded hover:bg-gray-300">Home</a></li>
+                <li><a href="clientorder.php" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Order</a></li>
+                <li><a href="#" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Notifications</a></li>
+                <li><a href="#" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Profile</a></li>
+                <li><a href="#" class="block p-2 text-red-500 hover:text-red-700" onclick="openLogoutModal()">Logout</a></li>
+            </ul>
+        </nav>
+    </div>
+    <footer class="text-center text-xs">&copy; 2025 Camarines Norte Lowland Rainfed Research Station</footer>
+</aside>
     
     <!-- Main Content -->
-    <main class="w-3/4 p-6 bg-white">
+    <main class="w-3/4 p-6 bg-white ml-[25%]">
         <header class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-bold text-green-700">Pineapple Crops Price</h1>
             <button class="bg-blue-600 text-white px-4 py-2 rounded">Place Order</button>
@@ -123,58 +123,61 @@ $stmt->close();
 
         
        
-       
-        <div class="bg-[#115D5B] p-6 rounded-lg border border-gray-300 overflow-y-auto">
-        <div class="flex justify-center">
-    <input type="text" placeholder="Search" 
-        class="bg-[#103635] w-3/4 p-3 rounded-full mb-4 text-white border border-[#CAEED5] mt-4 focus:border-green-700 focus:ring-2 focus:ring-green-700 focus:outline-none text-center">
-</div>
 
-<table class="w-full mt-10">
-    <thead>
-        <tr class="bg-[#4CAF50] border-white-300 text-white rounded-lg">
-            <th class="p-2 rounded-l-lg">Farmer's Name</th>
-            <th class="p-2">Month Of Harvest</th>
-            <th class="p-2">Possible Harvest</th>
-            <th class="p-2">Quantity</th>
-            <th class="p-2">Location</th>
-            <th class="p-2 rounded-r-lg">Status</th>
-        </tr>
-    </thead>
-    <tbody>
-    <?php
- 
-    $conn = new mysqli("localhost", "root", "", "capstone");
 
- 
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
+<!-- Table -->
+<div class="bg-[#115D5B] p-6 rounded-lg border border-gray-300 overflow-y-auto">
+    <div class="flex justify-center">
+        <input type="text" placeholder="Search" 
+            class="bg-[#103635] w-3/4 p-3 rounded-full mb-4 text-white border border-[#CAEED5] mt-4 focus:border-green-700 focus:ring-2 focus:ring-green-700 focus:outline-none text-center">
+    </div>
 
-    $sql = "SELECT farmer_name, month_of_harvest, possible_harvest, quantity, location, status FROM harvests";
-    $result = $conn->query($sql);
+    <div class="space-y-4 mt-10">
+        <?php
+        $conn = new mysqli("localhost", "root", "", "capstone");
 
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            echo "<tr class='border-b'>
-                <td class='p-2 text-white font-bold text-center'>{$row['farmer_name']}</td>
-                <td class='p-2 text-white font-bold text-center'>{$row['month_of_harvest']}</td>
-                <td class='p-2 text-white font-bold text-center'>{$row['possible_harvest']}</td>
-                <td class='p-2 text-white font-bold text-center'>{$row['quantity']} kg</td>
-                <td class='p-2 text-white font-bold text-center'>{$row['location']}</td>
-                <td class='p-2 text-center font-bold " . ($row['status'] == 'Available' ? 'text-green-400' : ($row['status'] == 'Sold' ? 'text-red-400' : 'text-yellow-400')) . "'>
-                    {$row['status']}
-                </td>
-            </tr>";
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
         }
-    } else {
-        echo "<tr><td colspan='6' class='p-2 text-center text-white font-bold'>No Data Available</td></tr>";
-    }
 
-    $conn->close();
-    ?>
-    </tbody>
-    </table>
+        $sql = "SELECT farmer_name, month_of_harvest, possible_harvest, quantity, location, status FROM harvests";
+        $result = $conn->query($sql);
+
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                echo "<div class='bg-white p-4 rounded-lg shadow-md flex items-center justify-between'>
+                        <div>
+                            <p class='font-bold text-gray-800'>{$row['farmer_name']}</p>
+                            <p class='text-sm text-gray-500'>{$row['month_of_harvest']}</p>
+                        </div>
+                        <div class='text-center'>
+                            <p class='text-gray-800'>{$row['possible_harvest']}</p>
+                            <p class='text-sm text-gray-500'>Possible Harvest</p>
+                        </div>
+                        <div class='text-center'>
+                            <p class='text-gray-800'>{$row['quantity']} kg</p>
+                            <p class='text-sm text-gray-500'>Quantity</p>
+                        </div>
+                        <div class='text-center'>
+                            <p class='text-gray-800'>{$row['location']}</p>
+                            <p class='text-sm text-gray-500'>Location</p>
+                        </div>
+                        <div class='text-center'>
+                            <span class='px-3 py-1 rounded-full text-white " . 
+                            ($row['status'] == 'Available' ? 'bg-green-500' : ($row['status'] == 'Sold' ? 'bg-red-500' : 'bg-yellow-500')) . "'>
+                                {$row['status']}
+                            </span>
+                        </div>
+                    </div>";
+            }
+        } else {
+            echo "<div class='p-4 text-center text-gray-500 bg-white rounded-lg shadow-md'>No Data Available</div>";
+        }
+
+        $conn->close();
+        ?>
+    </div>
+</div>
     </div>
     </main>
     
