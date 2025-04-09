@@ -142,3 +142,25 @@
 [2025-04-07 17:24:09] Login successful for user: dave
 [2025-04-07 17:26:05] Attempting login - User input: dave
 [2025-04-07 17:26:05] Login successful for user: dave
+[2025-04-07 18:40:15] Attempting registration - Email: greg@greg.com
+[2025-04-07 18:40:15] Registration successful for: greg@greg.com
+[2025-04-07 18:40:29] Attempting login - User input: greg
+[2025-04-07 18:40:29] Login successful for user: greg
+[2025-04-09 08:50:20] Attempting farmer login - Identifier: 09254361243
+[2025-04-09 08:50:20] Login failed for identifier: 09254361243 - User not found
+[2025-04-09 08:50:26] Attempting farmer login - Identifier: 09254361243
+[2025-04-09 08:50:26] Login failed for identifier: 09254361243 - User not found
+[2025-04-09 08:50:35] Attempting farmer login - Identifier: 09254361243
+[2025-04-09 08:50:35] Login failed for identifier: 09254361243 - User not found
+[2025-04-09 08:50:41] Attempting farmer login - Identifier: dave
+[2025-04-09 08:50:41] Login failed for identifier: dave - User not found
+[2025-04-09 08:51:00] Attempting login - User input: 09254361243
+[2025-04-09 08:51:00] Login failed for user: 09254361243 - User not found
+[2025-04-09 08:51:07] Attempting login - User input: 09254361243
+[2025-04-09 08:51:07] Login failed for user: 09254361243 - User not found
+[2025-04-09 08:51:15] Attempting login - User input: dave
+[2025-04-09 08:51:15] Login successful for user: dave
+[2025-04-09 08:51:55] Attempting login - User input: example@yahoo.com
+[2025-04-09 08:51:55] Login successful for user: example@yahoo.com
+[2025-04-09 10:24:16] Attempting login - User input: dave
+[2025-04-09 10:24:16] Login successful for user: dave

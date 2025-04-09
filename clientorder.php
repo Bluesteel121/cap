@@ -66,6 +66,18 @@ if ($result->num_rows > 0) {
 
 $stmt->close();
 
+// Get sample farmer data - in a real implementation, this would come from your database
+// You would need to create or modify your database schema to include farmer details
+$farmer_data = [
+    'full_name' => 'Juan Dela Cruz',
+    'age' => 45,
+    'contact_number' => '+63 9123456789',
+    'email' => 'juandelacruz@example.com', // Optional
+    'farm_location' => 'Daet, Camarines Norte',
+    'plantation_size' => '2.5 hectares',
+    'flowering_date' => '2025-01-15'
+];
+
 // Get all provinces from the location database, ordered alphabetically
 $provinces_query = "SELECT DISTINCT province FROM location ORDER BY province ASC";
 $provinces_result = $conn->query($provinces_query);
@@ -129,6 +141,26 @@ if (isset($_GET['action'])) {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
+            // Toggle logout modal
+            $('#logoutButton').click(function() {
+                $('#logoutModal').toggleClass('hidden');
+            });
+            
+            $('#cancelLogout').click(function() {
+                $('#logoutModal').addClass('hidden');
+            });
+            
+            $('#confirmLogout').click(function() {
+                window.location.href = 'logout.php';
+            });
+            
+            // Close modal if clicked outside
+            $(window).click(function(event) {
+                if ($(event.target).is('#logoutModal')) {
+                    $('#logoutModal').addClass('hidden');
+                }
+            });
+            
             // When province selection changes
             $('#province').change(function() {
                 var province = $(this).val();
@@ -192,6 +224,18 @@ if (isset($_GET['action'])) {
 </head>
 <body class="min-h-screen bg-white">
 
+    <!-- Logout Modal -->
+    <div id="logoutModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-80">
+            <h3 class="text-lg font-bold mb-4">Confirm Logout</h3>
+            <p class="mb-6">Are you sure you want to logout?</p>
+            <div class="flex justify-end gap-4">
+                <button id="cancelLogout" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Cancel</button>
+                <button id="confirmLogout" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Logout</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Sidebar -->
     <aside class="w-1/4 bg-[#115D5B] p-6 h-screen text-white fixed top-0 left-0 overflow-y-auto">
         <div class="flex flex-col items-center text-center">
@@ -206,7 +250,7 @@ if (isset($_GET['action'])) {
                 <li><a href="#" class="block p-2 bg-[#CAEED5] text-green-700 rounded">Order</a></li>
                 <li><a href="#" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Notifications</a></li>
                 <li><a href="clientprofile.php" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Profile</a></li>
-                <li><a href="#" class="block p-2 text-red-500 hover:text-red-700">Logout</a></li>
+                <li><a id="logoutButton" href="#" class="block p-2 text-red-500 hover:text-red-700">Logout</a></li>
             </ul>
         </nav>
     </aside>
@@ -215,20 +259,65 @@ if (isset($_GET['action'])) {
     <main class="ml-[25%] p-6 bg-white min-h-screen">
         <div class="grid grid-cols-2 gap-6">
             
-            <!-- Customer Details -->
+            <!-- Farmer Details -->
             <div class="border p-4 rounded-lg">
-                <h2 class="text-center font-bold">Customer Details</h2>
-                <p class="text-center text-sm">HOME</p>
-                <p class="text-center text-sm">Default Shipping Address</p>
-                <button class="block w-full bg-gray-200 text-center py-2 rounded mt-2">+ Add Address</button>
-                <input type="text" value="John Khent Avellana" class="w-full border p-2 rounded mt-2">
-                <input type="text" value="+63 9663902440" class="w-full border p-2 rounded mt-2">
-                <input type="text" value="JohnkhentAvellana77@gmail.com" class="w-full border p-2 rounded mt-2">
-                <input type="text" value="Purok 2 Daisy Street Mercedes Camarines Norte" class="w-full border p-2 rounded mt-2">
-                <img src="image.png" alt="Map" class="w-full mt-2 rounded">
+                <h2 class="text-center font-bold text-lg mb-2">Farmer Details</h2>
+                <div class="space-y-3">
+                    <div class="flex flex-col">
+                        <label class="text-sm text-gray-600">Farmer Name</label>
+                        <input type="text" value="<?php echo htmlspecialchars($farmer_data['full_name']); ?>" class="w-full border p-2 rounded" readonly>
+                    </div>
+                    
+                    <div class="flex flex-col">
+                        <label class="text-sm text-gray-600">Age</label>
+                        <input type="text" value="<?php echo htmlspecialchars($farmer_data['age']); ?>" class="w-full border p-2 rounded" readonly>
+                    </div>
+                    
+                    <div class="flex flex-col">
+                        <label class="text-sm text-gray-600">Contact Number</label>
+                        <input type="text" value="<?php echo htmlspecialchars($farmer_data['contact_number']); ?>" class="w-full border p-2 rounded" readonly>
+                    </div>
+                    
+                    <?php if (!empty($farmer_data['email'])): ?>
+                    <div class="flex flex-col">
+                        <label class="text-sm text-gray-600">Email (Optional)</label>
+                        <input type="text" value="<?php echo htmlspecialchars($farmer_data['email']); ?>" class="w-full border p-2 rounded" readonly>
+                    </div>
+                    <?php endif; ?>
+                    
+                    <div class="flex flex-col">
+                        <label class="text-sm text-gray-600">Farm Location</label>
+                        <input type="text" value="<?php echo htmlspecialchars($farmer_data['farm_location']); ?>" class="w-full border p-2 rounded" readonly>
+                    </div>
+                    
+                    <div class="flex flex-col">
+                        <label class="text-sm text-gray-600">Plantation Size</label>
+                        <input type="text" value="<?php echo htmlspecialchars($farmer_data['plantation_size']); ?>" class="w-full border p-2 rounded" readonly>
+                    </div>
+                    
+                    <div class="flex flex-col">
+                        <label class="text-sm text-gray-600">Flowering Date</label>
+                        <input type="text" value="<?php echo htmlspecialchars($farmer_data['flowering_date']); ?>" class="w-full border p-2 rounded" readonly>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <label class="text-sm text-gray-600">Farm Location Map</label>
+                    <div class="bg-gray-200 h-48 rounded flex items-center justify-center">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d124511.96928214153!2d122.90943525!3d14.102620349999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397d741f7ac3635%3A0x39a4ab3c1a2dba03!2sDaet%2C%20Camarines%20Norte!5e0!3m2!1sen!2sph!4v1712647281695!5m2!1sen!2sph" 
+                            width="100%" 
+                            height="100%" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                </div>
             </div>
 
-            <!-- Order Detailsss -->
+            <!-- Order Details -->
             <div class="border p-4 rounded-lg">
                 <h2 class="font-bold">Pineapple Fruit</h2>
                 <input type="number" placeholder="Quantity" class="w-full border p-2 rounded mt-2">
