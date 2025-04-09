@@ -174,7 +174,7 @@ $harvest_result = $stmt->get_result();
             while ($row = $harvest_result->fetch_assoc()) {
                 echo "<div class='harvest-row bg-[#103635] bg-opacity-50 border-[2.5px] border-[#4CAF50] p-4 rounded-lg shadow-md flex items-center justify-between hover:bg-[#4CAF50] hover:bg-opacity-80'>
                         <div>
-                            <p class='font-bold text-white'>{$row['farmer_name']}</p>
+                            <a href='clientorder.php?farmer=" . urlencode($row['farmer_name']) . "' class='font-bold text-white hover:underline cursor-pointer'>{$row['farmer_name']}</a>
                             <p class='font-bold text-sm text-[#4CAF50]'>{$row['month_of_harvest']}</p>
                         </div>
                         <div class='text-center'>
@@ -203,7 +203,6 @@ $harvest_result = $stmt->get_result();
         ?>
     </div>
 </div>
-
 
     </main>
 

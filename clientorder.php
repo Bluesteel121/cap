@@ -66,17 +66,44 @@ if ($result->num_rows > 0) {
 
 $stmt->close();
 
-// Get sample farmer data - in a real implementation, this would come from your database
-// You would need to create or modify your database schema to include farmer details
+// Set default farmer data
 $farmer_data = [
     'full_name' => 'Juan Dela Cruz',
     'age' => 45,
     'contact_number' => '+63 9123456789',
-    'email' => 'juandelacruz@example.com', // Optional
+    'email' => 'juandelacruz@example.com',
     'farm_location' => 'Daet, Camarines Norte',
     'plantation_size' => '2.5 hectares',
     'flowering_date' => '2025-01-15'
 ];
+
+// If a farmer name is provided in the URL, fetch the farmer's details from the harvests table
+if (isset($_GET['farmer'])) {
+    $farmer_name = $_GET['farmer'];
+    
+    // Query to get farmer data directly from the harvests table
+    $harvest_query = "SELECT * FROM harvests WHERE farmer_name = ? LIMIT 1";
+    $stmt = $conn->prepare($harvest_query);
+    $stmt->bind_param("s", $farmer_name);
+    $stmt->execute();
+    $harvest_result = $stmt->get_result();
+    
+    if ($harvest_result && $harvest_result->num_rows > 0) {
+        $harvest_data = $harvest_result->fetch_assoc();
+        
+        // Update farmer data with values from the harvests table
+        $farmer_data = [
+            'full_name' => $harvest_data['farmer_name'],
+            'age' => 45, // Default value since it's not in harvests table
+            'contact_number' => '+63 9123456789', // Default value
+            'email' => 'farmer@example.com', // Default value
+            'farm_location' => $harvest_data['location'] ?? 'Daet, Camarines Norte',
+            'plantation_size' => '2.5 hectares', // Default value
+            'flowering_date' => date('Y-m-d', strtotime('first day of ' . $harvest_data['month_of_harvest'] . ' 2025'))
+        ];
+    }
+    $stmt->close();
+}
 
 // Get all provinces from the location database, ordered alphabetically
 $provinces_query = "SELECT DISTINCT province FROM location ORDER BY province ASC";
@@ -151,7 +178,7 @@ if (isset($_GET['action'])) {
             });
             
             $('#confirmLogout').click(function() {
-                window.location.href = 'logout.php';
+                window.location.href = 'account.php';
             });
             
             // Close modal if clicked outside
@@ -239,7 +266,7 @@ if (isset($_GET['action'])) {
     <!-- Sidebar -->
     <aside class="w-1/4 bg-[#115D5B] p-6 h-screen text-white fixed top-0 left-0 overflow-y-auto">
         <div class="flex flex-col items-center text-center">
-            <img src="<?php echo displayProfileImage($profile_pic); ?>" alt="Profile" class="w-20 h-20 rounded-full border mb-2">
+            <img src="<?php echo displayProfileImage($profile_pic); ?>" alt="Profile" class="w-20 h-20 rounded-full border mb-2 object-cover">
             <h2 class="font-bold"><?php echo htmlspecialchars($full_name); ?></h2>
             <p class="text-sm"><?php echo htmlspecialchars($email); ?></p>
             <p class="text-sm italic"><?php echo htmlspecialchars($user_type); ?></p>
@@ -250,7 +277,7 @@ if (isset($_GET['action'])) {
                 <li><a href="#" class="block p-2 bg-[#CAEED5] text-green-700 rounded">Order</a></li>
                 <li><a href="#" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Notifications</a></li>
                 <li><a href="clientprofile.php" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Profile</a></li>
-                <li><a id="logoutButton" href="account.php" class="block p-2 text-red-500 hover:text-red-700">Logout</a></li>
+                <li><a id="logoutButton" href="javascript:void(0)" class="block p-2 text-red-500 hover:text-red-700">Logout</a></li>
             </ul>
         </nav>
     </aside>
@@ -323,9 +350,14 @@ if (isset($_GET['action'])) {
                 <input type="number" placeholder="Quantity" class="w-full border p-2 rounded mt-2">
                 <select class="w-full border p-2 rounded mt-2">
                     <option>Mode of Payment</option>
+                    <option>Cash on Delivery</option>
+                    <option>Bank Transfer</option>
+                    <option>E-wallet</option>
                 </select>
                 <select class="w-full border p-2 rounded mt-2">
                     <option>Variant</option>
+                    <option>Queen Pineapple</option>
+                    <option>Formosa Pineapple</option>
                 </select>
 
                 <h2 class="font-bold mt-4">Customer Address</h2>
