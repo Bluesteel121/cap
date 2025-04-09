@@ -183,3 +183,10 @@
 [2025-04-08 17:30:51] Attempting login - User input: dave
 [2025-04-08 17:30:51] Login successful for user: dave
 >>>>>>> 724a76f888bce779996893772d7c538398788b36
+[2025-04-09 12:26:43] Attempting login - User input: dave
+[2025-04-09 12:26:43] Login failed for user: dave - Invalid password
+[2025-04-09 12:26:50] Attempting login - User input: dave
+[2025-04-09 12:26:50] Login successful for user: dave
+[2025-04-09 12:33:25] Attempting farmer login - Identifier: bbnos
+[2025-04-09 12:33:25] Login successful for identifier: bbnos
+[2025-04-09 12:46:33] Counter update failed - User not logged in
