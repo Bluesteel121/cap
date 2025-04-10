@@ -49,8 +49,9 @@
     </header>
 
     <?php
-    $conn = new mysqli("localhost", "username", "password", "farmer_acc");
-
+    session_start();
+    $conn = new mysqli("localhost", "root", "", "capstone");
+    
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
     }
