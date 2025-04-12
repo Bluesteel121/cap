@@ -190,6 +190,7 @@
 [2025-04-09 12:33:25] Attempting farmer login - Identifier: bbnos
 [2025-04-09 12:33:25] Login successful for identifier: bbnos
 [2025-04-09 12:46:33] Counter update failed - User not logged in
+<<<<<<< HEAD
 [2025-04-09 17:09:32] Attempting login - User input: dave
 [2025-04-09 17:09:32] Login successful for user: dave
 [2025-04-10 00:46:59] Attempting login - User input: dave
@@ -200,3 +201,7 @@
 [2025-04-12 02:16:38] Login failed for identifier: blue - Invalid password
 [2025-04-12 02:16:56] Attempting farmer login - Identifier: nemz
 [2025-04-12 02:16:56] Login successful for identifier: nemz
+=======
+[2025-04-10 05:55:43] Attempting farmer login - Identifier: bbnos
+[2025-04-10 05:55:43] Login successful for identifier: bbnos
+>>>>>>> f6a9c756640be1246f6d273e197267c9a58a8e09
