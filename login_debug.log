@@ -218,3 +218,23 @@
 [2025-04-14 16:23:44] Login successful for user: dave
 [2025-04-14 16:24:07] Attempting login - User input: dave
 [2025-04-14 16:24:07] Login successful for user: dave
+[2025-04-14 17:13:44] Attempting farmer login - Identifier: bbnos
+[2025-04-14 17:13:44] Login successful for identifier: bbnos
+[2025-04-14 17:39:57] Attempting login - User input: bbnos
+[2025-04-14 17:39:57] Login failed for user: bbnos - User not found
+[2025-04-14 17:40:04] Attempting login - User input: dave
+[2025-04-14 17:40:04] Login successful for user: dave
+[2025-04-14 17:43:28] Attempting farmer login - Identifier: nemz
+[2025-04-14 17:43:28] Login successful for identifier: nemz
+[2025-04-14 17:43:43] Attempting farmer login - Identifier: bbnos
+[2025-04-14 17:43:43] Login successful for identifier: bbnos
+[2025-04-14 17:45:46] Attempting farmer login - Identifier: bbnos
+[2025-04-14 17:45:46] Login successful for identifier: bbnos
+[2025-04-14 17:49:21] Attempting farmer login - Identifier: nemz123456
+[2025-04-14 17:49:21] Login failed for identifier: nemz123456 - User not found
+[2025-04-14 17:49:27] Attempting farmer login - Identifier: nemz
+[2025-04-14 17:49:27] Login successful for identifier: nemz
+[2025-04-14 17:50:06] Attempting farmer login - Identifier: bbnos
+[2025-04-14 17:50:06] Login successful for identifier: bbnos
+[2025-04-14 17:52:02] Attempting farmer login - Identifier: nemz
+[2025-04-14 17:52:02] Login successful for identifier: nemz
