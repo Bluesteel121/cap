@@ -306,6 +306,8 @@ try {
                                     </div>
                                 </div>
                             </div>
+            
+            
                         </div>
             <?php
                     }
@@ -352,8 +354,8 @@ try {
                 </div>
                 <form method="POST" class="mt-2">
                     <div class="flex items-center gap-2">
-                        <button name="reset_flowered" type="submit" class="bg-[#FCAE36] px-3 py-1 rounded text-black font-medium">Harvest</button>
-                        <input type="number" name="flowered_amount" placeholder="+" class="flex-grow bg-white rounded p-1 text-center">
+                        <button name="reset_flowered" type="submit" class="bg-[#FCAE36] px-3 py-1 rounded text-black font-medium">Reset</button>
+                        <input type="number" name="flowered_amount" placeholder="+ " class="flex-grow bg-white rounded p-1 text-left">
                         <button name="add_flowered" type="submit" class="bg-[#4CAF50] px-3 py-1 rounded text-white font-medium">ADD</button>
                     </div>
                 </form>
@@ -367,8 +369,8 @@ try {
                 </div>
                 <form method="POST" class="mt-2">
                     <div class="flex items-center gap-2">
-                        <button name="reset_pested" type="submit" class="bg-[#FCAE36] px-3 py-1 rounded text-black font-medium">Harvest</button>
-                        <input type="number" name="pested_amount" placeholder="+" class="flex-grow bg-white rounded p-1 text-center">
+                        <button name="reset_pested" type="submit" class="bg-[#FCAE36] px-3 py-1 rounded text-black font-medium">Reset</button>
+                        <input type="number" name="pested_amount" placeholder="+" class="flex-grow bg-white rounded p-1 text-left">
                         <button name="add_pested" type="submit" class="bg-[#4CAF50] px-3 py-1 rounded text-white font-medium">ADD</button>
                     </div>
                 </form>
