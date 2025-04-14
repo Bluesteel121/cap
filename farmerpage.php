@@ -69,9 +69,9 @@ try {
         $total_planted = $plantation_row['total_planted'];
     } else {
         // Default values if no data found
-        $plantation_area = "2.5";
-        $last_harvest = "10000 pcs";
-        $total_planted = 50000;
+        $plantation_area = "0.0";
+        $last_harvest = "0 pcs";
+        $total_planted = 0;
     }
 } catch (Exception $e) {
     echo "<div class='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4'>Error: " . $e->getMessage() . "</div>";
