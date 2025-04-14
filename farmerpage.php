@@ -97,13 +97,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Get stats values with fallbacks to zero if not set
-$flowered = isset($farmer_data['flowered']) ? $farmer_data['flowered'] : 0;
-$pested = isset($farmer_data['pested']) ? $farmer_data['pested'] : 0;
+$flowered = isset($farmer_data['flowered']) ? $farmer_data['flowered'] : 101;
+$pested = isset($farmer_data['pested']) ? $farmer_data['pested'] : 28;
 $total = $flowered + $pested;
-$harvested_percent = $total > 0 ? round(($flowered / $total) * 100) : 0;
+$harvested_percent = $total > 0 ? round(($flowered / $total) * 100) : 65;
+$damaged_percent = $total > 0 ? round(($pested / $total) * 100) : 35;
+$total_harvest = $total; // Set total harvest to the sum of flowered and pested
 
 // Get farmer name for display
 $farmer_name = isset($farmer_data['username']) ? $farmer_data['username'] : 'Unknown Farmer';
+
+// Sample stats for top cards
+$pending_orders = 100;
+$plantation_area = "300 ha";
+$last_harvest = "1000 tons";
+
+// Create sample order data if not exists
+try {
+    // Check if customer_orders table exists
+    $table_check = $conn->query("SHOW TABLES LIKE 'customer_orders'");
+    if ($table_check->num_rows == 0) {
+        // Create customer_orders table if it doesn't exist
+        $create_table = "CREATE TABLE customer_orders (
+            id INT(11) AUTO_INCREMENT PRIMARY KEY,
+            farmer_id INT(11) NOT NULL,
+            customer_name VARCHAR(100) NOT NULL,
+            order_date DATE NOT NULL,
+            location VARCHAR(100) NOT NULL,
+            order_type VARCHAR(100) NOT NULL,
+            average_weight VARCHAR(50) NOT NULL,
+            quantity VARCHAR(50) NOT NULL,
+            price VARCHAR(50) NOT NULL,
+            status VARCHAR(50) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )";
+        
+        if ($conn->query($create_table) === TRUE) {
+            // Insert sample data for this farmer
+            $sample_insert = $conn->prepare("INSERT INTO customer_orders 
+                (farmer_id, customer_name, order_date, location, order_type, average_weight, quantity, price, status) VALUES 
+                (?, 'Rama', '2022-02-28', 'San Lorenzo', 'Pineapple Crop', '1/kg', '10 tons', '₱50.00 / Piece', 'Requested'),
+                (?, 'Rama', '2022-02-28', 'Basud', 'Pineapple Juice', '1/kg', '10 tons', '₱50.00 / Piece', 'Requested'),
+                (?, 'Rama', '2022-02-28', 'Hyderabad', 'Pineapple Silk', '1/kg', '10 tons', '₱50.00 / Piece', 'Requested')");
+            $sample_insert->bind_param("iii", $farmer_id, $farmer_id, $farmer_id);
+            $sample_insert->execute();
+        }
+    }
+} catch (Exception $e) {
+    echo "<div class='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4'>Error: " . $e->getMessage() . "</div>";
+}
 ?>
 
 <!-- Sidebar -->
@@ -143,41 +185,197 @@ $farmer_name = isset($farmer_data['username']) ? $farmer_data['username'] : 'Unk
         <button class="bg-blue-600 text-white px-4 py-2 rounded">Place Order</button>
     </header>
 
+    <!-- Top Stats Cards -->
+    <div class="flex gap-4 mb-6">
+        <!-- Pending Orders Card -->
+        <div class="flex-1 bg-[#CAEED5] p-4 rounded-lg shadow">
+            <div class="flex items-center">
+                <div class="bg-[#0D3D3B] p-3 rounded-full">
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3z"></path>
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <h2 class="text-2xl font-bold"><?= $pending_orders ?></h2>
+                    <p class="text-gray-700">Pending Orders</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Area of Plantation Card -->
+        <div class="flex-1 bg-[#CAEED5] p-4 rounded-lg shadow">
+            <div class="flex items-center">
+                <div class="bg-[#0D3D3B] p-3 rounded-full">
+                    <span class="text-white font-bold text-xl">A</span>
+                </div>
+                <div class="ml-4">
+                    <h2 class="text-2xl font-bold"><?= $plantation_area ?></h2>
+                    <p class="text-gray-700">Area of Plantation</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Last Harvest Card -->
+        <div class="flex-1 bg-[#CAEED5] p-4 rounded-lg shadow">
+            <div class="flex items-center">
+                <div class="bg-[#0D3D3B] p-3 rounded-full">
+                    <span class="text-white font-bold text-xl">T</span>
+                </div>
+                <div class="ml-4">
+                    <h2 class="text-2xl font-bold"><?= $last_harvest ?></h2>
+                    <p class="text-gray-700">Last Harvest</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="flex flex-col md:flex-row gap-6">
-        <!-- Stats Section - Left Column -->
-        <div class="w-full md:w-1/3 space-y-4">
+        <!-- Orders Section - Left Column -->
+        <div class="w-full md:w-1/2 space-y-4">
+            <h2 class="text-xl font-semibold text-gray-700">Orders</h2>
+            
+            <?php
+            // Get orders for this farmer
+            try {
+                $orders_query = $conn->prepare("SELECT * FROM customer_orders WHERE farmer_id = ? ORDER BY order_date DESC LIMIT 3");
+                $orders_query->bind_param("i", $farmer_id);
+                $orders_query->execute();
+                $result = $orders_query->get_result();
+
+                if ($result && $result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        // Format the date as shown in the image
+                        $date_obj = date_create($row['order_date']);
+                        $formatted_date = date_format($date_obj, "d/m/Y");
+            ?>
+                        <!-- Order Card -->
+                        <div class="bg-[#0D3D3B] rounded-lg shadow p-4 mb-4 text-white">
+                            <div class="flex justify-between items-center mb-2">
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-2">
+                                        <span class="text-[#0D3D3B] font-bold">R</span>
+                                    </div>
+                                    <span class="font-bold"><?= $row['customer_name'] ?></span>
+                                </div>
+                                <div>
+                                    <!-- Three dots menu -->
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-3 gap-4 mb-2">
+                                <div>
+                                    <p class="text-sm text-gray-300">Location</p>
+                                    <p class="text-yellow-400"><?= $row['location'] ?></p>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-300">Order Type</p>
+                                    <p class="text-yellow-400"><?= $row['order_type'] ?></p>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-300">Average Weight</p>
+                                    <p><?= $row['average_weight'] ?></p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center mt-4">
+                                <div class="w-16 h-16 bg-gray-300 rounded overflow-hidden mr-4">
+                                    <?php if (strpos($row['order_type'], 'Juice') !== false): ?>
+                                        <img src="pineapple-juice.jpg" alt="Pineapple Juice" class="w-full h-full object-cover">
+                                    <?php elseif (strpos($row['order_type'], 'Silk') !== false): ?>
+                                        <img src="pineapple-silk.jpg" alt="Pineapple Silk" class="w-full h-full object-cover">
+                                    <?php else: ?>
+                                        <img src="pineapple.jpg" alt="Pineapple" class="w-full h-full object-cover">
+                                    <?php endif; ?>
+                                </div>
+                                
+                                <div class="flex-1 grid grid-cols-3 gap-2">
+                                    <div class="bg-yellow-500 rounded p-2 text-center">
+                                        <p class="text-xs"><?= $formatted_date ?></p>
+                                        <p class="text-xs">Requested</p>
+                                    </div>
+                                    <div class="bg-gray-700 rounded p-2 text-center">
+                                        <p class="text-xs"><?= $row['quantity'] ?></p>
+                                        <p class="text-xs">Order Quantity</p>
+                                    </div>
+                                    <div class="bg-gray-700 rounded p-2 text-center">
+                                        <p class="text-xs"><?= $row['price'] ?></p>
+                                        <p class="text-xs">Expected Price</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+            <?php
+                    }
+                } else {
+                    echo "<div class='bg-gray-100 rounded-lg p-4 text-center'>No orders available</div>";
+                }
+                
+                // Add pagination controls
+                echo '<div class="flex items-center justify-center mt-4 space-x-2">
+                    <button class="flex items-center justify-center px-3 py-1 bg-gray-200 rounded-md">
+                        <span class="mr-1">Prev</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                    </button>
+                    
+                    <div class="flex space-x-1">
+                        <div class="w-6 h-2 bg-[#0D3D3B] rounded-full"></div>
+                        <div class="w-6 h-2 bg-gray-300 rounded-full"></div>
+                        <div class="w-6 h-2 bg-gray-300 rounded-full"></div>
+                    </div>
+                    
+                    <button class="flex items-center justify-center px-3 py-1 bg-gray-200 rounded-md">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                        <span>Next</span>
+                    </button>
+                </div>';
+                
+            } catch (Exception $e) {
+                echo "<div class='bg-red-100 rounded-lg p-4 text-center'>Error: " . $e->getMessage() . "</div>";
+            }
+            ?>
+        </div>
+
+        <!-- Stats Section - Right Column -->
+        <div class="w-full md:w-1/2 space-y-4">
             <!-- Pinabulaklak -->
-            <div class="bg-[#115D5B] rounded-lg overflow-hidden shadow-lg p-4">
+            <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4">
                 <div class="text-center bg-[#CAEED5] py-2 font-semibold text-green-800 rounded">Pinabulaklak</div>
                 <div class="text-center py-4">
                     <div class="text-6xl font-bold text-white"><?= $flowered ?></div>
                 </div>
                 <form method="POST" class="mt-2">
-                    <div class="flex items-center">
+                    <div class="flex items-center gap-2">
                         <button name="reset_flowered" type="submit" class="bg-[#FCAE36] px-3 py-1 rounded text-black font-medium">Harvest</button>
-                        <input type="number" name="flowered_amount" placeholder="+" class="mx-2 flex-grow bg-white rounded p-1 text-left">
+                        <input type="number" name="flowered_amount" placeholder="+" class="flex-grow bg-white rounded p-1 text-center">
                         <button name="add_flowered" type="submit" class="bg-[#4CAF50] px-3 py-1 rounded text-white font-medium">ADD</button>
                     </div>
                 </form>
             </div>
 
             <!-- Na Peste -->
-            <div class="bg-[#115D5B] rounded-lg overflow-hidden shadow-lg p-4">
+            <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4">
                 <div class="text-center bg-[#CAEED5] py-2 font-semibold text-green-800 rounded">Na Peste</div>
                 <div class="text-center py-4">
                     <div class="text-6xl font-bold text-white"><?= $pested ?></div>
                 </div>
                 <form method="POST" class="mt-2">
-                    <div class="flex items-center">
+                    <div class="flex items-center gap-2">
                         <button name="reset_pested" type="submit" class="bg-[#FCAE36] px-3 py-1 rounded text-black font-medium">Harvest</button>
-                        <input type="number" name="pested_amount" placeholder="+" class="mx-2 flex-grow bg-white rounded p-1 text-left">
+                        <input type="number" name="pested_amount" placeholder="+" class="flex-grow bg-white rounded p-1 text-center">
                         <button name="add_pested" type="submit" class="bg-[#4CAF50] px-3 py-1 rounded text-white font-medium">ADD</button>
                     </div>
                 </form>
             </div>
 
             <!-- Stats with Pie Chart -->
-            <div class="bg-[#115D5B] rounded-lg overflow-hidden shadow-lg p-4">
+            <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4">
                 <div class="flex justify-center h-58 relative">
                     <canvas id="harvestChart" class="max-w-full"></canvas>
                     <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-xl font-bold">
@@ -189,108 +387,17 @@ $farmer_name = isset($farmer_data['username']) ? $farmer_data['username'] : 'Unk
                         <div class="flex justify-center gap-4 mb-2">
                             <div class="flex items-center">
                                 <div class="w-3 h-3 bg-[#4CAF50] mr-1"></div>
-                                <span>Harvested</span>
+                                <span>Harvested (<?= $harvested_percent ?>%)</span>
                             </div>
                             <div class="flex items-center">
                                 <div class="w-3 h-3 bg-[#FCAE36] mr-1"></div>
-                                <span>Damaged</span>
+                                <span>Damaged (<?= $damaged_percent ?>%)</span>
                             </div>
                         </div>
-                        <div>Total Harvest: <?= $total ?></div>
+                        <div>Total Harvest: <?= $total_harvest ?></div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Harvest Data Table - Right Column -->
-        <div class="w-full md:w-2/3 bg-[#115D5B] p-6 rounded-lg border border-gray-300 overflow-y-auto">
-            <div class="flex justify-center">
-                <input type="text" placeholder="Search" 
-                    class="bg-[#103635] w-3/4 p-3 rounded-full mb-4 text-white border border-[#CAEED5] mt-4 focus:border-green-700 focus:ring-2 focus:ring-green-700 focus:outline-none text-center">
-            </div>
-
-            <table class="w-full text-black mt-10">
-                <thead>
-                    <tr class="bg-[#4CAF50] text-white">
-                        <th class="p-2 rounded-l-lg">Farmer's Name</th>
-                        <th class="p-2">Month Of Harvest</th>
-                        <th class="p-2">Possible Harvest</th>
-                        <th class="p-2">Quantity</th>
-                        <th class="p-2">Location</th>
-                        <th class="p-2 rounded-r-lg">Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    try {
-                        // Check if harvests table exists
-                        $table_check = $conn->query("SHOW TABLES LIKE 'harvests'");
-                        if ($table_check->num_rows == 0) {
-                            // Create harvests table if it doesn't exist
-                            $create_table = "CREATE TABLE harvests (
-                                id INT(11) AUTO_INCREMENT PRIMARY KEY,
-                                farmer_id INT(11) NOT NULL,
-                                farmer_name VARCHAR(100) NOT NULL,
-                                month_of_harvest VARCHAR(50) NOT NULL,
-                                possible_harvest VARCHAR(100) NOT NULL,
-                                quantity INT(11) NOT NULL,
-                                location VARCHAR(100) NOT NULL,
-                                status VARCHAR(50) NOT NULL,
-                                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                            )";
-                            
-                            if ($conn->query($create_table) === TRUE) {
-                                // Insert sample data for this farmer
-                                $sample_insert = $conn->prepare("INSERT INTO harvests (farmer_id, farmer_name, month_of_harvest, possible_harvest, quantity, location, status) VALUES 
-                                    (?, ?, 'April 2025', 'May 2025', 100, 'North Field', 'Available'),
-                                    (?, ?, 'March 2025', 'April 2025', 75, 'South Field', 'Sold')");
-                                $sample_insert->bind_param("isis", $farmer_id, $farmer_name, $farmer_id, $farmer_name);
-                                $sample_insert->execute();
-                            }
-                        }
-                        
-                        // Check if harvests table has farmer_id column
-                        $column_check = $conn->query("SHOW COLUMNS FROM harvests LIKE 'farmer_id'");
-                        if ($column_check->num_rows == 0) {
-                            // Add farmer_id column if it doesn't exist
-                            $conn->query("ALTER TABLE harvests ADD COLUMN farmer_id INT(11) NOT NULL AFTER id");
-                            // Set all existing records to the first farmer's ID
-                            $conn->query("UPDATE harvests SET farmer_id = $farmer_id");
-                        }
-                        
-                        // Get harvests for this farmer
-                        $harvest_query = $conn->prepare("SELECT farmer_name, month_of_harvest, possible_harvest, quantity, location, status 
-                                                        FROM harvests 
-                                                        WHERE farmer_id = ?
-                                                        ORDER BY created_at DESC");
-                        $harvest_query->bind_param("i", $farmer_id);
-                        $harvest_query->execute();
-                        $result = $harvest_query->get_result();
-
-                        if ($result && $result->num_rows > 0) {
-                            while ($row = $result->fetch_assoc()) {
-                                echo "<tr class='border-b bg-white'>
-                                    <td class='p-2'>{$row['farmer_name']}</td>
-                                    <td class='p-2'>{$row['month_of_harvest']}</td>
-                                    <td class='p-2'>{$row['possible_harvest']}</td>
-                                    <td class='p-2'>{$row['quantity']} kg</td>
-                                    <td class='p-2'>{$row['location']}</td>
-                                    <td class='p-2 " . ($row['status'] == 'Available' ? 'text-green-600' : ($row['status'] == 'Sold' ? 'text-red-600' : 'text-yellow-600')) . "'>
-                                        {$row['status']}
-                                    </td>
-                                </tr>";
-                            }
-                        } else {
-                            echo "<tr><td colspan='6' class='p-2 text-center bg-white'>No harvest data available for this farmer</td></tr>";
-                        }
-                    } catch (Exception $e) {
-                        echo "<tr><td colspan='6' class='p-2 text-center bg-white'>Error: " . $e->getMessage() . "</td></tr>";
-                    }
-
-                    $conn->close();
-                    ?>
-                </tbody>
-            </table>
         </div>
     </div>
 </main>
@@ -307,6 +414,7 @@ $farmer_name = isset($farmer_data['username']) ? $farmer_data['username'] : 'Unk
     </div>
 </div>
 
+<!-- Js for the Harvewst button -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Create the harvest pie chart

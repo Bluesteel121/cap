@@ -205,3 +205,7 @@
 [2025-04-10 05:55:43] Attempting farmer login - Identifier: bbnos
 [2025-04-10 05:55:43] Login successful for identifier: bbnos
 >>>>>>> f6a9c756640be1246f6d273e197267c9a58a8e09
+[2025-04-12 03:35:12] Attempting login - User input: dave
+[2025-04-12 03:35:12] Login successful for user: dave
+[2025-04-14 15:06:41] Attempting farmer login - Identifier: bbnos
+[2025-04-14 15:06:41] Login successful for identifier: bbnos
