@@ -1,25 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pineapple Crops Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <script>
-        function openLogoutModal() {
-            document.getElementById('logout-modal').classList.remove('hidden');
-        }
-        function closeLogoutModal() {
-            document.getElementById('logout-modal').classList.add('hidden');
-        }
-        function confirmLogout() {
-            window.location.href = 'account.php'; // Update your logout URL here
-        }
-    </script>
-</head>
-<body class="flex">
-
 <?php
 session_start();
 $conn = new mysqli("localhost", "root", "", "capstone");
@@ -53,6 +31,52 @@ try {
     echo "<div class='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4'>Error: " . $e->getMessage() . "</div>";
 }
 
+// Create plantation_details table if it doesn't exist
+try {
+    // Check if plantation_details table exists
+    $table_check = $conn->query("SHOW TABLES LIKE 'plantation_details'");
+    if ($table_check->num_rows == 0) {
+        // Create plantation_details table if it doesn't exist
+        $create_table = "CREATE TABLE plantation_details (
+            id INT(11) AUTO_INCREMENT PRIMARY KEY,
+            farmer_id INT(11) NOT NULL,
+            area VARCHAR(50) NOT NULL,
+            last_harvest VARCHAR(50) NOT NULL,
+            total_planted INT(11) DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )";
+        
+        if ($conn->query($create_table) === TRUE) {
+            // Insert sample data for this farmer
+            $sample_insert = $conn->prepare("INSERT INTO plantation_details 
+                (farmer_id, area, last_harvest, total_planted) VALUES 
+                (?, '2.5', '10000 pcs', 50000)");
+            $sample_insert->bind_param("i", $farmer_id);
+            $sample_insert->execute();
+        }
+    }
+    
+    // Get plantation data for this farmer
+    $plantation_query = $conn->prepare("SELECT * FROM plantation_details WHERE farmer_id = ?");
+    $plantation_query->bind_param("i", $farmer_id);
+    $plantation_query->execute();
+    $plantation_result = $plantation_query->get_result();
+    
+    if ($plantation_result && $plantation_row = $plantation_result->fetch_assoc()) {
+        $plantation_area = $plantation_row['area'];
+        $last_harvest = $plantation_row['last_harvest'];
+        $total_planted = $plantation_row['total_planted'];
+    } else {
+        // Default values if no data found
+        $plantation_area = "2.5";
+        $last_harvest = "10000 pcs";
+        $total_planted = 50000;
+    }
+} catch (Exception $e) {
+    echo "<div class='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4'>Error: " . $e->getMessage() . "</div>";
+}
+
 // Handle updates
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
@@ -75,6 +99,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: ".$_SERVER['PHP_SELF']);
             exit();
         } elseif (isset($_POST['reset_flowered'])) {
+            // Store the previous value for reference
+            $previous_flowered = isset($farmer_data['flowered']) ? $farmer_data['flowered'] : 0;
+            
             $update_query = $conn->prepare("UPDATE farmer_acc SET flowered = 0 WHERE farmer_id = ?");
             $update_query->bind_param("i", $farmer_id);
             $update_query->execute();
@@ -83,11 +110,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: ".$_SERVER['PHP_SELF']);
             exit();
         } elseif (isset($_POST['reset_pested'])) {
+            // Store the previous value for reference
+            $previous_pested = isset($farmer_data['pested']) ? $farmer_data['pested'] : 0;
+            
             $update_query = $conn->prepare("UPDATE farmer_acc SET pested = 0 WHERE farmer_id = ?");
             $update_query->bind_param("i", $farmer_id);
             $update_query->execute();
             // Update local data
             $farmer_data['pested'] = 0;
+            header("Location: ".$_SERVER['PHP_SELF']);
+            exit();
+        } elseif (isset($_POST['harvest_button'])) {
+            // Get current flowered and pested values
+            $flowered = isset($farmer_data['flowered']) ? $farmer_data['flowered'] : 0;
+            $pested = isset($farmer_data['pested']) ? $farmer_data['pested'] : 0;
+            
+            // Calculate actual harvest (flowered - pested)
+            $actual_harvest = max(0, $flowered - $pested); // Make sure it's not negative
+            
+            // Update last_harvest with the calculated value
+            $update_query = $conn->prepare("UPDATE plantation_details SET last_harvest = ? WHERE farmer_id = ?");
+            $new_harvest = $actual_harvest . " pcs";
+            $update_query->bind_param("si", $new_harvest, $farmer_id);
+            $update_query->execute();
+            
+            // Update local variable
+            $last_harvest = $new_harvest;
+            
+            // Reset both flowered and pested to 0 after harvest
+            $reset_query = $conn->prepare("UPDATE farmer_acc SET flowered = 0, pested = 0 WHERE farmer_id = ?");
+            $reset_query->bind_param("i", $farmer_id);
+            $reset_query->execute();
+            $farmer_data['flowered'] = 0;
+            $farmer_data['pested'] = 0;
+            
             header("Location: ".$_SERVER['PHP_SELF']);
             exit();
         }
@@ -97,56 +153,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Get stats values with fallbacks to zero if not set
-$flowered = isset($farmer_data['flowered']) ? $farmer_data['flowered'] : 101;
+$flowered = isset($farmer_data['flowered']) ? $farmer_data['flowered'] : 10000;
 $pested = isset($farmer_data['pested']) ? $farmer_data['pested'] : 28;
-$total = $flowered + $pested;
-$harvested_percent = $total > 0 ? round(($flowered / $total) * 100) : 65;
-$damaged_percent = $total > 0 ? round(($pested / $total) * 100) : 35;
-$total_harvest = $total; // Set total harvest to the sum of flowered and pested
+
+// Calculate the actual harvest (flowered - pested), ensure it's not negative
+$actual_harvest = max(0, $flowered - $pested);
+$total = $flowered + $pested; // Total for percentage calculations
+
+// Calculate percentages
+if ($total > 0) {
+    $harvested_percent = round(($flowered / $total) * 100);
+    $damaged_percent = round(($pested / $total) * 100);
+} else {
+    $harvested_percent = 65; // Default values
+    $damaged_percent = 35;
+}
 
 // Get farmer name for display
-$farmer_name = isset($farmer_data['username']) ? $farmer_data['username'] : 'Unknown Farmer';
+$farmer_name = isset($farmer_data['username']) ? $farmer_data['username'] : 'Ricardo Dela Cruz';
+$contact_num = isset($farmer_data['contact_num']) ? $farmer_data['contact_num'] : 'rice@gmail.com';
 
 // Sample stats for top cards
-$pending_orders = 100;
-$plantation_area = "300 ha";
-$last_harvest = "1000 tons";
-
-// Create sample order data if not exists
-try {
-    // Check if customer_orders table exists
-    $table_check = $conn->query("SHOW TABLES LIKE 'customer_orders'");
-    if ($table_check->num_rows == 0) {
-        // Create customer_orders table if it doesn't exist
-        $create_table = "CREATE TABLE customer_orders (
-            id INT(11) AUTO_INCREMENT PRIMARY KEY,
-            farmer_id INT(11) NOT NULL,
-            customer_name VARCHAR(100) NOT NULL,
-            order_date DATE NOT NULL,
-            location VARCHAR(100) NOT NULL,
-            order_type VARCHAR(100) NOT NULL,
-            average_weight VARCHAR(50) NOT NULL,
-            quantity VARCHAR(50) NOT NULL,
-            price VARCHAR(50) NOT NULL,
-            status VARCHAR(50) NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )";
-        
-        if ($conn->query($create_table) === TRUE) {
-            // Insert sample data for this farmer
-            $sample_insert = $conn->prepare("INSERT INTO customer_orders 
-                (farmer_id, customer_name, order_date, location, order_type, average_weight, quantity, price, status) VALUES 
-                (?, 'Rama', '2022-02-28', 'San Lorenzo', 'Pineapple Crop', '1/kg', '10 tons', '₱50.00 / Piece', 'Requested'),
-                (?, 'Rama', '2022-02-28', 'Basud', 'Pineapple Juice', '1/kg', '10 tons', '₱50.00 / Piece', 'Requested'),
-                (?, 'Rama', '2022-02-28', 'Hyderabad', 'Pineapple Silk', '1/kg', '10 tons', '₱50.00 / Piece', 'Requested')");
-            $sample_insert->bind_param("iii", $farmer_id, $farmer_id, $farmer_id);
-            $sample_insert->execute();
-        }
-    }
-} catch (Exception $e) {
-    echo "<div class='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4'>Error: " . $e->getMessage() . "</div>";
-}
+$pending_orders = 5;
 ?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pineapple Crops Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script>
+        function openLogoutModal() {
+            document.getElementById('logout-modal').classList.remove('hidden');
+        }
+        function closeLogoutModal() {
+            document.getElementById('logout-modal').classList.add('hidden');
+        }
+        function confirmLogout() {
+            window.location.href = 'account.php'; // Update your logout URL here
+        }
+    </script>
+</head>
+<body class="flex">
 
 <!-- Sidebar -->
 <aside class="w-1/4 bg-[#115D5B] p-6 h-screen flex flex-col justify-between text-white">
@@ -157,7 +208,7 @@ try {
             ?>
             <img src="<?= $profile_pic ?>" alt="Profile" class="w-20 h-20 rounded-full border mb-2">
             <h2 class="font-bold"><?= $farmer_name ?></h2>
-            <p class="text-sm"><?= isset($farmer_data['contact_num']) ? $farmer_data['contact_num'] : 'No Contact' ?></p>
+            <p class="text-sm"><?= $contact_num ?></p>
             <p class="text-sm italic">Farmer</p>
             <?php if(isset($farmer_data['status'])): ?>
                 <p class="text-xs mt-1 px-2 py-1 rounded-full <?= $farmer_data['status'] == 'Active' ? 'bg-green-600' : 'bg-red-600' ?>">
@@ -167,10 +218,30 @@ try {
         </div>
         <nav class="mt-6">
             <ul class="space-y-2">
-                <li><a href="#" class="block p-2 bg-[#CAEED5] text-green-700 rounded">Home</a></li>
-                <li><a href="#" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Profile</a></li>
-                <li><a href="#" class="block p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">Notifications</a></li>
-                <li><a href="#" class="block p-2 text-red-500 hover:text-red-700" onclick="openLogoutModal()">Logout</a></li>
+                <li><a href="#" class="flex items-center justify-center p-2 bg-[#CAEED5] text-green-700 rounded">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                    Home</a>
+                </li>
+                <li><a href="#" class="flex items-center justify-center p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                    Profile</a>
+                </li>
+                <li><a href="#" class="flex items-center justify-center p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                    </svg>
+                    Notifications</a>
+                </li>
+                <li><a href="#" class="flex items-center justify-center p-2 text-red-500 hover:text-red-700" onclick="openLogoutModal()">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    </svg>
+                    Logout</a>
+                </li>
             </ul>
         </nav>
     </div>
@@ -179,11 +250,6 @@ try {
 
 <!-- Main Content -->
 <main class="w-3/4 p-6 bg-white">
-
-    <header class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-green-700">Pineapple Crops Dashboard</h1>
-        <button class="bg-blue-600 text-white px-4 py-2 rounded">Place Order</button>
-    </header>
 
     <!-- Top Stats Cards -->
     <div class="flex gap-4 mb-6">
@@ -205,7 +271,7 @@ try {
         <!-- Area of Plantation Card -->
         <div class="flex-1 bg-[#CAEED5] p-4 rounded-lg shadow">
             <div class="flex items-center">
-                <div class="bg-[#0D3D3B] p-3 rounded-full">
+                <div class="bg-[#0D3D3B] p-3 rounded-full flex items-center justify-center">
                     <span class="text-white font-bold text-xl">A</span>
                 </div>
                 <div class="ml-4">
@@ -218,7 +284,7 @@ try {
         <!-- Last Harvest Card -->
         <div class="flex-1 bg-[#CAEED5] p-4 rounded-lg shadow">
             <div class="flex items-center">
-                <div class="bg-[#0D3D3B] p-3 rounded-full">
+                <div class="bg-[#0D3D3B] p-3 rounded-full flex items-center justify-center">
                     <span class="text-white font-bold text-xl">T</span>
                 </div>
                 <div class="ml-4">
@@ -229,142 +295,58 @@ try {
         </div>
     </div>
 
-    <div class="flex flex-col md:flex-row gap-6">
-        <!-- Orders Section - Left Column -->
-        <div class="w-full md:w-1/2 space-y-4">
-            <h2 class="text-xl font-semibold text-gray-700">Orders</h2>
-            
-            <?php
-            // Get orders for this farmer
-            try {
-                $orders_query = $conn->prepare("SELECT * FROM customer_orders WHERE farmer_id = ? ORDER BY order_date DESC LIMIT 3");
-                $orders_query->bind_param("i", $farmer_id);
-                $orders_query->execute();
-                $result = $orders_query->get_result();
-
-                if ($result && $result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) {
-                        // Format the date as shown in the image
-                        $date_obj = date_create($row['order_date']);
-                        $formatted_date = date_format($date_obj, "d/m/Y");
-            ?>
-                        <!-- Order Card -->
-                        <div class="bg-[#0D3D3B] rounded-lg shadow p-4 mb-4 text-white">
-                            <div class="flex justify-between items-center mb-2">
-                                <div class="flex items-center">
-                                    <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-2">
-                                        <span class="text-[#0D3D3B] font-bold">R</span>
-                                    </div>
-                                    <span class="font-bold"><?= $row['customer_name'] ?></span>
-                                </div>
-                                <div>
-                                    <!-- Three dots menu -->
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                            
-                            <div class="grid grid-cols-3 gap-4 mb-2">
-                                <div>
-                                    <p class="text-sm text-gray-300">Location</p>
-                                    <p class="text-yellow-400"><?= $row['location'] ?></p>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-300">Order Type</p>
-                                    <p class="text-yellow-400"><?= $row['order_type'] ?></p>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-300">Average Weight</p>
-                                    <p><?= $row['average_weight'] ?></p>
-                                </div>
-                            </div>
-                            
-                            <div class="flex items-center mt-4">
-                                <div class="w-16 h-16 bg-gray-300 rounded overflow-hidden mr-4">
-                                    <?php if (strpos($row['order_type'], 'Juice') !== false): ?>
-                                        <img src="pineapple-juice.jpg" alt="Pineapple Juice" class="w-full h-full object-cover">
-                                    <?php elseif (strpos($row['order_type'], 'Silk') !== false): ?>
-                                        <img src="pineapple-silk.jpg" alt="Pineapple Silk" class="w-full h-full object-cover">
-                                    <?php else: ?>
-                                        <img src="pineapple.jpg" alt="Pineapple" class="w-full h-full object-cover">
-                                    <?php endif; ?>
-                                </div>
-                                
-                                <div class="flex-1 grid grid-cols-3 gap-2">
-                                    <div class="bg-yellow-500 rounded p-2 text-center">
-                                        <p class="text-xs"><?= $formatted_date ?></p>
-                                        <p class="text-xs">Requested</p>
-                                    </div>
-                                    <div class="bg-gray-700 rounded p-2 text-center">
-                                        <p class="text-xs"><?= $row['quantity'] ?></p>
-                                        <p class="text-xs">Order Quantity</p>
-                                    </div>
-                                    <div class="bg-gray-700 rounded p-2 text-center">
-                                        <p class="text-xs"><?= $row['price'] ?></p>
-                                        <p class="text-xs">Expected Price</p>
-                                    </div>
-                                </div>
-                            </div>
-            
-            
-                        </div>
-            <?php
-                    }
-                } else {
-                    echo "<div class='bg-gray-100 rounded-lg p-4 text-center'>No orders available</div>";
-                }
-                
-                // Add pagination controls
-                echo '<div class="flex items-center justify-center mt-4 space-x-2">
-                    <button class="flex items-center justify-center px-3 py-1 bg-gray-200 rounded-md">
-                        <span class="mr-1">Prev</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                        </svg>
-                    </button>
-                    
-                    <div class="flex space-x-1">
-                        <div class="w-6 h-2 bg-[#0D3D3B] rounded-full"></div>
-                        <div class="w-6 h-2 bg-gray-300 rounded-full"></div>
-                        <div class="w-6 h-2 bg-gray-300 rounded-full"></div>
-                    </div>
-                    
-                    <button class="flex items-center justify-center px-3 py-1 bg-gray-200 rounded-md">
-                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                        </svg>
-                        <span>Next</span>
-                    </button>
-                </div>';
-                
-            } catch (Exception $e) {
-                echo "<div class='bg-red-100 rounded-lg p-4 text-center'>Error: " . $e->getMessage() . "</div>";
-            }
-            ?>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Total of Pineapple Planted -->
+        <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4">
+            <div class="text-center bg-[#CAEED5] py-2 font-semibold text-green-800 rounded">Total of Pineapple planted</div>
+            <div class="text-center py-6">
+                <div class="text-6xl font-bold text-white"><?= number_format($total_planted) ?></div>
+            </div>
+            <div class="flex items-center gap-2 mt-2">
+                <button type="button" class="bg-[#FCAE36] px-3 py-1 rounded text-black font-medium">Reset</button>
+                <input type="number" placeholder="+" class="flex-grow bg-white rounded p-1 text-left">
+                <button type="button" class="bg-[#4CAF50] px-3 py-1 rounded text-white font-medium">ADD</button>
+            </div>
         </div>
 
-        <!-- Stats Section - Right Column -->
-        <div class="w-full md:w-1/2 space-y-4">
-            <!-- Pinabulaklak -->
-            <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4">
-                <div class="text-center bg-[#CAEED5] py-2 font-semibold text-green-800 rounded">Pinabulaklak</div>
-                <div class="text-center py-4">
-                    <div class="text-6xl font-bold text-white"><?= $flowered ?></div>
-                </div>
-                <form method="POST" class="mt-2">
-                    <div class="flex items-center gap-2">
-                        <button name="reset_flowered" type="submit" class="bg-[#FCAE36] px-3 py-1 rounded text-black font-medium">Reset</button>
-                        <input type="number" name="flowered_amount" placeholder="+ " class="flex-grow bg-white rounded p-1 text-left">
-                        <button name="add_flowered" type="submit" class="bg-[#4CAF50] px-3 py-1 rounded text-white font-medium">ADD</button>
-                    </div>
-                </form>
+        <!-- Pinabulaklak Section -->
+        <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4">
+            <div class="text-center bg-[#CAEED5] py-2 font-semibold text-green-800 rounded">Pinabulaklak</div>
+            <div class="text-center py-6">
+                <div class="text-6xl font-bold text-white"><?= number_format($flowered) ?></div>
             </div>
+            <form method="POST" class="mt-2">
+                <div class="flex items-center gap-2">
+                    <button name="reset_flowered" type="submit" class="bg-[#FCAE36] px-3 py-1 rounded text-black font-medium">Reset</button>
+                    <input type="number" name="flowered_amount" placeholder="+" class="flex-grow bg-white rounded p-1 text-left">
+                    <button name="add_flowered" type="submit" class="bg-[#4CAF50] px-3 py-1 rounded text-white font-medium">ADD</button>
+                </div>
+            </form>
+        </div>
 
+        <!-- Fertilizer Usage Section -->
+        <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4">
+            <div class="text-center bg-[#CAEED5] py-2 font-semibold text-green-800 rounded">Fertilizer Usage</div>
+            <div class="flex flex-col space-y-2 mt-3 max-h-80 overflow-y-auto">
+                <?php for($i=0; $i<6; $i++): ?>
+                <div class="bg-[#CAEED5] p-2 rounded">
+                    Total of Pineapple planted
+                </div>
+                <?php endfor; ?>
+            </div>
+            <div class="flex items-center gap-2 mt-4">
+                <button type="button" class="bg-[#FCAE36] px-3 py-1 rounded text-black font-medium">Reset</button>
+                <input type="text" placeholder="+" class="flex-grow bg-white rounded p-1 text-left">
+                <button type="button" class="bg-[#4CAF50] px-3 py-1 rounded text-white font-medium">ADD</button>
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="flex flex-col space-y-4">
             <!-- Na Peste -->
             <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4">
                 <div class="text-center bg-[#CAEED5] py-2 font-semibold text-green-800 rounded">Na Peste</div>
-                <div class="text-center py-4">
+                <div class="text-center py-6">
                     <div class="text-6xl font-bold text-white"><?= $pested ?></div>
                 </div>
                 <form method="POST" class="mt-2">
@@ -396,7 +378,12 @@ try {
                                 <span>Damaged (<?= $damaged_percent ?>%)</span>
                             </div>
                         </div>
-                        <div>Total Harvest: <?= $total_harvest ?></div>
+                        <div>Total Harvest: <?= $actual_harvest ?></div>
+                        
+                        <!-- Harvest Button -->
+                        <form method="POST" class="mt-3">
+                            <button name="harvest_button" type="submit" class="bg-[#4CAF50] px-4 py-2 rounded text-white font-medium">Harvest</button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -416,7 +403,7 @@ try {
     </div>
 </div>
 
-<!-- Js for the Harvewst button -->
+<!-- Chart.js for the Harvest chart -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Create the harvest pie chart
