@@ -66,6 +66,9 @@ if ($result->num_rows > 0) {
 
 $stmt->close();
 
+// Default product type if no farmer is selected
+$product_type = "Pineapple Fruit";
+
 // Set default farmer data
 $farmer_data = [
     'full_name' => 'Juan Dela Cruz',
@@ -74,7 +77,8 @@ $farmer_data = [
     'email' => 'juandelacruz@example.com',
     'farm_location' => 'Daet, Camarines Norte',
     'plantation_size' => '2.5 hectares',
-    'flowering_date' => '2025-01-15'
+    'flowering_date' => '2025-01-15',
+    'possible_harvest' => 'Pineapple Fruit' // Default product type
 ];
 
 // If a farmer name is provided in the URL, fetch the farmer's details from the harvests table
@@ -99,11 +103,47 @@ if (isset($_GET['farmer'])) {
             'email' => 'farmer@example.com', // Default value
             'farm_location' => $harvest_data['location'] ?? 'Daet, Camarines Norte',
             'plantation_size' => '2.5 hectares', // Default value
-            'flowering_date' => date('Y-m-d', strtotime('first day of ' . $harvest_data['month_of_harvest'] . ' 2025'))
+            'flowering_date' => date('Y-m-d', strtotime('first day of ' . $harvest_data['month_of_harvest'] . ' 2025')),
+            'possible_harvest' => $harvest_data['possible_harvest'] ?? 'Pineapple Fruit' // Get the product type
         ];
+        
+        // Update the product type for the order form
+        $product_type = $farmer_data['possible_harvest'];
     }
     $stmt->close();
 }
+
+// Get product variants based on product type
+function getProductVariants($product_type) {
+    switch ($product_type) {
+        case 'Pineapple Fruit':
+            return ['Queen Pineapple', 'Formosa Pineapple'];
+        case 'Pineapple Juice':
+            return ['Pure Juice', 'With Pulp', 'Concentrated'];
+        case 'Pineapple Fiber':
+            return ['Raw Fiber', 'Processed Fiber', 'Dyed Fiber'];
+        default:
+            return ['Standard'];
+    }
+}
+
+// Get product unit based on product type
+function getProductUnit($product_type) {
+    switch ($product_type) {
+        case 'Pineapple Fruit':
+            return 'piece(s)';
+        case 'Pineapple Juice':
+            return 'liter(s)';
+        case 'Pineapple Fiber':
+            return 'yard(s)';
+        default:
+            return 'unit(s)';
+    }
+}
+
+// Get the variants for the selected product
+$product_variants = getProductVariants($product_type);
+$product_unit = getProductUnit($product_type);
 
 // Get all provinces from the location database, ordered alphabetically
 $provinces_query = "SELECT DISTINCT province FROM location ORDER BY province ASC";
@@ -246,6 +286,26 @@ if (isset($_GET['action'])) {
                     });
                 }
             });
+            
+            // Update price and total when quantity changes
+            $('#quantity').on('input', function() {
+                updateTotal();
+            });
+            
+            function updateTotal() {
+                var quantity = parseInt($('#quantity').val()) || 0;
+                var price = 50; // Base price, this could be dynamic based on product
+                var total = quantity * price;
+                
+                // Update the cart table
+                $('#cartQuantity').text(quantity);
+                $('#cartPrice').text('₱' + price);
+                $('#cartTotal').text('₱' + total);
+                
+                // Update the totals
+                $('#subTotal').text('₱' + total);
+                $('#grandTotal').text('₱' + total);
+            }
         });
     </script>
 </head>
@@ -326,6 +386,11 @@ if (isset($_GET['action'])) {
                         <label class="text-sm text-gray-600">Flowering Date</label>
                         <input type="text" value="<?php echo htmlspecialchars($farmer_data['flowering_date']); ?>" class="w-full border p-2 rounded" readonly>
                     </div>
+                    
+                    <div class="flex flex-col">
+                        <label class="text-sm text-gray-600">Available Product</label>
+                        <input type="text" value="<?php echo htmlspecialchars($farmer_data['possible_harvest']); ?>" class="w-full border p-2 rounded bg-green-50" readonly>
+                    </div>
                 </div>
                 
                 <div class="mt-4">
@@ -346,18 +411,23 @@ if (isset($_GET['action'])) {
 
             <!-- Order Details -->
             <div class="border p-4 rounded-lg">
-                <h2 class="font-bold">Pineapple Fruit</h2>
-                <input type="number" placeholder="Quantity" class="w-full border p-2 rounded mt-2">
+                <h2 class="font-bold text-green-700 text-xl"><?php echo htmlspecialchars($product_type); ?></h2>
+                <p class="text-gray-600 text-sm mb-2">Please specify the details for your order</p>
+                
+                <input type="number" id="quantity" placeholder="Quantity (<?php echo htmlspecialchars($product_unit); ?>)" class="w-full border p-2 rounded mt-2">
+                
                 <select class="w-full border p-2 rounded mt-2">
-                    <option>Mode of Payment</option>
-                    <option>Cash on Delivery</option>
-                    <option>Bank Transfer</option>
-                    <option>E-wallet</option>
+                    <option value="">Mode of Payment</option>
+                    <option value="COD">Cash on Delivery</option>
+                    <option value="Bank">Bank Transfer</option>
+                    <option value="Ewallet">E-wallet</option>
                 </select>
+                
                 <select class="w-full border p-2 rounded mt-2">
-                    <option>Variant</option>
-                    <option>Queen Pineapple</option>
-                    <option>Formosa Pineapple</option>
+                    <option value="">Variant</option>
+                    <?php foreach ($product_variants as $variant): ?>
+                        <option value="<?php echo htmlspecialchars($variant); ?>"><?php echo htmlspecialchars($variant); ?></option>
+                    <?php endforeach; ?>
                 </select>
 
                 <h2 class="font-bold mt-4">Customer Address</h2>
@@ -391,24 +461,24 @@ if (isset($_GET['action'])) {
                 </thead>
                 <tbody>
                     <tr class="text-center">
-                        <td class="p-2">Pineapple</td>
-                        <td class="p-2">Queen Pineapple</td>
-                        <td class="p-2">1</td>
-                        <td class="p-2">₱500</td>
-                        <td class="p-2">₱500</td>
+                        <td class="p-2"><?php echo htmlspecialchars($product_type); ?></td>
+                        <td class="p-2">Not Selected</td>
+                        <td class="p-2" id="cartQuantity">0</td>
+                        <td class="p-2" id="cartPrice">₱50</td>
+                        <td class="p-2" id="cartTotal">₱0</td>
                     </tr>
                 </tbody>
             </table>
 
             <div class="text-right mt-4">
-                <p>Sub Total: ₱500</p>
+                <p>Sub Total: <span id="subTotal">₱0</span></p>
                 <p>Shipping: ₱0.00</p>
-                <p class="font-bold">Grand Total: ₱500</p>
+                <p class="font-bold">Grand Total: <span id="grandTotal">₱0</span></p>
             </div>
 
             <div class="flex justify-end gap-4 mt-4">
-                <button class="bg-red-500 text-white px-4 py-2 rounded">Cancel</button>
-                <button class="bg-green-500 text-white px-4 py-2 rounded">Confirm</button>
+                <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Cancel</button>
+                <button class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Confirm</button>
             </div>
         </div>
     </main>
