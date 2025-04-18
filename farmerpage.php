@@ -151,6 +151,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: ".$_SERVER['PHP_SELF']);
             exit();
         }
+        // Place this alongside your other fertilizer handlers
+elseif (isset($_POST['reset_fertilizer'])) {
+    $fertilizer_id = intval($_POST['fertilizer_id']);
+    $stmt = $conn->prepare("DELETE FROM fertilizer_usage WHERE id = ? AND farmer_id = ?");
+    $stmt->bind_param("ii", $fertilizer_id, $farmer_id);
+    $stmt->execute();
+    header("Location: ".$_SERVER['PHP_SELF']);
+    exit();
+} 
+elseif (isset($_POST['reset_all_fertilizer'])) {
+    $stmt = $conn->prepare("DELETE FROM fertilizer_usage WHERE farmer_id = ?");
+    $stmt->bind_param("i", $farmer_id);
+    $stmt->execute();
+    header("Location: ".$_SERVER['PHP_SELF']);
+    exit();
+}
+//total Planted
+elseif (isset($_POST['add_planted'])) {
+    $amount = intval($_POST['planted_amount'] ?? 1);
+    $stmt = $conn->prepare("UPDATE plantation_details SET total_planted = total_planted + ? WHERE farmer_id = ?");
+    $stmt->bind_param("ii", $amount, $farmer_id);
+    $stmt->execute();
+    
+    // If no rows were updated, insert a new row
+    if ($stmt->affected_rows == 0) {
+        $stmt = $conn->prepare("INSERT INTO plantation_details (farmer_id, area, last_harvest, total_planted) VALUES (?, '0.0', '0 pcs', ?)");
+        $stmt->bind_param("ii", $farmer_id, $amount);
+        $stmt->execute();
+    }
+    
+    // Update the variable for the page
+    $total_planted += $amount;
+    header("Location: ".$_SERVER['PHP_SELF']);
+    exit();
+} 
+elseif (isset($_POST['reset_planted'])) {
+    $stmt = $conn->prepare("UPDATE plantation_details SET total_planted = 0 WHERE farmer_id = ?");
+    $stmt->bind_param("i", $farmer_id);
+    $stmt->execute();
+    
+    // Update the variable for the page
+    $total_planted = 0;
+    header("Location: ".$_SERVER['PHP_SELF']);
+    exit();
+}
 
     } catch (Exception $e) {
         echo "<div class='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4'>Error: " . $e->getMessage() . "</div>";
@@ -170,6 +215,7 @@ $farmer_name = $farmer_data['username'] ?? 'Ricardo Dela Cruz';
 $contact_num = $farmer_data['contact_num'] ?? 'rice@gmail.com';
 $pending_orders = 5;
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -190,7 +236,7 @@ $pending_orders = 5;
 </head>
 <body class="flex">
 <!-- Sidebar -->
-<aside class="w-1/4 bg-[#115D5B] p-6 h-screen flex flex-col justify-between text-white">
+<aside class="w-1/4 bg-[#115D5B] p-6 h-screen fixed top-0 left-0 flex flex-col justify-between text-white">
     <div>
         <div class="flex flex-col items-center text-center">
             <?php $profile_pic = $farmer_data['profile_picture'] ?? 'profile.jpg'; ?>
@@ -233,7 +279,7 @@ $pending_orders = 5;
 </aside>
 
 <!-- Main Content -->
-<main class="w-3/4 p-6 bg-white">
+<main class="w-3/4 p-6 bg-white ml-[25%]">
     <!-- Top Cards -->
     <div class="flex gap-4 mb-6">
         <div class="flex-1 bg-[#CAEED5] p-4 rounded-lg shadow">
@@ -273,20 +319,24 @@ $pending_orders = 5;
         </div>
     </div>
 
+
+
     <!-- Main Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Pineapple Planted -->
         <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4">
-            <div class="text-center bg-[#CAEED5] py-2 font-semibold text-green-800 rounded">Total of Pineapple planted</div>
-            <div class="text-center py-6">
-                <div class="text-6xl font-bold text-white"><?= number_format($total_planted) ?></div>
-            </div>
-            <div class="flex items-center gap-2 mt-2">
-                <button type="button" class="bg-[#FCAE36] px-3 py-1 rounded text-black font-medium">Reset</button>
-                <input type="number" placeholder="+" class="flex-grow bg-white rounded p-1 text-left">
-                <button type="button" class="bg-[#4CAF50] px-3 py-1 rounded text-white font-medium">ADD</button>
-            </div>
+    <div class="text-center bg-[#CAEED5] py-2 font-semibold text-green-800 rounded">Total of Pineapple planted</div>
+    <div class="text-center py-6">
+        <div class="text-6xl font-bold text-white"><?= number_format($total_planted) ?></div>
+    </div>
+    <form method="POST" class="mt-2">
+        <div class="flex items-center gap-2">
+            <button type="submit" name="reset_planted" class="bg-[#FCAE36] px-3 py-1 rounded text-black font-medium">Reset</button>
+            <input type="number" name="planted_amount" placeholder="+" class="flex-grow bg-white rounded p-1 text-left">
+            <button type="submit" name="add_planted" class="bg-[#4CAF50] px-3 py-1 rounded text-white font-medium">ADD</button>
         </div>
+    </form>
+</div>
 
         <!-- Pinabulaklak -->
         <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4">
@@ -305,68 +355,74 @@ $pending_orders = 5;
 
         <!-- Fertilizer Usage -->
         <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4">
-            <div class="text-center bg-[#CAEED5] py-2 font-semibold text-green-800 rounded">Fertilizer Usage</div>
-            <div class="mt-3 max-h-80 overflow-y-auto">
-                <table class="w-full text-white">
-                    <thead class="bg-[#115D5B]">
-                        <tr>
-                            <th class="p-2">Month</th>
-                            <th>Type</th>
-                            <th>Per Plant (g)</th>
-                            <th>Sacks</th>
-                            <th>Action</th>
+       <div class="text-center bg-[#CAEED5] py-1.5 text-sm font-medium text-green-800 rounded">Fertilizer Usage</div>
+    <div class="mt-3 overflow-y-auto" style="max-height: <?php echo !empty($fertilizer_data) ? '80vh' : 'auto'; ?>">
+        <table class="w-full text-white">
+            <thead class="bg-[#115D5B]">
+                <tr>
+                <th class="px-2 py-1 text-sm">Month</th>
+                    <th>Type</th>
+                    <th>Per Plant (g)</th>
+                    <th>Sacks</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (!empty($fertilizer_data)): ?>
+                    <?php foreach ($fertilizer_data as $entry): ?>
+                        <tr class="text-center border-b border-[#115D5B]">
+                            <td class="p-2"><?= htmlspecialchars($entry['month']) ?></td>
+                            <td><?= htmlspecialchars($entry['type']) ?></td>
+                            <td><?= number_format($entry['per_plant_grams'], 2) ?>g</td>
+                            <td><?= htmlspecialchars($entry['sacks']) ?> sacks</td>
+                            <td class="px-2 py-1"><?= htmlspecialchars($entry['month']) ?></td>
+                            <td>
+                                <form method="POST" style="display: inline;">
+                                    <input type="hidden" name="fertilizer_id" value="<?= $entry['id'] ?>">
+                                    <button type="submit" name="reset_fertilizer" class="font-bold text-red-400 hover:text-red-600  bg-[#CAEED5] p-1 rounded-lg">Reset</button>
+                                </form>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        <?php if (!empty($fertilizer_data)): ?>
-                            <?php foreach ($fertilizer_data as $entry): ?>
-                                <tr class="text-center border-b border-[#115D5B]">
-                                    <td class="p-2"><?= htmlspecialchars($entry['month']) ?></td>
-                                    <td><?= htmlspecialchars($entry['type']) ?></td>
-                                    <td><?= number_format($entry['per_plant_grams'], 2) ?>g</td>
-                                    <td><?= htmlspecialchars($entry['sacks']) ?> sacks</td>
-                                    <td>
-                                        <button class="text-red-400 hover:text-red-600">Reset</button>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <tr>
-                                <td colspan="5" class="text-center py-4 text-gray-400">No fertilizer records found</td>
-                            </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="5" class="text-center py-4 text-gray-400">No fertilizer records found</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
 
-            <!-- Fertilizer Form -->
-            <div id="fertilizerForm" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                <div class="bg-white p-6 rounded-lg w-96">
-                    <h3 class="text-xl font-bold mb-4">Add Fertilizer Data</h3>
-                    <form method="POST">
-                        <input type="month" name="month" class="w-full p-2 mb-2 border rounded" required>
-                        <input type="text" name="type" placeholder="Fertilizer Type" class="w-full p-2 mb-2 border rounded" required>
-                        <input type="number" step="0.01" name="per_plant" placeholder="Grams per plant" class="w-full p-2 mb-2 border rounded" required>
-                        <input type="number" name="sacks" placeholder="Number of sacks" class="w-full p-2 mb-2 border rounded" required>
-                        <div class="flex gap-2 mt-4">
-                            <button type="button" onclick="closeFertilizerForm()" class="flex-1 bg-gray-500 text-white px-4 py-2 rounded">Cancel</button>
-                            <button type="submit" name="add_fertilizer" class="flex-1 bg-[#4CAF50] text-white px-4 py-2 rounded">Add</button>
-                        </div>
-                    </form>
+    <!-- Fertilizer Form -->
+    <div id="fertilizerForm" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-lg w-96">
+            <h3 class="text-xl font-bold mb-4">Add Fertilizer Data</h3>
+            <form method="POST">
+                <input type="month" name="month" class="w-full p-2 mb-2 border rounded" required>
+                <input type="text" name="type" placeholder="Fertilizer Type" class="w-full p-2 mb-2 border rounded" required>
+                <input type="number" step="0.01" name="per_plant" placeholder="Grams per plant" class="w-full p-2 mb-2 border rounded" required>
+                <input type="number" name="sacks" placeholder="Number of sacks" class="w-full p-2 mb-2 border rounded" required>
+                <div class="flex gap-2 mt-4">
+                    <button type="button" onclick="closeFertilizerForm()" class="flex-1 bg-gray-500 text-white px-4 py-2 rounded">Cancel</button>
+                    <button type="submit" name="add_fertilizer" class="flex-1 bg-[#4CAF50] text-white px-4 py-2 rounded">Add</button>
                 </div>
-            </div>
-
-            <div class="flex items-center gap-2 mt-4">
-                <button type="button" class="bg-[#FCAE36] px-3 py-1 rounded text-black font-medium">Reset All</button>
-                <input 
-                    type="text" 
-                    placeholder="+" 
-                    class="flex-grow bg-white rounded p-1 text-left cursor-pointer"
-                    onclick="openFertilizerForm()"
-                    readonly
-                >
-            </div>
+            </form>
         </div>
+    </div>
+
+    <div class="flex items-center gap-2 mt-4">
+        <form method="POST" style="display: inline;">
+            <button type="submit" name="reset_all_fertilizer" class="bg-[#FCAE36] px-3 py-1 rounded text-black font-medium">Reset All</button>
+        </form>
+        <input 
+            type="text" 
+            placeholder="+" 
+            class="flex-grow bg-white rounded p-1 text-left cursor-pointer"
+            onclick="openFertilizerForm()"
+            readonly
+        >
+    </div>
+</div>
 
         <!-- Right Panel -->
         <div class="flex flex-col space-y-4">
@@ -415,7 +471,7 @@ $pending_orders = 5;
         </div>
     </div>
 </main>
-
+</main>
 <!-- Logout Modal -->
 <div id="logout-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
     <div class="bg-white p-6 rounded-lg shadow-lg text-center">
