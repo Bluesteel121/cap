@@ -248,3 +248,7 @@
 [2025-04-18 17:22:38] Login successful for identifier: bbnos
 [2025-04-22 19:40:38] Attempting login - User input: dave
 [2025-04-22 19:40:38] Login successful for user: dave
+[2025-04-29 08:52:34] Attempting farmer login - Identifier: dave
+[2025-04-29 08:52:34] Login failed for identifier: dave - User not found
+[2025-04-29 08:53:43] Attempting farmer login - Identifier: bbnos
+[2025-04-29 08:53:43] Login successful for identifier: bbnos

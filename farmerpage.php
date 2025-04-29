@@ -12,7 +12,7 @@ $farmer_data = [];
 $fertilizer_data = [];
 
 try {
-    // Get farmer account data
+    // Get farmer account data from data base
     $stmt = $conn->prepare("SELECT * FROM farmer_acc WHERE farmer_id = ?");
     $stmt->bind_param("i", $farmer_id);
     $stmt->execute();
@@ -81,6 +81,7 @@ try {
 } catch (Exception $e) {
     echo "<div class='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4'>Error: " . $e->getMessage() . "</div>";
 }
+
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -202,6 +203,7 @@ elseif (isset($_POST['reset_planted'])) {
     }
 }
 
+
 // Calculate stats
 $flowered = $farmer_data['flowered'] ?? 0;
 $pested = $farmer_data['pested'] ?? 0;
@@ -215,6 +217,7 @@ $farmer_name = $farmer_data['username'] ?? 'Ricardo Dela Cruz';
 $contact_num = $farmer_data['contact_num'] ?? 'rice@gmail.com';
 $pending_orders = 5;
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -235,7 +238,7 @@ $pending_orders = 5;
     </script>
 </head>
 <body class="flex">
-<!-- Sidebar -->
+<!-- Sidebar green -->
 <aside class="w-1/4 bg-[#115D5B] p-6 h-screen fixed top-0 left-0 flex flex-col justify-between text-white">
     <div>
         <div class="flex flex-col items-center text-center">
@@ -250,6 +253,9 @@ $pending_orders = 5;
                 </p>
             <?php endif; ?>
         </div>
+
+
+
         <nav class="mt-6">
             <ul class="space-y-2">
                 <li><a href="#" class="flex items-center justify-center p-2 bg-[#CAEED5] text-green-700 rounded">
@@ -277,6 +283,10 @@ $pending_orders = 5;
     </div>
     <footer class="text-center text-xs">&copy; 2025 Camarines Norte Lowland Rainfed Research Station</footer>
 </aside>
+
+
+
+
 
 <!-- Main Content -->
 <main class="w-3/4 p-6 bg-white ml-[25%]">
