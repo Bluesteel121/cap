@@ -246,9 +246,55 @@
 [2025-04-18 16:37:59] Login successful for identifier: bbnos
 [2025-04-18 17:22:38] Attempting farmer login - Identifier: bbnos
 [2025-04-18 17:22:38] Login successful for identifier: bbnos
+<<<<<<< HEAD
+[2025-04-18 18:04:28] Attempting farmer login - Identifier: bbnos
+[2025-04-18 18:04:28] Login successful for identifier: bbnos
+[2025-04-18 18:04:36] Attempting farmer login - Identifier: bbnos
+[2025-04-18 18:04:36] Login successful for identifier: bbnos
+[2025-04-18 18:07:55] Attempting farmer login - Identifier: bbnos
+[2025-04-18 18:07:55] Login successful for identifier: bbnos
+[2025-04-18 18:08:47] Attempting farmer login - Identifier: bbnos
+[2025-04-18 18:08:47] Login successful for identifier: bbnos
+[2025-04-18 18:38:51] Attempting farmer login - Identifier: bbnos
+[2025-04-18 18:38:51] Login successful for identifier: bbnos
+[2025-04-18 18:42:00] Attempting farmer login - Identifier: bbnos
+[2025-04-18 18:42:00] Login successful for identifier: bbnos
+[2025-04-18 18:45:15] Attempting farmer login - Identifier: bbnos
+[2025-04-18 18:45:15] Login successful for identifier: bbnos
+[2025-04-18 18:48:44] Attempting farmer login - Identifier: bbnos
+[2025-04-18 18:48:44] Login successful for identifier: bbnos
+[2025-04-18 18:49:14] Attempting farmer login - Identifier: bbnos
+[2025-04-18 18:49:14] Login successful for identifier: bbnos
+[2025-04-23 03:13:14] Attempting farmer login - Identifier: bbnos
+[2025-04-23 03:13:14] Login successful for identifier: bbnos
+[2025-04-23 03:14:55] Attempting farmer login - Identifier: bbnos
+[2025-04-23 03:14:55] Login successful for identifier: bbnos
+[2025-04-23 03:15:44] Attempting farmer login - Identifier: bbnos
+[2025-04-23 03:15:44] Login successful for identifier: bbnos
+[2025-04-23 17:58:18] Attempting farmer login - Identifier: bbnos
+[2025-04-23 17:58:18] Login successful for identifier: bbnos
+[2025-04-23 17:58:18] Attempting farmer login - Identifier: bbnos
+[2025-04-23 17:58:18] Login successful for identifier: bbnos
+[2025-04-23 17:58:43] Attempting farmer login - Identifier: bbnos
+[2025-04-23 17:58:43] Login successful for identifier: bbnos
+[2025-04-23 17:59:01] Attempting farmer login - Identifier: bbnos
+[2025-04-23 17:59:01] Login successful for identifier: bbnos
+[2025-04-23 18:02:33] Attempting farmer login - Identifier: bbnos
+[2025-04-23 18:02:33] Login successful for identifier: bbnos
+[2025-04-23 18:07:29] Attempting farmer login - Identifier: bbnos
+[2025-04-23 18:07:29] Login successful for identifier: bbnos
+[2025-04-24 20:11:37] Attempting farmer login - Identifier: bbnos
+[2025-04-24 20:11:37] Login successful for identifier: bbnos
+[2025-04-25 14:02:58] Attempting farmer login - Identifier: bbnos
+[2025-04-25 14:02:58] Login successful for identifier: bbnos
+=======
 [2025-04-22 19:40:38] Attempting login - User input: dave
 [2025-04-22 19:40:38] Login successful for user: dave
+<<<<<<< HEAD
 [2025-04-29 08:52:34] Attempting farmer login - Identifier: dave
 [2025-04-29 08:52:34] Login failed for identifier: dave - User not found
 [2025-04-29 08:53:43] Attempting farmer login - Identifier: bbnos
 [2025-04-29 08:53:43] Login successful for identifier: bbnos
+=======
+>>>>>>> 3f7362933b7ad4ff6a42453111795d670ebd3614
+>>>>>>> 56d959dd78ce950c8f519c649627f38f819a3886
