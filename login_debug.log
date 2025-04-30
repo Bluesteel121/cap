@@ -290,4 +290,15 @@
 =======
 [2025-04-22 19:40:38] Attempting login - User input: dave
 [2025-04-22 19:40:38] Login successful for user: dave
+<<<<<<< HEAD
+[2025-04-29 08:52:34] Attempting farmer login - Identifier: dave
+[2025-04-29 08:52:34] Login failed for identifier: dave - User not found
+[2025-04-29 08:53:43] Attempting farmer login - Identifier: bbnos
+[2025-04-29 08:53:43] Login successful for identifier: bbnos
+=======
 >>>>>>> 3f7362933b7ad4ff6a42453111795d670ebd3614
+>>>>>>> 56d959dd78ce950c8f519c649627f38f819a3886
+[2025-04-30 12:03:01] Attempting farmer login - Identifier: bbnos
+[2025-04-30 12:03:01] Login successful for identifier: bbnos
+[2025-04-30 12:10:42] Attempting login - User input: dave
+[2025-04-30 12:10:42] Login successful for user: dave
