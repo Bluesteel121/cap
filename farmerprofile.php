@@ -1,93 +1,26 @@
 <?php
-// Start the session if it's not already started
-session_start();
+// Include the shared database connection and functions
+require_once 'db_connect.php';
 
-// Check if user is logged in via username, email, or contact_num
-$is_logged_in = false;
+// Get farmer data using the shared function
+$farmer_data = getFarmerData($conn);
+$login_identifier = isset($_SESSION['username']) ? $_SESSION['username'] : 
+                   (isset($_SESSION['email']) ? $_SESSION['email'] : 
+                   (isset($_SESSION['contact_num']) ? $_SESSION['contact_num'] : ""));
+
+// Get the login field name
 $login_field = "";
-$login_identifier = "";
-
-// Check if logged in via username
 if (isset($_SESSION['username']) && !empty($_SESSION['username'])) {
-    $is_logged_in = true;
     $login_field = "username";
-    $login_identifier = $_SESSION['username'];
-} 
-// Check if logged in via email
-else if (isset($_SESSION['email']) && !empty($_SESSION['email'])) {
-    $is_logged_in = true;
+} else if (isset($_SESSION['email']) && !empty($_SESSION['email'])) {
     $login_field = "email";
-    $login_identifier = $_SESSION['email'];
-}
-// Add check for contact_num
-else if (isset($_SESSION['contact_num']) && !empty($_SESSION['contact_num'])) {
-    $is_logged_in = true;
+} else if (isset($_SESSION['contact_num']) && !empty($_SESSION['contact_num'])) {
     $login_field = "contact_num";
-    $login_identifier = $_SESSION['contact_num'];
 }
 
 // Include GitHub upload function if you have it
 if (file_exists('github_upload.php')) {
     require_once 'github_upload.php';
-}
-
-// Database connection
-$conn = new mysqli("localhost", "root", "", "capstone");
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-// Get farmer data from database using the login identifier
-$sql = "SELECT * FROM farmer_acc WHERE $login_field = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $login_identifier);
-$stmt->execute();
-$result = $stmt->get_result();
-
-if ($result->num_rows > 0) {
-    $farmer_data = $result->fetch_assoc();
-} else {
-    // Handle case where user data is not found
-    $farmer_data = [
-        'farmer_id' => 0,
-        'name' => "Unknown Farmer",
-        'birthdate' => "",
-        'sex' => "",
-        'email' => $login_identifier,
-        'civil_status' => "",
-        'username' => "",
-        'password' => "",
-        'contact_num' => "", 
-        'address' => "",
-        'farm_location' => "",
-        'varieties' => "",
-        'farm_size' => "",
-        'yield' => "",
-        'years_farming' => "",
-        'market' => "",
-        'soil_type' => "",
-        'fertilizer' => "",
-        'profile_picture' => null,
-        'status' => "Active",
-        'flowered' => 0,
-        'pested' => 0,
-        'created_at' => date("Y-m-d H:i:s")
-    ];
-}
-
-$stmt->close();
-
-// Function to display profile image
-function displayProfileImage($profile_pic) {
-    if ($profile_pic && strlen($profile_pic) > 0) {
-        // Return the path to the image
-        return $profile_pic;
-    } else {
-        // Return the path to the default profile image
-        return "profile.jpg";
-    }
 }
 
 // Get the profile image source
@@ -157,7 +90,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $param_types .= "s";
         $param_values[] = $username;
         
-        // FIXED: Use contact_num as the field name instead of cellphone
         $sql_parts[] = "contact_num = ?"; 
         $param_types .= "s";
         $param_values[] = $contact_num;
@@ -280,11 +212,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Complete the SQL query
             $sql = "UPDATE farmer_acc SET " . implode(", ", $sql_parts) . " WHERE ";
             
-            // Use the current login field for the WHERE clause
-            $sql .= "$login_field = ?";
+            // Use the farmer_id for the WHERE clause instead of login field
+            $sql .= "farmer_id = ?";
             
-            $param_types .= "s";
-            $param_values[] = $login_identifier;
+            $param_types .= "i"; // integer for farmer_id
+            $param_values[] = $farmer_data['farmer_id'];
             
             // Prepare the statement
             $stmt = $conn->prepare($sql);
@@ -306,14 +238,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $update_message .= "Profile updated successfully!";
                     
                     // Update session variables to reflect changes
-                    if ($login_field == "username" && $username != $login_identifier) {
+                    if ($username != $_SESSION['username'] && isset($_SESSION['username'])) {
                         $_SESSION['username'] = $username;
-                    } 
-                    if ($login_field == "email" && $email != $login_identifier) {
+                    }
+                    if ($email != $_SESSION['email'] && isset($_SESSION['email'])) {
                         $_SESSION['email'] = $email;
                     }
-                    if ($login_field == "contact_num" && $contact_num != $login_identifier) {
+                    if ($contact_num != $_SESSION['contact_num'] && isset($_SESSION['contact_num'])) {
                         $_SESSION['contact_num'] = $contact_num;
+                    }
+                    
+                    // Clear any cached data
+                    if (isset($_SESSION['farmer_data'])) {
+                        unset($_SESSION['farmer_data']);
                     }
                     
                     // Redirect to refresh the page with new data
@@ -335,7 +272,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 if (isset($_GET['message'])) {
     $update_message = $_GET['message'];
 }
+
+
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
