@@ -265,11 +265,11 @@ $profile_pic = displayProfileImage($farmer_data['profile_picture']);
         </div>
     </div>
 
-    <!-- Main Grid -->
-  
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+  <!-- Main Grid -->
+<div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Row 1: Top 3 cards side by side -->
     <!-- Pineapple Planted -->
-    <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4 order-1">
+    <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4">
         <div class="text-center bg-[#CAEED5] py-2 font-semibold text-green-800 rounded">Total of Pineapple planted</div>
         <div class="text-center py-6">
             <div class="text-6xl font-bold text-white"><?= number_format($total_planted) ?></div>
@@ -282,24 +282,7 @@ $profile_pic = displayProfileImage($farmer_data['profile_picture']);
             </div>
         </form>
     </div>
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Pineapple Planted -->
-        <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4">
-            <div class="text-center bg-[#CAEED5] py-2 font-semibold text-green-800 rounded">Total of Pineapple planted</div>
-            <div class="text-center py-6">
-                <div class="text-6xl font-bold text-white"><?= number_format($total_planted) ?></div>
-            </div>
-            <form method="POST" class="mt-2">
-                <div class="flex items-center gap-2">
-                    <button type="submit" name="reset_planted" class="bg-[#FCAE36] px-3 py-1 rounded text-black font-medium">Reset</button>
-                    <input type="number" name="planted_amount" placeholder="+" class="flex-grow bg-white rounded p-1 text-left">
-                    <button type="submit" name="add_planted" class="bg-[#4CAF50] px-3 py-1 rounded text-white font-medium">ADD</button>
-                </div>
-            </form>
-        </div>
 
-    <!-- Right Column: Pinabulaklak and Na Peste stacked -->
-<div class="flex flex-col gap-6 order-2 md:order-2 lg:order-2 md:col-span-1 lg:col-span-1">
     <!-- Pinabulaklak -->
     <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4">
         <div class="text-center bg-[#CAEED5] py-2 font-semibold text-green-800 rounded">Pinabulaklak</div>
@@ -329,20 +312,17 @@ $profile_pic = displayProfileImage($farmer_data['profile_picture']);
             </div>
         </form>
     </div>
-</div>
 
-
-
-
-    <!-- Fertilizer Usage - Numbers only for sacks and grams -->
-    <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4 order-4 md:order-3 lg:order-3 md:col-span-2 lg:col-span-1">
+    <!-- Row 2: Two tables side by side -->
+    <!-- Fertilizer Usage -->
+    <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4 md:col-span-1 lg:col-span-1.5">
         <!-- Header -->
         <div class="text-center bg-[#CAEED5] py-1.5 text-sm font-medium text-green-800 rounded">
             Fertilizer Usage
         </div>
         
         <!-- Table container with adaptive height -->
-        <div class="mt-3 overflow-y-auto h-64 md:h-80">
+        <div class="mt-3 overflow-y-auto h-52 md:h-52 lg:h-52">
             <table class="w-full text-white">
                 <thead class="bg-[#115D5B] sticky top-0">
                     <tr>
@@ -377,61 +357,6 @@ $profile_pic = displayProfileImage($farmer_data['profile_picture']);
                 </tbody>
             </table>
         </div>
-        <!-- Fertilizer Usage -->
-        <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4">
-            <div class="text-center bg-[#CAEED5] py-1.5 text-sm font-medium text-green-800 rounded">Fertilizer Usage</div>
-            <div class="mt-3 overflow-y-auto" style="max-height: <?php echo !empty($fertilizer_data) ? '80vh' : 'auto'; ?>">
-                <table class="w-full text-white">
-                    <thead class="bg-[#115D5B]">
-                        <tr>
-                            <th class="px-2 py-1 text-sm">Month</th>
-                            <th>Type</th>
-                            <th>Per Plant (g)</th>
-                            <th>Sacks</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if (!empty($fertilizer_data)): ?>
-                            <?php foreach ($fertilizer_data as $entry): ?>
-                                <tr class="text-center border-b border-[#115D5B]">
-                                    <td class="p-2"><?= htmlspecialchars($entry['month']) ?></td>
-                                    <td><?= htmlspecialchars($entry['type']) ?></td>
-                                    <td><?= number_format($entry['per_plant_grams'], 2) ?>g</td>
-                                    <td><?= htmlspecialchars($entry['sacks']) ?> sacks</td>
-                                    <td>
-                                        <form method="POST" style="display: inline;">
-                                            <input type="hidden" name="fertilizer_id" value="<?= $entry['id'] ?>">
-                                            <button type="submit" name="reset_fertilizer" class="font-bold text-red-400 hover:text-red-600 bg-[#CAEED5] p-1 rounded-lg">Reset</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <tr>
-                                <td colspan="5" class="text-center py-4 text-gray-400">No fertilizer records found</td>
-                            </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Fertilizer Form -->
-            <div id="fertilizerForm" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div class="bg-white p-6 rounded-lg w-96">
-                    <h3 class="text-xl font-bold mb-4">Add Fertilizer Data</h3>
-                    <form method="POST">
-                        <input type="month" name="month" class="w-full p-2 mb-2 border rounded" required>
-                        <input type="text" name="type" placeholder="Fertilizer Type" class="w-full p-2 mb-2 border rounded" required>
-                        <input type="number" step="0.01" name="per_plant" placeholder="Grams per plant" class="w-full p-2 mb-2 border rounded" required>
-                        <input type="number" name="sacks" placeholder="Number of sacks" class="w-full p-2 mb-2 border rounded" required>
-                        <div class="flex gap-2 mt-4">
-                            <button type="button" onclick="closeFertilizerForm()" class="flex-1 bg-gray-500 text-white px-4 py-2 rounded">Cancel</button>
-                            <button type="submit" name="add_fertilizer" class="flex-1 bg-[#4CAF50] text-white px-4 py-2 rounded">Add</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
 
         <div class="flex items-center gap-2 mt-4">
             <form method="POST" style="display: inline;">
@@ -447,17 +372,15 @@ $profile_pic = displayProfileImage($farmer_data['profile_picture']);
         </div>
     </div>
 
-    
-
-    <!-- NEW: Pest Types Tracking Table - Added below Na Peste -->
-    <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4 order-6 md:col-span-2 lg:col-span-1">
+    <!-- Pest Types Tracking Table -->
+    <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4 md:col-span-2 lg:col-span-1.5">
         <!-- Header -->
         <div class="text-center bg-[#CAEED5] py-1.5 text-sm font-medium text-green-800 rounded">
             Pest Types Tracking
         </div>
         
         <!-- Table container with adaptive height -->
-        <div class="mt-3 overflow-y-auto h-64 md:h-80">
+        <div class="mt-3 overflow-y-auto h-52 md:h-52 lg:h-52">
             <table class="w-full text-white">
                 <thead class="bg-[#115D5B] sticky top-0">
                     <tr>
@@ -507,17 +430,17 @@ $profile_pic = displayProfileImage($farmer_data['profile_picture']);
         </div>
     </div>
 
-    <!-- Harvest Chart -->
-    <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4 order-6 md:order-6 lg:order-6">
-        <div class="flex justify-center h-58 relative">
-            <canvas id="harvestChart" class="max-w-full"></canvas>
+    <!-- Row 3: Harvest Chart (Full Width) -->
+    <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4 md:col-span-1 lg:col-span-3">
+        <div class="flex justify-center h-40 md:h-48 lg:h-40 relative">
+            <canvas id="harvestChart" class="max-w-full max-h-full"></canvas>
             <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-xl font-bold">
                 <?= $harvested_percent ?>% Harvested
             </div>
         </div>
-        <div class="flex justify-center mt-4 text-white">
+        <div class="flex justify-center mt-2 text-white">
             <div class="flex flex-col items-center">
-                <div class="flex justify-center gap-4 mb-2">
+                <div class="flex justify-center gap-4 mb-1">
                     <div class="flex items-center">
                         <div class="w-3 h-3 bg-[#4CAF50] mr-1"></div>
                         <span>Harvested (<?= $harvested_percent ?>%)</span>
@@ -528,7 +451,7 @@ $profile_pic = displayProfileImage($farmer_data['profile_picture']);
                     </div>
                 </div>
                 <div>Total Harvest: <?= $actual_harvest ?></div>
-                <form method="POST" class="mt-3">
+                <form method="POST" class="mt-2">
                     <button name="harvest_button" type="submit" class="bg-[#4CAF50] px-4 py-2 rounded text-white font-medium">Harvest</button>
                 </form>
             </div>
@@ -537,7 +460,7 @@ $profile_pic = displayProfileImage($farmer_data['profile_picture']);
 </div>
 
 <!-- Fertilizer Form Modal -->
-<<div id="fertilizerForm" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+<div id="fertilizerForm" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white p-6 rounded-lg w-full max-w-md mx-4">
         <h3 class="text-xl font-bold mb-4">Add Fertilizer Data</h3>
         <form method="POST">
@@ -553,7 +476,7 @@ $profile_pic = displayProfileImage($farmer_data['profile_picture']);
     </div>
 </div>
 
-<!-- NEW: Pest Form Modal -->
+<!-- Pest Form Modal -->
 <div id="pestForm" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white p-6 rounded-lg w-full max-w-md mx-4">
         <h3 class="text-xl font-bold mb-4">Add Pest Tracking Data</h3>
