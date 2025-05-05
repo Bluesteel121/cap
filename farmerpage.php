@@ -46,23 +46,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit();
         } 
         // Planted handlers
-        elseif (isset($_POST['add_planted'])) {
-            $amount = intval($_POST['planted_amount'] ?? 1);
-            $stmt = $conn->prepare("UPDATE farmer_acc SET total_planted = total_planted + ? WHERE farmer_id = ?");
-            $stmt->bind_param("ii", $amount, $farmer_id);
-            $stmt->execute();
-            $farmer_data['total_planted'] = ($farmer_data['total_planted'] ?? 0) + $amount;
-            header("Location: ".$_SERVER['PHP_SELF']);
-            exit();
-        } 
-        elseif (isset($_POST['reset_planted'])) {
-            $stmt = $conn->prepare("UPDATE farmer_acc SET total_planted = 0 WHERE farmer_id = ?");
-            $stmt->bind_param("i", $farmer_id);
-            $stmt->execute();
-            $farmer_data['total_planted'] = 0;
-            header("Location: ".$_SERVER['PHP_SELF']);
-            exit();
-        }
+elseif (isset($_POST['add_planted'])) {
+    $amount = intval($_POST['planted_amount'] ?? 1);
+    $stmt = $conn->prepare("UPDATE farmer_acc SET total_planted = total_planted + ? WHERE farmer_id = ?");
+    if (!$stmt) {
+        die("Prepare failed: " . $conn->error);
+    }
+    $stmt->bind_param("ii", $amount, $farmer_id);
+    $stmt->execute();
+    $farmer_data['total_planted'] = ($farmer_data['total_planted'] ?? 0) + $amount;
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit();
+} 
+elseif (isset($_POST['reset_planted'])) {
+    if (!isset($farmer_id)) {
+        die("Error: farmer_id is not set.");
+    }
+    $stmt = $conn->prepare("UPDATE farmer_acc SET total_planted = 0 WHERE farmer_id = ?");
+    if (!$stmt) {
+        die("Prepare failed: " . $conn->error);
+    }
+    $stmt->bind_param("i", $farmer_id);
+    $stmt->execute();
+    $farmer_data['total_planted'] = 0;
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit();
+}
+       
         // Harvest handler
         elseif (isset($_POST['harvest_button'])) {
             $flowered = $farmer_data['flowered'] ?? 0;
@@ -430,34 +440,6 @@ $profile_pic = displayProfileImage($farmer_data['profile_picture']);
         </div>
     </div>
 
-    <!-- Row 3: Harvest Chart (Full Width) -->
-    <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4 md:col-span-1 lg:col-span-3">
-        <div class="flex justify-center h-40 md:h-48 lg:h-40 relative">
-            <canvas id="harvestChart" class="max-w-full max-h-full"></canvas>
-            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-xl font-bold">
-                <?= $harvested_percent ?>% Harvested
-            </div>
-        </div>
-        <div class="flex justify-center mt-2 text-white">
-            <div class="flex flex-col items-center">
-                <div class="flex justify-center gap-4 mb-1">
-                    <div class="flex items-center">
-                        <div class="w-3 h-3 bg-[#4CAF50] mr-1"></div>
-                        <span>Harvested (<?= $harvested_percent ?>%)</span>
-                    </div>
-                    <div class="flex items-center">
-                        <div class="w-3 h-3 bg-[#FCAE36] mr-1"></div>
-                        <span>Damaged (<?= $damaged_percent ?>%)</span>
-                    </div>
-                </div>
-                <div>Total Harvest: <?= $actual_harvest ?></div>
-                <form method="POST" class="mt-2">
-                    <button name="harvest_button" type="submit" class="bg-[#4CAF50] px-4 py-2 rounded text-white font-medium">Harvest</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- Fertilizer Form Modal -->
 <div id="fertilizerForm" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -507,6 +489,37 @@ $profile_pic = displayProfileImage($farmer_data['profile_picture']);
         </form>
     </div>
 </div>
+
+
+ <!-- Row 3: Harvest Chart (Full Width) -->
+ <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4 md:col-span-1 lg:col-span-3">
+        <div class="flex justify-center h-40 md:h-48 lg:h-40 relative">
+            <canvas id="harvestChart" class="max-w-full max-h-full"></canvas>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-xl font-bold">
+                <?= $harvested_percent ?>% Harvested
+            </div>
+        </div>
+        <div class="flex justify-center mt-2 text-white">
+            <div class="flex flex-col items-center">
+                <div class="flex justify-center gap-4 mb-1">
+                    <div class="flex items-center">
+                        <div class="w-3 h-3 bg-[#4CAF50] mr-1"></div>
+                        <span>Harvested (<?= $harvested_percent ?>%)</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-3 h-3 bg-[#FCAE36] mr-1"></div>
+                        <span>Damaged (<?= $damaged_percent ?>%)</span>
+                    </div>
+                </div>
+                <div>Total Harvest: <?= $actual_harvest ?></div>
+                <form method="POST" class="mt-2">
+                    <button name="harvest_button" type="submit" class="bg-[#4CAF50] px-4 py-2 rounded text-white font-medium">Harvest</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <script>
 function openFertilizerForm() {
