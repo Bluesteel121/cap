@@ -1,0 +1,54 @@
+[2025-05-06 17:09:21] Database Connection Status: Connected
+[2025-05-06 17:09:21] Attempting login - Username: john, Role: staff
+[2025-05-06 17:09:21] Total users in database: 2
+[2025-05-06 17:09:21] Existing User - Username: dave, Role: dev
+[2025-05-06 17:09:21] Existing User - Username: john, Role: staff
+[2025-05-06 17:09:21] Query result rows: 1
+[2025-05-06 17:09:21] Stored Password: pass
+[2025-05-06 17:09:21] Submitted Password: pass
+[2025-05-06 17:09:21] Password match. Redirecting to index.php
+[2025-05-06 17:10:58] Database Connection Status: Connected
+[2025-05-06 17:10:58] Attempting login - Username: john, Role: staff
+[2025-05-06 17:10:58] Total users in database: 2
+[2025-05-06 17:10:58] Existing User - Username: dave, Role: dev
+[2025-05-06 17:10:58] Existing User - Username: john, Role: staff
+[2025-05-06 17:10:58] Query result rows: 1
+[2025-05-06 17:10:58] Stored Password: pass
+[2025-05-06 17:10:58] Submitted Password: pass
+[2025-05-06 17:10:58] Password match. Redirecting to index.php
+[2025-05-06 17:11:04] Database Connection Status: Connected
+[2025-05-06 17:11:04] Attempting login - Username: john, Role: staff
+[2025-05-06 17:11:04] Total users in database: 2
+[2025-05-06 17:11:04] Existing User - Username: dave, Role: dev
+[2025-05-06 17:11:04] Existing User - Username: john, Role: staff
+[2025-05-06 17:11:04] Query result rows: 1
+[2025-05-06 17:11:04] Stored Password: pass
+[2025-05-06 17:11:04] Submitted Password: pass
+[2025-05-06 17:11:04] Password match. Redirecting to index.php
+[2025-05-06 17:11:55] Database Connection Status: Connected
+[2025-05-06 17:11:55] Attempting login - Username: john, Role: staff
+[2025-05-06 17:11:55] Total users in database: 2
+[2025-05-06 17:11:55] Existing User - Username: dave, Role: dev
+[2025-05-06 17:11:55] Existing User - Username: john, Role: staff
+[2025-05-06 17:11:55] Query result rows: 1
+[2025-05-06 17:11:55] Stored Password: pass
+[2025-05-06 17:11:55] Submitted Password: pass
+[2025-05-06 17:11:55] Password match. Redirecting to index.php
+[2025-05-06 17:15:44] Database Connection Status: Connected
+[2025-05-06 17:15:44] Attempting login - Username: john, Role: staff
+[2025-05-06 17:15:44] Total users in database: 2
+[2025-05-06 17:15:44] Existing User - Username: dave, Role: dev
+[2025-05-06 17:15:44] Existing User - Username: john, Role: staff
+[2025-05-06 17:15:44] Query result rows: 1
+[2025-05-06 17:15:44] Stored Password: pass
+[2025-05-06 17:15:44] Submitted Password: pass
+[2025-05-06 17:15:44] Password match. Redirecting to index.php
+[2025-05-06 17:30:13] Database Connection Status: Connected
+[2025-05-06 17:30:13] Attempting login - Username: john, Role: staff
+[2025-05-06 17:30:13] Total users in database: 2
+[2025-05-06 17:30:13] Existing User - Username: dave, Role: dev
+[2025-05-06 17:30:13] Existing User - Username: john, Role: staff
+[2025-05-06 17:30:13] Query result rows: 1
+[2025-05-06 17:30:13] Stored Password: pass
+[2025-05-06 17:30:13] Submitted Password: pass
+[2025-05-06 17:30:13] Password match. Redirecting to index.php
