@@ -46,32 +46,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit();
         } 
         // Planted handlers
-elseif (isset($_POST['add_planted'])) {
-    $amount = intval($_POST['planted_amount'] ?? 1);
-    $stmt = $conn->prepare("UPDATE farmer_acc SET total_planted = total_planted + ? WHERE farmer_id = ?");
-    if (!$stmt) {
-        die("Prepare failed: " . $conn->error);
-    }
-    $stmt->bind_param("ii", $amount, $farmer_id);
-    $stmt->execute();
-    $farmer_data['total_planted'] = ($farmer_data['total_planted'] ?? 0) + $amount;
-    header("Location: " . $_SERVER['PHP_SELF']);
-    exit();
-} 
-elseif (isset($_POST['reset_planted'])) {
-    if (!isset($farmer_id)) {
-        die("Error: farmer_id is not set.");
-    }
-    $stmt = $conn->prepare("UPDATE farmer_acc SET total_planted = 0 WHERE farmer_id = ?");
-    if (!$stmt) {
-        die("Prepare failed: " . $conn->error);
-    }
-    $stmt->bind_param("i", $farmer_id);
-    $stmt->execute();
-    $farmer_data['total_planted'] = 0;
-    header("Location: " . $_SERVER['PHP_SELF']);
-    exit();
-}
+        elseif (isset($_POST['add_planted'])) {
+            $amount = intval($_POST['planted_amount'] ?? 1);
+            $stmt = $conn->prepare("UPDATE farmer_acc SET total_planted = total_planted + ? WHERE farmer_id = ?");
+            if (!$stmt) {
+                die("Prepare failed: " . $conn->error);
+            }
+            $stmt->bind_param("ii", $amount, $farmer_id);
+            $stmt->execute();
+            $farmer_data['total_planted'] = ($farmer_data['total_planted'] ?? 0) + $amount;
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit();
+        } 
+        elseif (isset($_POST['reset_planted'])) {
+            if (!isset($farmer_id)) {
+                die("Error: farmer_id is not set.");
+            }
+            $stmt = $conn->prepare("UPDATE farmer_acc SET total_planted = 0 WHERE farmer_id = ?");
+            if (!$stmt) {
+                die("Prepare failed: " . $conn->error);
+            }
+            $stmt->bind_param("i", $farmer_id);
+            $stmt->execute();
+            $farmer_data['total_planted'] = 0;
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit();
+        }
        
         // Harvest handler
         elseif (isset($_POST['harvest_button'])) {
@@ -144,6 +144,60 @@ elseif (isset($_POST['reset_planted'])) {
             header("Location: ".$_SERVER['PHP_SELF']);
             exit();
         }
+        // Pest tracking handlers
+        elseif (isset($_POST['add_pest'])) {
+            $pest_date = $_POST['pest_date'];
+            $pest_type = $_POST['pest_type'];
+            $affected_area = $_POST['affected_area'];
+            $severity = $_POST['severity'];
+            
+            // Store pest data as JSON in farmer_acc
+            $pest_data = json_decode($farmer_data['pest_data'] ?? '[]', true);
+            $pest_data[] = [
+                'id' => uniqid(),
+                'date' => $pest_date,
+                'type' => $pest_type,
+                'area' => $affected_area,
+                'severity' => $severity,
+                'created_at' => date('Y-m-d H:i:s')
+            ];
+            
+            $json_pest = json_encode($pest_data);
+            $stmt = $conn->prepare("UPDATE farmer_acc SET pest_data = ? WHERE farmer_id = ?");
+            $stmt->bind_param("si", $json_pest, $farmer_id);
+            $stmt->execute();
+            
+            $farmer_data['pest_data'] = $json_pest;
+            header("Location: ".$_SERVER['PHP_SELF']);
+            exit();
+        }
+        elseif (isset($_POST['reset_pest'])) {
+            $pest_id = $_POST['pest_id'];
+            $pest_data = json_decode($farmer_data['pest_data'] ?? '[]', true);
+            
+            // Filter out the pest with the matching ID
+            $filtered_data = array_filter($pest_data, function($item) use ($pest_id) {
+                return $item['id'] !== $pest_id;
+            });
+            
+            $json_pest = json_encode(array_values($filtered_data));
+            $stmt = $conn->prepare("UPDATE farmer_acc SET pest_data = ? WHERE farmer_id = ?");
+            $stmt->bind_param("si", $json_pest, $farmer_id);
+            $stmt->execute();
+            
+            $farmer_data['pest_data'] = $json_pest;
+            header("Location: ".$_SERVER['PHP_SELF']);
+            exit();
+        }
+        elseif (isset($_POST['reset_all_pests'])) {
+            $stmt = $conn->prepare("UPDATE farmer_acc SET pest_data = '[]' WHERE farmer_id = ?");
+            $stmt->bind_param("i", $farmer_id);
+            $stmt->execute();
+            
+            $farmer_data['pest_data'] = '[]';
+            header("Location: ".$_SERVER['PHP_SELF']);
+            exit();
+        }
     } catch (Exception $e) {
         echo "<div class='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4'>Error: " . $e->getMessage() . "</div>";
     }
@@ -159,11 +213,14 @@ $last_harvest = $farmer_data['last_harvest'] ?? '0 pcs';
 // Parse fertilizer data from JSON
 $fertilizer_data = json_decode($farmer_data['fertilizer_data'] ?? '[]', true);
 
+// Parse pest data from JSON
+$pest_data = json_decode($farmer_data['pest_data'] ?? '[]', true);
+
 // Calculate harvest stats
 $actual_harvest = max(0, $flowered - $pested);
 $total = $flowered + $pested;
-$harvested_percent = $total > 0 ? round(($flowered / $total) * 100) : 00;
-$damaged_percent = $total > 0 ? round(($pested / $total) * 100) : 00;
+$harvested_percent = $total > 0 ? round(($flowered / $total) * 100) : 0;
+$damaged_percent = $total > 0 ? round(($pested / $total) * 100) : 0;
 
 // Farmer display info
 $farmer_name = $farmer_data['username'] ?? 'Ricardo Dela Cruz';
@@ -213,14 +270,16 @@ $profile_pic = displayProfileImage($farmer_data['profile_picture']);
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                     </svg>
                     Home</a></li>
+                
                 <li><a href="farmerprofile.php" class="flex items-center  p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                     </svg>
                     Profile</a></li>
-                <li><a href="#" class="flex items-center  p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">
+
+                    <li><a href="farmernotif.php" class="flex items-center  p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                     </svg>
                     Notifications</a></li>
                 <li><a href="#" class="flex items-center  p-2 text-red-500 hover:text-red-700" onclick="openLogoutModal()">
