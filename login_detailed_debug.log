@@ -169,3 +169,15 @@
 [2025-04-22 19:46:14] Existing User - Username: john, Role: staff
 [2025-04-22 19:46:14] Query result rows: 0
 [2025-04-22 19:46:14] No matching user found for Username: dave, Role: staff
+[2025-05-06 06:39:18] Database Connection Status: Connected
+[2025-05-06 06:39:18] Attempting login - Username: john, Role: staff
+[2025-05-06 06:39:18] Total users in database: 2
+[2025-05-06 06:39:18] Existing User - Username: dave, Role: dev
+[2025-05-06 06:39:18] Existing User - Username: john, Role: staff
+[2025-05-06 06:39:18] Query result rows: 1
+[2025-05-06 06:39:18] Stored Password: pass
+[2025-05-06 06:39:18] Submitted Password: pass
+[2025-05-06 06:39:18] Password match. Redirecting to index.php
+[2025-05-06 15:08:50] Database Connection Status: Connected
+[2025-05-06 15:08:50] Attempting login - Username: john, Role: staff
+[2025-05-06 15:08:55] Total users in database: 
