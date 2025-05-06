@@ -21,8 +21,12 @@ function getFarmerData($conn) {
     if (isset($_SESSION['farmer_id']) && !empty($_SESSION['farmer_id'])) {
         $farmer_id = $_SESSION['farmer_id'];
         $sql = "SELECT * FROM farmer_acc WHERE farmer_id = ?";
-        $stmt = $conn->prepare($sql);
+        $stmt = $conn->prepare("SELECT SQL_NO_CACHE * FROM farmer_acc WHERE farmer_id = ? LIMIT 1");
         $stmt->bind_param("i", $farmer_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        return $result->fetch_assoc();
     }
     // Then check various login methods
     elseif (isset($_SESSION['username']) && !empty($_SESSION['username'])) {

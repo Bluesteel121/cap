@@ -42,7 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $address = $_POST['address'];
     $farm_location = $_POST['farm_location'];
     $varieties = $_POST['varieties'];
-    $farm_size = $_POST['farm_size'];
+    $plantation_area = $_POST['plantation_area']; // Collecting plantation_area from form
     $yield = $_POST['yield'];
     $years_farming = $_POST['years_farming'];
     $market = $_POST['market'];
@@ -106,9 +106,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $param_types .= "s";
         $param_values[] = $varieties;
         
-        $sql_parts[] = "farm_size = ?";
+        $sql_parts[] = "plantation_area = ?"; // Changed from farm_size to plantation_area
         $param_types .= "s";
-        $param_values[] = $farm_size;
+        $param_values[] = $plantation_area;
         
         $sql_parts[] = "yield = ?";
         $param_types .= "s";
@@ -272,8 +272,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 if (isset($_GET['message'])) {
     $update_message = $_GET['message'];
 }
-
-
 ?>
 
 
@@ -502,11 +500,11 @@ if (isset($_GET['message'])) {
                             
                             <!-- Farm Size -->
                             <div>
-                                <label for="farm_size" class="block text-sm font-medium text-gray-700">Farm Size (hectares)</label>
-                                <input type="text" name="farm_size" id="farm_size" value="<?php echo htmlspecialchars($farmer_data['farm_size']); ?>" 
-                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring focus:ring-green-500 focus:ring-opacity-50 
-                                              bg-white text-gray-800 px-3 py-2">
-                            </div>
+                                    <label for="plantation_area" class="block text-sm font-medium text-gray-700">Farm Size (hectares)</label>
+                                    <input type="text" name="plantation_area" id="plantation_area" value="<?php echo htmlspecialchars($farmer_data['plantation_area']); ?>"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring focus:ring-green-500 focus:ring-opacity-50 
+                                    bg-white text-gray-800 px-3 py-2">
+                                </div>
                             
                             <!-- Yield -->
                             <div>
