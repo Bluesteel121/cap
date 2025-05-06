@@ -5,7 +5,7 @@ ini_set('display_errors', 1);
 session_start();
 function debugLog($message) {
     error_log($message);
-    file_put_contents('login_debug.log', date('[Y-m-d H:i:s] ') . $message . PHP_EOL, FILE_APPEND);
+    file_put_contents('farmer_login.log', date('[Y-m-d H:i:s] ') . $message . PHP_EOL, FILE_APPEND);
 }
 
 
