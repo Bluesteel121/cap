@@ -202,3 +202,12 @@
 [2025-05-06 18:09:57] Stored Password: pass
 [2025-05-06 18:09:57] Submitted Password: pass
 [2025-05-06 18:09:57] Password match. Redirecting to index.php
+[2025-05-09 20:30:30] Database Connection Status: Connected
+[2025-05-09 20:30:30] Attempting login - Username: john, Role: staff
+[2025-05-09 20:30:30] Total users in database: 2
+[2025-05-09 20:30:30] Existing User - Username: dave, Role: dev
+[2025-05-09 20:30:30] Existing User - Username: john, Role: staff
+[2025-05-09 20:30:30] Query result rows: 1
+[2025-05-09 20:30:30] Stored Password: pass
+[2025-05-09 20:30:30] Submitted Password: pass
+[2025-05-09 20:30:30] Password match. Redirecting to index.php
