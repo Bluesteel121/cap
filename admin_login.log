@@ -211,3 +211,43 @@
 [2025-05-09 20:30:30] Stored Password: pass
 [2025-05-09 20:30:30] Submitted Password: pass
 [2025-05-09 20:30:30] Password match. Redirecting to index.php
+[2025-05-13 20:27:35] Database Connection Status: Connected
+[2025-05-13 20:27:35] Attempting login - Username: buddy, Role: staff
+[2025-05-13 20:27:35] Total users in database: 3
+[2025-05-13 20:27:35] Existing User - Username: dave, Role: dev
+[2025-05-13 20:27:35] Existing User - Username: john, Role: staff
+[2025-05-13 20:27:35] Existing User - Username: buddy, Role: staff
+[2025-05-13 20:27:35] Query result rows: 1
+[2025-05-13 20:27:35] Stored Password: pass
+[2025-05-13 20:27:35] Submitted Password: pass
+[2025-05-13 20:27:35] Password match. Redirecting to index.php
+[2025-05-13 20:33:58] Database Connection Status: Connected
+[2025-05-13 20:33:58] Attempting login - Username: buddy, Role: staff
+[2025-05-13 20:33:58] Total users in database: 3
+[2025-05-13 20:33:58] Existing User - Username: dave, Role: dev
+[2025-05-13 20:33:58] Existing User - Username: john, Role: staff
+[2025-05-13 20:33:58] Existing User - Username: buddy, Role: staff
+[2025-05-13 20:33:58] Query result rows: 1
+[2025-05-13 20:33:58] Stored Password: pass
+[2025-05-13 20:33:58] Submitted Password: pass
+[2025-05-13 20:33:58] Password match. Redirecting to index.php
+[2025-05-13 20:53:04] Database Connection Status: Connected
+[2025-05-13 20:53:04] Attempting login - Username: buddy, Role: staff
+[2025-05-13 20:53:04] Total users in database: 3
+[2025-05-13 20:53:04] Existing User - Username: dave, Role: dev
+[2025-05-13 20:53:04] Existing User - Username: john, Role: staff
+[2025-05-13 20:53:04] Existing User - Username: buddy, Role: staff
+[2025-05-13 20:53:04] Query result rows: 1
+[2025-05-13 20:53:04] Stored Password: pass
+[2025-05-13 20:53:04] Submitted Password: pass
+[2025-05-13 20:53:04] Password match. Redirecting to index.php
+[2025-05-13 20:55:06] Database Connection Status: Connected
+[2025-05-13 20:55:06] Attempting login - Username: buddy, Role: staff
+[2025-05-13 20:55:06] Total users in database: 3
+[2025-05-13 20:55:06] Existing User - Username: dave, Role: dev
+[2025-05-13 20:55:06] Existing User - Username: john, Role: staff
+[2025-05-13 20:55:06] Existing User - Username: buddy, Role: staff
+[2025-05-13 20:55:06] Query result rows: 1
+[2025-05-13 20:55:06] Stored Password: pass
+[2025-05-13 20:55:06] Submitted Password: pass
+[2025-05-13 20:55:06] Password match. Redirecting to index.php

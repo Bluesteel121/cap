@@ -4,8 +4,21 @@ require_once 'db_connect.php';
 include "connect.php";
 
 $conn = new mysqli("localhost", "root", "", "capstone");
-$farmer_data = getFarmerData($conn);
-$farmer_id = $farmer_data['farmer_id'];
+
+$user_id = $_SESSION['user_id'] ?? 1; // Default to user ID 1 if not set
+
+$user_query = "SELECT name, position FROM accounts WHERE id = ?";
+$stmt = $conn->prepare($user_query);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$user_result = $stmt->get_result();
+$user_info = $user_result->fetch_assoc();
+
+$user_name = $user_info['name'] ?? 'Unknown';
+$user_position = $user_info['position'] ?? 'Unknown';
+
+// Note: Added this to define the profile pic variable which was used but not defined
+$profile_pic = 'default-profile.jpg'; // Provide a default value or fetch from database if needed
 
 ?>
 
@@ -37,14 +50,8 @@ $farmer_id = $farmer_data['farmer_id'];
     <div>
     <div class="flex flex-col items-center text-center">
             <img src="<?= htmlspecialchars($profile_pic) ?>" alt="Profile" class="w-20 h-20 rounded-full border mb-2">
-            <h2 class="font-bold"><?= htmlspecialchars($farmer_data['name'] ?? $farmer_data['username'] ?? 'Farmer') ?></h2>
-            <p class="text-sm"><?= htmlspecialchars($contact_num) ?></p>
-            <p class="text-sm italic">Farmer</p>
-            <?php if(isset($farmer_data['status'])): ?>
-                <p class="text-xs mt-1 px-2 py-1 rounded-full <?= $farmer_data['status'] == 'Active' ? 'bg-green-600' : 'bg-red-600' ?>">
-                    <?= htmlspecialchars($farmer_data['status']) ?>
-                </p>
-            <?php endif; ?>
+            <h2 class="font-bold"><?= htmlspecialchars($user_name) ?></h2>
+            <p class="text-sm italic"><?= htmlspecialchars($user_position) ?></p>
         </div>
 
         <nav class="mt-6">
