@@ -5,7 +5,7 @@ include "connect.php";
 
 $conn = new mysqli("localhost", "root", "", "capstone");
 
-$user_id = $_SESSION['user_id'] ?? 1; // Default to user ID 1 if not set
+$user_id = $_SESSION['user_id'] ?? 1; 
 
 $user_query = "SELECT name, position FROM accounts WHERE id = ?";
 $stmt = $conn->prepare($user_query);
@@ -17,8 +17,7 @@ $user_info = $user_result->fetch_assoc();
 $user_name = $user_info['name'] ?? 'Unknown';
 $user_position = $user_info['position'] ?? 'Unknown';
 
-// Note: Added this to define the profile pic variable which was used but not defined
-$profile_pic = 'default-profile.jpg'; // Provide a default value or fetch from database if needed
+$profile_pic = 'default-profile.jpg'; 
 
 ?>
 
