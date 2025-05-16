@@ -49,17 +49,14 @@
                         </svg>
                         Profile</a>
                     </li>
-                </ul>
-            </nav>
-            
-            <div class="mt-auto pb-6 px-4">
-                <a href="#" class="flex items-center p-2 text-red-400 hover:text-red-300">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+                     <li><a href="#" class="flex items-center p-2 text-red-500 hover:text-red-700" onclick="openLogoutModal()">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                     </svg>
-                    Logout
-                </a>
-            </div>
+                    Logout</a></li>
+                </ul>
+            </nav>
         </aside>
         
         <!-- Main Content Area -->
@@ -195,5 +192,43 @@
             </div>
         </main>
     </div>
+
+    <!-- Logout Modal -->
+    <div id="logout-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white p-6 rounded-lg shadow-lg text-center w-80">
+            <h2 class="text-lg font-bold mb-4">Confirm Logout</h2>
+            <p class="mb-6">Are you sure you want to logout?</p>
+            <div class="flex justify-center gap-4">
+                <button onclick="confirmLogout()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded transition">Yes, Logout</button>
+                <button onclick="closeLogoutModal()" class="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded transition">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Logout Modal Functions
+        function openLogoutModal() {
+            document.getElementById('logout-modal').classList.remove('hidden');
+        }
+
+        function closeLogoutModal() {
+            document.getElementById('logout-modal').classList.add('hidden');
+        }
+
+        function confirmLogout() {
+            // Here you would typically redirect to a logout endpoint
+            // For now, we'll just close the modal and show an alert
+            closeLogoutModal();
+            alert('You have been logged out successfully.');
+            // window.location.href = '/logout'; // Uncomment this to actually log out
+        }
+
+        // Close modal when clicking outside of it
+        document.getElementById('logout-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLogoutModal();
+            }
+        });
+    </script>
 </body>
 </html>
