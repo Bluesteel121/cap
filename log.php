@@ -1,5 +1,4 @@
 <?php
-// Server-side log processing - no AJAX needed
 $logContent = [];
 $rawLogContent = '';
 $logError = null;
@@ -17,7 +16,7 @@ if (!in_array($activeLogType, $allowedLogTypes)) {
 $logFilePath = $activeLogType . '_login.log';
 
 // Process log file if requested
-if (isset($_GET['view_logs'])) {
+if (isset($_GET['view_logs']) || !isset($_GET['view_logs'])) { // Default to viewing logs
     // Check if log file exists and is readable
     if (!file_exists($logFilePath)) {
         $logError = [
@@ -106,6 +105,9 @@ if (isset($_GET['view_logs'])) {
                     ];
                 }
             }
+            
+            // Reverse the array to show latest logs first
+            $logContent = array_reverse($logContent);
         }
     }
 }
@@ -221,8 +223,7 @@ if (isset($conn) && !$conn->connect_error) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>System Logs</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Replace with actual Font Awesome kit -->
-    <script src="https://kit.fontawesome.com/your_actual_kit.js" crossorigin="anonymous"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script>
         function openLogoutModal() {
             document.getElementById('logout-modal').classList.remove('hidden');
@@ -268,256 +269,278 @@ if (isset($conn) && !$conn->connect_error) {
             if (rawView.classList.contains('hidden')) {
                 rawView.classList.remove('hidden');
                 toggleButton.textContent = 'Hide Raw Log Format';
+                toggleButton.classList.remove('bg-[#115D5B]');
+                toggleButton.classList.add('bg-[#0F3D3A]');
             } else {
                 rawView.classList.add('hidden');
                 toggleButton.textContent = 'Show Raw Log Format';
+                toggleButton.classList.remove('bg-[#0F3D3A]');
+                toggleButton.classList.add('bg-[#115D5B]');
             }
         }
         
-        // Initialize the page with home tab selected
+        // Initialize the page - always show logs by default
         document.addEventListener('DOMContentLoaded', function() {
-            showTab('<?php echo isset($_GET['view_logs']) ? "logs" : "home"; ?>');
+            // No need to call showTab as we're always showing logs now
         });
     </script>
+    <style>
+        /* Custom scrollbar for WebKit browsers */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0F3D3A;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #CAEED5;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #90C29E;
+        }
+        
+        /* Animation for status indicators */
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+        .status-active {
+            animation: pulse 2s infinite;
+        }
+    </style>
 </head>
-<body>
+<body class="bg-[#F0F7F4]">
     <!-- Sidebar -->
-    <aside class="w-1/4 bg-[#115D5B] p-6 h-screen fixed top-0 left-0 flex flex-col justify-between text-white">
+    <aside class="w-1/4 bg-gradient-to-b from-[#115D5B] to-[#0F3D3A] p-6 h-screen fixed top-0 left-0 flex flex-col justify-between text-white shadow-xl">
         <div>
-            <div class="flex flex-col items-center text-center">
-                <img src="<?= isset($profile_pic) ? htmlspecialchars($profile_pic) : 'default_avatar.png' ?>" alt="Profile" class="w-20 h-20 rounded-full border mb-2">
-                <h2 class="font-bold"><?= htmlspecialchars($user_name) ?></h2>
-                <p class="text-sm italic"><?= htmlspecialchars($user_position) ?></p>
+            <div class="flex flex-col items-center text-center mb-8">
+                <div class="relative">
+                    <img src="<?= isset($profile_pic) ? htmlspecialchars($profile_pic) : 'default_avatar.png' ?>" alt="Profile" class="w-24 h-24 rounded-full border-4 border-[#CAEED5] mb-3 object-cover shadow-md">
+                    <?php if(isset($status) && $status == 'Active'): ?>
+                        <span class="absolute bottom-3 right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-[#115D5B] status-active"></span>
+                    <?php endif; ?>
+                </div>
+                <h2 class="font-bold text-lg"><?= htmlspecialchars($user_name) ?></h2>
+                <p class="text-sm italic text-[#CAEED5]"><?= htmlspecialchars($user_position) ?></p>
                 <?php if(isset($contact_num)): ?>
-                    <p class="text-sm"><?= htmlspecialchars($contact_num) ?></p>
-                <?php endif; ?>
-                <?php if(isset($status)): ?>
-                    <p class="text-xs mt-1 px-2 py-1 rounded-full <?= $status == 'Active' ? 'bg-green-600' : 'bg-red-600' ?>">
-                        <?= htmlspecialchars($status) ?>
-                    </p>
+                    <p class="text-sm mt-1"><i class="fas fa-phone-alt text-xs mr-1"></i><?= htmlspecialchars($contact_num) ?></p>
                 <?php endif; ?>
             </div>
 
-            <nav class="mt-6">
-                <ul class="space-y-2">
-                    <li><a href="adminpage.php" class="flex items-center p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                        </svg>
+            <nav class="mt-8">
+                <ul class="space-y-3">
+                    <li><a href="adminpage.php" class="flex items-center p-3 hover:bg-[#CAEED5] hover:text-[#115D5B] rounded-lg transition-all duration-200">
+                        <i class="fas fa-home w-5 h-5 mr-3"></i>
                         Home</a></li>
                     
-                    <li><a href="#" class="flex items-center p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-                        </svg>
+                    <li><a href="#" class="flex items-center p-3 hover:bg-[#CAEED5] hover:text-[#115D5B] rounded-lg transition-all duration-200">
+                        <i class="fas fa-user w-5 h-5 mr-3"></i>
                         Profile</a></li>
 
-                    <li><a href="#" class="flex items-center p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                        </svg>
+                    <li><a href="#" class="flex items-center p-3 hover:bg-[#CAEED5] hover:text-[#115D5B] rounded-lg transition-all duration-200">
+                        <i class="fas fa-bell w-5 h-5 mr-3"></i>
                         Notifications</a></li>
                         
-                    <li><a href="log.php" class="flex items-center p-2 bg-[#CAEED5] text-green-700 rounded">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                        </svg>
+                    <li><a href="log.php" class="flex items-center p-3 bg-[#CAEED5] text-[#115D5B] rounded-lg font-medium shadow-md">
+                        <i class="fas fa-clipboard-list w-5 h-5 mr-3"></i>
                         System Logs</a></li>
                         
-                    <li><a href="#" class="flex items-center p-2 text-red-500 hover:text-red-700" onclick="openLogoutModal()">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                        </svg>
+                    <li><a href="#" class="flex items-center p-3 text-red-300 hover:bg-red-500 hover:text-white rounded-lg transition-all duration-200" onclick="openLogoutModal()">
+                        <i class="fas fa-sign-out-alt w-5 h-5 mr-3"></i>
                         Logout</a></li>
                 </ul>
             </nav>
         </div>
-        <footer class="text-center text-xs">&copy; 2025 Camarines Norte Lowland Rainfed Research Station</footer>
+        <footer class="text-center text-xs text-[#CAEED5]">&copy; 2025 Camarines Norte Lowland Rainfed Research Station</footer>
     </aside>
     
     <!-- Main Content -->
-    <main class="w-3/4 ml-[25%] p-6 bg-white">
-        <div class="bg-[#0F3D3A] p-6 rounded-lg border border-green-700 w-full max-w-7xl mx-auto h-[615px] overflow-y-auto">
-            <!-- Log Management Section -->
-            <div class="text-white mb-4">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-semibold">Log Management</h2>
-                    <div class="space-x-2">
-                        <a href="?view_logs=1&log_type=admin" class="px-4 py-2 rounded <?php echo $activeLogType == 'admin' ? 'bg-[#CAEED5] text-green-700' : 'bg-[#1A5E5C] text-white hover:bg-[#CAEED5] hover:text-green-700'; ?>">
-                            Admin Logs
+    <main class="w-3/4 ml-[25%] p-6">
+        <div class="bg-gradient-to-br from-[#0F3D3A] to-[#0A2E2C] p-6 rounded-xl border border-[#115D5B] shadow-lg w-full max-w-7xl mx-auto h-[calc(100vh-3rem)] overflow-hidden flex flex-col">
+            <!-- Header with Breadcrumb -->
+            <div class="flex justify-between items-center mb-4 text-white">
+                <div>
+                    <h1 class="text-2xl font-bold flex items-center">
+                        <i class="fas fa-clipboard-list mr-3 text-[#CAEED5]"></i>
+                        System Logs
+                    </h1>
+                    <div class="text-sm text-[#CAEED5] mt-1">
+                        Dashboard / <span class="text-white">System Logs</span>
+                    </div>
+                </div>
+                <div class="text-sm bg-[#115D5B] px-3 py-1 rounded-lg">
+                    <i class="far fa-clock mr-1"></i> <?php echo date('F d, Y h:i A'); ?>
+                </div>
+            </div>
+            
+            <!-- Log Navigation Tabs -->
+            <div class="flex items-center mb-4 bg-[#0A2E2C] rounded-lg p-1">
+                <a href="?log_type=admin" class="flex-1 px-4 py-2 text-center font-medium rounded-lg transition-all duration-200 <?php echo $activeLogType == 'admin' ? 'bg-[#CAEED5] text-[#115D5B]' : 'text-white hover:bg-[#115D5B]'; ?>">
+                    <i class="fas fa-user-shield mr-2"></i>Admin Logs
+                </a>
+                <a href="?log_type=farmer" class="flex-1 px-4 py-2 text-center font-medium rounded-lg transition-all duration-200 <?php echo $activeLogType == 'farmer' ? 'bg-[#CAEED5] text-[#115D5B]' : 'text-white hover:bg-[#115D5B]'; ?>">
+                    <i class="fas fa-tractor mr-2"></i>Farmer Logs
+                </a>
+                <a href="?log_type=client" class="flex-1 px-4 py-2 text-center font-medium rounded-lg transition-all duration-200 <?php echo $activeLogType == 'client' ? 'bg-[#CAEED5] text-[#115D5B]' : 'text-white hover:bg-[#115D5B]'; ?>">
+                    <i class="fas fa-users mr-2"></i>Client Logs
+                </a>
+            </div>
+            
+            <!-- Filters and Controls -->
+            <div class="bg-[#115D5B] p-4 rounded-t-lg border-b border-[#CAEED5]/20">
+                <form action="" method="GET" class="flex flex-wrap gap-3 items-end">
+                    <input type="hidden" name="log_type" value="<?php echo $activeLogType; ?>">
+                    
+                    <div class="flex-1 min-w-[200px]">
+                        <label for="search" class="block text-sm font-medium text-white mb-1">
+                            <i class="fas fa-search mr-1"></i> Search Logs
+                        </label>
+                        <input type="text" id="search" name="search" value="<?php echo htmlspecialchars($searchTerm); ?>" 
+                               placeholder="Search by keyword, user, or status..."
+                               class="w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#CAEED5] bg-[#0F3D3A] text-white border border-[#CAEED5]/30 placeholder-gray-400">
+                    </div>
+                    
+                    <div class="w-48">
+                        <label for="filter" class="block text-sm font-medium text-white mb-1">
+                            <i class="fas fa-filter mr-1"></i> Filter By Type
+                        </label>
+                        <select id="filter" name="filter" 
+                                class="w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#CAEED5] bg-[#0F3D3A] text-white border border-[#CAEED5]/30">
+                            <option value="all" <?php echo $filterType == 'all' ? 'selected' : ''; ?>>All Types</option>
+                            <option value="login" <?php echo $filterType == 'login' ? 'selected' : ''; ?>>Login Activities</option>
+                            <option value="registration" <?php echo $filterType == 'registration' ? 'selected' : ''; ?>>Registrations</option>
+                            <option value="attempt" <?php echo $filterType == 'attempt' ? 'selected' : ''; ?>>Login Attempts</option>
+                            <option value="other" <?php echo $filterType == 'other' ? 'selected' : ''; ?>>Other Actions</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <button type="submit" class="bg-[#CAEED5] hover:bg-green-200 text-[#115D5B] px-4 py-2 rounded-md font-medium transition-all duration-200 flex items-center">
+                            <i class="fas fa-search mr-2"></i> Apply Filters
+                        </button>
+                    </div>
+                    
+                    <div class="ml-auto flex gap-2">
+                        <a href="?export_csv=1&log_type=<?php echo $activeLogType; ?><?php 
+                            echo !empty($searchTerm) ? '&search=' . urlencode($searchTerm) : ''; 
+                            echo $filterType != 'all' ? '&filter=' . urlencode($filterType) : ''; 
+                        ?>" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-all duration-200 flex items-center">
+                            <i class="fas fa-file-csv mr-2"></i> Export CSV
                         </a>
-                        <a href="?view_logs=1&log_type=farmer" class="px-4 py-2 rounded <?php echo $activeLogType == 'farmer' ? 'bg-[#CAEED5] text-green-700' : 'bg-[#1A5E5C] text-white hover:bg-[#CAEED5] hover:text-green-700'; ?>">
-                            Farmer Logs
-                        </a>
-                        <a href="?view_logs=1&log_type=client" class="px-4 py-2 rounded <?php echo $activeLogType == 'client' ? 'bg-[#CAEED5] text-green-700' : 'bg-[#1A5E5C] text-white hover:bg-[#CAEED5] hover:text-green-700'; ?>">
-                            Client Logs
-                        </a>
+                        <button type="button" id="toggle-raw-view" onclick="toggleRawView()" 
+                                class="bg-[#115D5B] hover:bg-[#0F3D3A] text-white px-4 py-2 rounded-md transition-all duration-200 flex items-center">
+                            <i class="fas fa-code mr-2"></i> Show Raw Log
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Raw Log View (Hidden by default) -->
+            <div id="raw-log-view" class="hidden p-4 bg-[#0A2E2C] text-green-400 border border-green-800 rounded-md mb-3 overflow-auto max-h-[200px] font-mono text-sm">
+                <pre><?php echo htmlspecialchars($rawLogContent); ?></pre>
+            </div>
+            
+            <!-- Log Display -->
+            <div class="flex-1 overflow-auto bg-[#0A2E2C] rounded-b-lg">
+                <div class="sticky top-0 z-10 flex justify-between items-center p-3 bg-[#0A2E2C] border-b border-[#CAEED5]/20 text-white">
+                    <div class="font-semibold text-[#CAEED5]">
+                        <i class="fas fa-list-alt mr-2"></i> <?php echo ucfirst($activeLogType); ?> Activity Log
+                    </div>
+                    <div class="text-sm flex items-center">
+                        <span class="bg-[#115D5B] px-2 py-1 rounded-lg">
+                            <i class="fas fa-clipboard-check mr-1"></i>
+                            <?php echo count($logContent); ?> <?php echo count($logContent) === 1 ? 'entry' : 'entries'; ?> found
+                        </span>
                     </div>
                 </div>
                 
-                <?php if (!isset($_GET['view_logs'])): ?>
-                    <!-- Dashboard Overview if no logs selected -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-                        <div class="p-4 border rounded-lg bg-[#1A5E5C]">
-                            <h3 class="font-medium text-lg mb-2">Log Files Status</h3>
-                            <ul class="space-y-2">
-                                <li class="flex justify-between">
-                                    <span>Admin Logs:</span>
-                                    <span class="<?php echo $adminLogExists ? 'text-green-300' : 'text-red-300'; ?>">
-                                        <?php echo $logStatus['admin']; ?>
-                                    </span>
-                                </li>
-                                <li class="flex justify-between">
-                                    <span>Farmer Logs:</span>
-                                    <span class="<?php echo $farmerLogExists ? 'text-green-300' : 'text-red-300'; ?>">
-                                        <?php echo $logStatus['farmer']; ?>
-                                    </span>
-                                </li>
-                                <li class="flex justify-between">
-                                    <span>Client Logs:</span>
-                                    <span class="<?php echo $clientLogExists ? 'text-green-300' : 'text-red-300'; ?>">
-                                        <?php echo $logStatus['client']; ?>
-                                    </span>
-                                </li>
-                            </ul>
+                <?php if ($logError): ?>
+                    <div class="flex items-center p-4 bg-red-900/40 border-l-4 border-red-500 text-red-300 m-4 rounded-r">
+                        <div class="mr-3 text-xl text-red-500">
+                            <i class="fas fa-exclamation-circle"></i>
                         </div>
-                        
-                        <!-- Quick Actions -->
-                        <div class="p-4 border rounded-lg bg-[#1A5E5C]">
-                            <h3 class="font-medium text-lg mb-2">Quick Actions</h3>
-                            <div class="space-y-2">
-                                <a href="?view_logs=1&log_type=admin" class="block w-full bg-[#CAEED5] hover:bg-green-200 text-green-700 text-center py-2 rounded">
-                                    View Admin Logs
-                                </a>
-                                <a href="?view_logs=1&log_type=farmer" class="block w-full bg-[#CAEED5] hover:bg-green-200 text-green-700 text-center py-2 rounded">
-                                    View Farmer Logs
-                                </a>
-                                <a href="?view_logs=1&log_type=client" class="block w-full bg-[#CAEED5] hover:bg-green-200 text-green-700 text-center py-2 rounded">
-                                    View Client Logs
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <!-- System Info -->
-                        <div class="p-4 border rounded-lg bg-[#1A5E5C]">
-                            <h3 class="font-medium text-lg mb-2">System Information</h3>
-                            <ul class="space-y-2">
-                                <li class="flex justify-between">
-                                    <span>PHP Version:</span>
-                                    <span><?php echo phpversion(); ?></span>
-                                </li>
-                                <li class="flex justify-between">
-                                    <span>Server:</span>
-                                    <span><?php echo $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown'; ?></span>
-                                </li>
-                                <li class="flex justify-between">
-                                    <span>Time:</span>
-                                    <span><?php echo date('Y-m-d H:i:s'); ?></span>
-                                </li>
-                            </ul>
+                        <div>
+                            <div class="font-bold"><?php echo $logError['error']; ?></div>
+                            <div class="text-sm"><?php echo $logError['message']; ?></div>
                         </div>
                     </div>
-                <?php endif; ?>
-                
-                <?php if (isset($_GET['view_logs'])): ?>
-                    <div class="bg-[#1A5E5C] text-white p-4 rounded-t">
-                        <div class="flex justify-between items-center">
-                            <h3 class="text-lg font-medium"><?php echo ucfirst($activeLogType); ?> Logs</h3>
-                            <span id="log-counter">
-                                <?php echo count($logContent) . ' log entries found'; ?>
-                            </span>
+                <?php elseif (empty($logContent)): ?>
+                    <div class="flex items-center p-4 bg-yellow-900/40 border-l-4 border-yellow-500 text-yellow-300 m-4 rounded-r">
+                        <div class="mr-3 text-xl text-yellow-500">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold">No Log Entries Found</div>
+                            <div class="text-sm">No matching log entries were found with the current filters.</div>
                         </div>
                     </div>
-                    
-                    <!-- Filters and Controls -->
-                    <div class="bg-[#115D5B] p-4 border-x border-t border-green-800">
-                        <form action="" method="GET" class="flex flex-wrap gap-2 items-center">
-                            <input type="hidden" name="view_logs" value="1">
-                            <input type="hidden" name="log_type" value="<?php echo $activeLogType; ?>">
-                            
-                            <div class="flex-1 min-w-[200px]">
-                                <label for="search" class="block text-sm font-medium text-white mb-1">Search</label>
-                                <input type="text" id="search" name="search" value="<?php echo htmlspecialchars($searchTerm); ?>" 
-                                       class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#CAEED5] bg-[#0F3D3A] text-white border-green-800">
-                            </div>
-                            
-                            <div class="w-40">
-                                <label for="filter" class="block text-sm font-medium text-white mb-1">Filter By Type</label>
-                                <select id="filter" name="filter" 
-                                        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#CAEED5] bg-[#0F3D3A] text-white border-green-800">
-                                    <option value="all" <?php echo $filterType == 'all' ? 'selected' : ''; ?>>All Types</option>
-                                    <option value="login" <?php echo $filterType == 'login' ? 'selected' : ''; ?>>Login</option>
-                                    <option value="registration" <?php echo $filterType == 'registration' ? 'selected' : ''; ?>>Registration</option>
-                                    <option value="attempt" <?php echo $filterType == 'attempt' ? 'selected' : ''; ?>>Attempts</option>
-                                    <option value="other" <?php echo $filterType == 'other' ? 'selected' : ''; ?>>Other</option>
-                                </select>
-                            </div>
-                            
-                            <div class="self-end">
-                                <button type="submit" class="bg-[#CAEED5] hover:bg-green-200 text-green-700 px-4 py-2 rounded">
-                                    Apply Filters
-                                </button>
-                            </div>
-                            
-                            <div class="self-end ml-auto">
-                                <a href="?export_csv=1&log_type=<?php echo $activeLogType; ?><?php 
-                                    echo !empty($searchTerm) ? '&search=' . urlencode($searchTerm) : ''; 
-                                    echo $filterType != 'all' ? '&filter=' . urlencode($filterType) : ''; 
-                                ?>" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
-                                    Export to CSV
-                                </a>
-                                <button type="button" id="toggle-raw-view" onclick="toggleRawView()" 
-                                        class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded">
-                                    Show Raw Log Format
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                    
-                    <!-- Raw Log View (Hidden by default) -->
-                    <div id="raw-log-view" class="hidden border p-4 mt-2 bg-gray-900 text-green-400 rounded overflow-x-auto">
-                        <pre><?php echo htmlspecialchars($rawLogContent); ?></pre>
-                    </div>
-                    
-                    <!-- Log Display -->
-                    <div id="log-container" class="border rounded-b overflow-hidden border-green-800">
-                        <?php if ($logError): ?>
-                            <div class="text-red-500 bg-red-900 border border-red-700 rounded p-4 mb-2">
-                                <strong>Error: </strong><?php echo $logError['error']; ?><br>
-                                <?php echo $logError['message']; ?>
-                            </div>
-                        <?php elseif (empty($logContent)): ?>
-                            <div class="text-yellow-300 bg-yellow-900 border border-yellow-700 rounded p-4 mb-2">
-                                No log entries were found or could be parsed.
-                            </div>
-                        <?php else: ?>
-                            <?php foreach ($logContent as $log): ?>
-                                <?php
-                                    $statusClass = '';
-                                    if ($log['status'] === 'success') {
-                                        $statusClass = 'bg-green-900 border-green-700 text-green-300';
-                                    } elseif ($log['status'] === 'failed' || $log['status'] === 'error') {
-                                        $statusClass = 'bg-red-900 border-red-700 text-red-300';
-                                    } elseif ($log['status'] === 'info') {
-                                        $statusClass = 'bg-blue-900 border-blue-700 text-blue-300';
-                                    } elseif ($log['status'] === 'warning') {
-                                        $statusClass = 'bg-yellow-900 border-yellow-700 text-yellow-300';
-                                    } else {
-                                        $statusClass = 'bg-gray-800 border-gray-600 text-gray-300';
-                                    }
-                                ?>
-                                <div class="flex flex-col md:flex-row justify-between border px-4 py-3 mb-2 <?php echo $statusClass; ?>">
-                                    <div class="flex items-center">
-                                        <span class="font-bold mr-2"><?php echo htmlspecialchars($log['timestamp']); ?></span>
-                                        <span class="mr-2">|</span>
-                                        <span class="mr-2"><?php echo htmlspecialchars($log['user']); ?></span>
+                <?php else: ?>
+                    <div class="divide-y divide-[#CAEED5]/10">
+                        <?php foreach ($logContent as $index => $log): ?>
+                            <?php
+                                // Determine status icon and colors
+                                $statusIcon = 'fas fa-info-circle';
+                                $statusBgClass = 'bg-blue-900/30';
+                                $statusBorderClass = 'border-blue-600';
+                                $statusTextClass = 'text-blue-300';
+                                
+                                if ($log['status'] === 'success') {
+                                    $statusIcon = 'fas fa-check-circle';
+                                    $statusBgClass = 'bg-green-900/30';
+                                    $statusBorderClass = 'border-green-600';
+                                    $statusTextClass = 'text-green-300';
+                                } elseif ($log['status'] === 'failed' || $log['status'] === 'error') {
+                                    $statusIcon = 'fas fa-times-circle';
+                                    $statusBgClass = 'bg-red-900/30';
+                                    $statusBorderClass = 'border-red-600';
+                                    $statusTextClass = 'text-red-300';
+                                } elseif ($log['status'] === 'warning') {
+                                    $statusIcon = 'fas fa-exclamation-triangle';
+                                    $statusBgClass = 'bg-yellow-900/30';
+                                    $statusBorderClass = 'border-yellow-600';
+                                    $statusTextClass = 'text-yellow-300';
+                                }
+                                
+                                // Highlight for latest entry
+                                $isLatestClass = ($index === 0) ? 'border-l-4 '.$statusBorderClass : '';
+                                
+                                // Different background for alternating rows
+                                $rowBgClass = ($index % 2 === 0) ? 'bg-[#0F3D3A]/50' : '';
+                            ?>
+                            <div class="flex items-center p-3 <?php echo $rowBgClass; ?> <?php echo $isLatestClass; ?> hover:bg-[#115D5B]/20 transition-colors duration-200">
+                                <div class="mr-3 <?php echo $statusTextClass; ?>">
+                                    <i class="<?php echo $statusIcon; ?> text-lg"></i>
+                                </div>
+                                <div class="flex-grow">
+                                    <div class="flex flex-col md:flex-row justify-between">
+                                        <div class="font-medium text-white">
+                                            <?php echo htmlspecialchars($log['message']); ?>
+                                            <?php if ($index === 0): ?>
+                                                <span class="bg-[#CAEED5] text-[#115D5B] text-xs px-2 py-0.5 rounded-full ml-2">Latest</span>
+                                            <?php endif; ?>
+                                        </div>
+                                        <div class="text-sm text-[#CAEED5]">
+                                            <?php echo htmlspecialchars($log['user']); ?> • 
+                                            <span class="<?php echo $statusTextClass; ?>">
+                                                <?php echo ucfirst(htmlspecialchars($log['status'])); ?>
+                                            </span>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <span><?php echo htmlspecialchars($log['message']); ?></span>
+                                    <div class="text-xs text-gray-400 mt-1 flex items-center">
+                                        <i class="far fa-clock mr-1"></i>
+                                        <?php echo htmlspecialchars($log['timestamp']); ?>
+                                        <span class="mx-2">•</span>
+                                        <span class="rounded-full px-2 py-0.5 text-xs <?php echo $statusBgClass; ?> <?php echo $statusTextClass; ?>">
+                                            <?php echo ucfirst(htmlspecialchars($log['type'])); ?>
+                                        </span>
                                     </div>
                                 </div>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
             </div>
