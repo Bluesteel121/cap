@@ -247,11 +247,20 @@ $profile_pic = displayProfileImage($farmer_data['profile_picture']);
         function closeFertilizerForm() { document.getElementById('fertilizerForm').classList.add('hidden'); }
     </script>
 </head>
+
+
 <body class="flex">
-<!-- Sidebar green -->
-<aside class="w-1/4 bg-[#115D5B] p-6 h-screen fixed top-0 left-0 flex flex-col justify-between text-white">
+<!-- Mobile Sidebar Toggle Button -->
+<button id="sidebarToggle" class="fixed top-4 left-4 z-50 bg-[#0D3D3B] p-2 rounded-lg text-white md:hidden">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+</button>
+
+<!-- Sidebar green - with responsive classes -->
+<aside id="sidebar" class="w-full md:w-64 lg:w-1/4 bg-[#115D5B] p-6 h-screen fixed top-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col justify-between text-white z-40">
     <div>
-    <div class="flex flex-col items-center text-center">
+        <div class="flex flex-col items-center text-center">
             <img src="<?= htmlspecialchars($profile_pic) ?>" alt="Profile" class="w-20 h-20 rounded-full border mb-2">
             <h2 class="font-bold"><?= htmlspecialchars($farmer_data['name'] ?? $farmer_data['username'] ?? 'Farmer') ?></h2>
             <p class="text-sm"><?= htmlspecialchars($contact_num) ?></p>
@@ -265,24 +274,25 @@ $profile_pic = displayProfileImage($farmer_data['profile_picture']);
 
         <nav class="mt-6">
             <ul class="space-y-2">
-                <li><a href="#" class="flex items-center  p-2 bg-[#CAEED5] text-green-700 rounded">
+                <li><a href="#" class="flex items-center p-2 bg-[#CAEED5] text-green-700 rounded">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                     </svg>
                     Home</a></li>
                 
-                <li><a href="farmerprofile.php" class="flex items-center  p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">
+                <li><a href="farmerprofile.php" class="flex items-center p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                     </svg>
                     Profile</a></li>
 
-                    <li><a href="farmernotif.php" class="flex items-center  p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">
+                <li><a href="farmernotif.php" class="flex items-center p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                     </svg>
                     Notifications</a></li>
-                <li><a href="#" class="flex items-center  p-2 text-red-500 hover:text-red-700" onclick="openLogoutModal()">
+                    
+                <li><a href="#" class="flex items-center p-2 text-red-500 hover:text-red-700" onclick="openLogoutModal()">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                     </svg>
@@ -293,10 +303,10 @@ $profile_pic = displayProfileImage($farmer_data['profile_picture']);
     <footer class="text-center text-xs">&copy; 2025 Camarines Norte Lowland Rainfed Research Station</footer>
 </aside>
 
-<!-- Main Content -->
-<main class="w-3/4 p-6 bg-white ml-[25%]">
+<!-- Main Content - with responsive classes -->
+<main class="w-full md:w-[calc(100%-256px)] lg:w-3/4 bg-white md:ml-64 lg:ml-[25%] p-4 md:p-6 transition-all duration-300 ease-in-out">
     <!-- Top Cards -->
-    <div class="flex gap-4 mb-6">
+    <div class="flex flex-col md:flex-row gap-4 mb-6">
         <div class="flex-1 bg-[#CAEED5] p-4 rounded-lg shadow">
             <div class="flex items-center">
                 <div class="bg-[#0D3D3B] p-3 rounded-full">
@@ -334,171 +344,200 @@ $profile_pic = displayProfileImage($farmer_data['profile_picture']);
         </div>
     </div>
 
-  <!-- Main Grid -->
-<div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-6">
-    <!-- Row 1: Top 3 cards side by side -->
-    <!-- Pineapple Planted -->
-    <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4">
-        <div class="text-center bg-[#CAEED5] py-2 font-semibold text-green-800 rounded">Total of Pineapple planted</div>
-        <div class="text-center py-6">
-            <div class="text-6xl font-bold text-white"><?= number_format($total_planted) ?></div>
-        </div>
-        <form method="POST" class="mt-2">
-            <div class="flex items-center gap-2">
-                <button type="submit" name="reset_planted" class="bg-[#FCAE36] px-3 py-1 rounded text-black font-medium">Reset</button>
-                <input type="number" name="planted_amount" placeholder="+" class="flex-grow bg-white rounded p-1 text-left">
-                <button type="submit" name="add_planted" class="bg-[#4CAF50] px-3 py-1 rounded text-white font-medium">ADD</button>
+    <!-- Main Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        <!-- Row 1: Top 3 cards side by side -->
+        <!-- Pineapple Planted -->
+        <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4 overflow-hidden">
+            <div class="text-center bg-[#CAEED5] py-2 font-semibold text-green-800 rounded">Total of Pineapple planted</div>
+            <div class="text-center py-6">
+                <div class="text-4xl md:text-5xl lg:text-6xl font-bold text-white truncate"><?= number_format($total_planted) ?></div>
             </div>
-        </form>
-    </div>
-
-    <!-- Pinabulaklak -->
-    <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4">
-        <div class="text-center bg-[#CAEED5] py-2 font-semibold text-green-800 rounded">Pinabulaklak</div>
-        <div class="text-center py-6">
-            <div class="text-6xl font-bold text-white"><?= number_format($flowered) ?></div>
-        </div>
-        <form method="POST" class="mt-2">
-            <div class="flex items-center gap-2">
-                <button name="reset_flowered" type="submit" class="bg-[#FCAE36] px-3 py-1 rounded text-black font-medium">Reset</button>
-                <input type="number" name="flowered_amount" placeholder="+" class="flex-grow bg-white rounded p-1 text-left">
-                <button name="add_flowered" type="submit" class="bg-[#4CAF50] px-3 py-1 rounded text-white font-medium">ADD</button>
-            </div>
-        </form>
-    </div>
-
-    <!-- Na Peste -->
-    <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4">
-        <div class="text-center bg-[#CAEED5] py-2 font-semibold text-green-800 rounded">Na Peste</div>
-        <div class="text-center py-6">
-            <div class="text-6xl font-bold text-white"><?= $pested ?></div>
-        </div>
-        <form method="POST" class="mt-2">
-            <div class="flex items-center gap-2">
-                <button name="reset_pested" type="submit" class="bg-[#FCAE36] px-3 py-1 rounded text-black font-medium">Reset</button>
-                <input type="number" name="pested_amount" placeholder="+" class="flex-grow bg-white rounded p-1 text-left">
-                <button name="add_pested" type="submit" class="bg-[#4CAF50] px-3 py-1 rounded text-white font-medium">ADD</button>
-            </div>
-        </form>
-    </div>
-
-    <!-- Row 2: Two tables side by side -->
-    <!-- Fertilizer Usage -->
-    <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4 md:col-span-1 lg:col-span-1.5">
-        <!-- Header -->
-        <div class="text-center bg-[#CAEED5] py-1.5 text-sm font-medium text-green-800 rounded">
-            Fertilizer Usage
-        </div>
-        
-        <!-- Table container with adaptive height -->
-        <div class="mt-3 overflow-y-auto h-52 md:h-52 lg:h-52">
-            <table class="w-full text-white">
-                <thead class="bg-[#115D5B] sticky top-0">
-                    <tr>
-                        <th class="px-2 py-1 text-sm">Month</th>
-                        <th>Type</th>
-                        <th>Per Plant</th>
-                        <th>Sacks</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (!empty($fertilizer_data)): ?>
-                        <?php foreach ($fertilizer_data as $entry): ?>
-                            <tr class="text-center border-b border-[#115D5B]">
-                                <td class="p-2"><?= htmlspecialchars($entry['month']) ?></td>
-                                <td><?= htmlspecialchars($entry['type']) ?></td>
-                                <td><?= $entry['per_plant_grams'] ?></td>
-                                <td><?= $entry['sacks'] ?></td>
-                                <td>
-                                    <form method="POST" style="display: inline;">
-                                        <input type="hidden" name="fertilizer_id" value="<?= $entry['id'] ?>">
-                                        <button type="submit" name="reset_fertilizer" class="font-bold text-red-400 hover:text-red-600 bg-[#CAEED5] p-1 rounded-lg">Reset</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="5" class="text-center py-4 text-gray-400">No fertilizer records found</td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="flex items-center gap-2 mt-4">
-            <form method="POST" style="display: inline;">
-                <button type="submit" name="reset_all_fertilizer" class="bg-[#FCAE36] px-3 py-1 rounded text-black font-medium">Reset All</button>
+            <form method="POST" class="mt-2">
+                <div class="flex items-center gap-2">
+                    <button type="submit" name="reset_planted" class="bg-[#FCAE36] px-3 py-1 rounded text-black font-medium text-sm whitespace-nowrap">Reset</button>
+                    <input type="number" name="planted_amount" placeholder="+" class="flex-grow bg-white rounded p-1 text-left min-w-0">
+                    <button type="submit" name="add_planted" class="bg-[#4CAF50] px-3 py-1 rounded text-white font-medium text-sm whitespace-nowrap">ADD</button>
+                </div>
             </form>
-            <input 
-                type="text" 
-                placeholder="+" 
-                class="flex-grow bg-white rounded p-1 text-left cursor-pointer"
-                onclick="openFertilizerForm()"
-                readonly
-            >
-        </div>
-    </div>
-
-    <!-- Pest Types Tracking Table -->
-    <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4 md:col-span-2 lg:col-span-1.5">
-        <!-- Header -->
-        <div class="text-center bg-[#CAEED5] py-1.5 text-sm font-medium text-green-800 rounded">
-            Pest Types Tracking
-        </div>
-        
-        <!-- Table container with adaptive height -->
-        <div class="mt-3 overflow-y-auto h-52 md:h-52 lg:h-52">
-            <table class="w-full text-white">
-                <thead class="bg-[#115D5B] sticky top-0">
-                    <tr>
-                        <th class="px-2 py-1 text-sm">Date</th>
-                        <th>Pest Type</th>
-                        <th>Affected Area</th>
-                        <th>Severity</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (!empty($pest_data)): ?>
-                        <?php foreach ($pest_data as $pest): ?>
-                            <tr class="text-center border-b border-[#115D5B]">
-                                <td class="p-2"><?= htmlspecialchars($pest['date']) ?></td>
-                                <td><?= htmlspecialchars($pest['type']) ?></td>
-                                <td><?= htmlspecialchars($pest['area']) ?></td>
-                                <td><?= htmlspecialchars($pest['severity']) ?></td>
-                                <td>
-                                    <form method="POST" style="display: inline;">
-                                        <input type="hidden" name="pest_id" value="<?= $pest['id'] ?>">
-                                        <button type="submit" name="reset_pest" class="font-bold text-red-400 hover:text-red-600 bg-[#CAEED5] p-1 rounded-lg">Reset</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="5" class="text-center py-4 text-gray-400">No pest records found</td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
         </div>
 
-        <div class="flex items-center gap-2 mt-4">
-            <form method="POST" style="display: inline;">
-                <button type="submit" name="reset_all_pests" class="bg-[#FCAE36] px-3 py-1 rounded text-black font-medium">Reset All</button>
+        <!-- Pinabulaklak -->
+        <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4 overflow-hidden">
+            <div class="text-center bg-[#CAEED5] py-2 font-semibold text-green-800 rounded">Pinabulaklak</div>
+            <div class="text-center py-6">
+                <div class="text-4xl md:text-5xl lg:text-6xl font-bold text-white truncate"><?= number_format($flowered) ?></div>
+            </div>
+            <form method="POST" class="mt-2">
+                <div class="flex items-center gap-2">
+                    <button name="reset_flowered" type="submit" class="bg-[#FCAE36] px-3 py-1 rounded text-black font-medium text-sm whitespace-nowrap">Reset</button>
+                    <input type="number" name="flowered_amount" placeholder="+" class="flex-grow bg-white rounded p-1 text-left min-w-0">
+                    <button name="add_flowered" type="submit" class="bg-[#4CAF50] px-3 py-1 rounded text-white font-medium text-sm whitespace-nowrap">ADD</button>
+                </div>
             </form>
-            <input 
-                type="text" 
-                placeholder="+" 
-                class="flex-grow bg-white rounded p-1 text-left cursor-pointer"
-                onclick="openPestForm()"
-                readonly
-            >
+        </div>
+
+        <!-- Na Peste -->
+        <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4 overflow-hidden">
+            <div class="text-center bg-[#CAEED5] py-2 font-semibold text-green-800 rounded">Na Peste</div>
+            <div class="text-center py-6">
+                <div class="text-4xl md:text-5xl lg:text-6xl font-bold text-white truncate"><?= $pested ?></div>
+            </div>
+            <form method="POST" class="mt-2">
+                <div class="flex items-center gap-2">
+                    <button name="reset_pested" type="submit" class="bg-[#FCAE36] px-3 py-1 rounded text-black font-medium text-sm whitespace-nowrap">Reset</button>
+                    <input type="number" name="pested_amount" placeholder="+" class="flex-grow bg-white rounded p-1 text-left min-w-0">
+                    <button name="add_pested" type="submit" class="bg-[#4CAF50] px-3 py-1 rounded text-white font-medium text-sm whitespace-nowrap">ADD</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Row 2: Two tables side by side -->
+        <!-- Fertilizer Usage -->
+        <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4 md:col-span-1 lg:col-span-1.5 overflow-hidden">
+            <!-- Header -->
+            <div class="text-center bg-[#CAEED5] py-1.5 text-sm font-medium text-green-800 rounded">
+                Fertilizer Usage
+            </div>
+            
+            <!-- Table container with adaptive height -->
+            <div class="mt-3 overflow-y-auto h-52 md:h-52 lg:h-52">
+                <table class="w-full text-white table-fixed">
+                    <thead class="bg-[#115D5B] sticky top-0">
+                        <tr>
+                            <th class="px-2 py-1 text-sm w-1/5">Month</th>
+                            <th class="w-1/5">Type</th>
+                            <th class="w-1/5">Per Plant</th>
+                            <th class="w-1/5">Sacks</th>
+                            <th class="w-1/5">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (!empty($fertilizer_data)): ?>
+                            <?php foreach ($fertilizer_data as $entry): ?>
+                                <tr class="text-center border-b border-[#115D5B]">
+                                    <td class="p-2 truncate"><?= htmlspecialchars($entry['month']) ?></td>
+                                    <td class="truncate"><?= htmlspecialchars($entry['type']) ?></td>
+                                    <td class="truncate"><?= $entry['per_plant_grams'] ?></td>
+                                    <td class="truncate"><?= $entry['sacks'] ?></td>
+                                    <td>
+                                        <form method="POST" style="display: inline;">
+                                            <input type="hidden" name="fertilizer_id" value="<?= $entry['id'] ?>">
+                                            <button type="submit" name="reset_fertilizer" class="font-bold text-red-400 hover:text-red-600 bg-[#CAEED5] p-1 rounded-lg text-xs">Reset</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-gray-400">No fertilizer records found</td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="flex items-center gap-2 mt-4">
+                <form method="POST" style="display: inline;">
+                    <button type="submit" name="reset_all_fertilizer" class="bg-[#FCAE36] px-3 py-1 rounded text-black font-medium text-sm whitespace-nowrap">Reset All</button>
+                </form>
+                <input 
+                    type="text" 
+                    placeholder="+" 
+                    class="flex-grow bg-white rounded p-1 text-left cursor-pointer min-w-0"
+                    onclick="openFertilizerForm()"
+                    readonly
+                >
+            </div>
+        </div>
+
+        <!-- Pest Types Tracking Table -->
+        <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4 md:col-span-1 lg:col-span-1.5 overflow-hidden">
+            <!-- Header -->
+            <div class="text-center bg-[#CAEED5] py-1.5 text-sm font-medium text-green-800 rounded">
+                Pest Types Tracking
+            </div>
+            
+            <!-- Table container with adaptive height -->
+            <div class="mt-3 overflow-y-auto h-52 md:h-52 lg:h-52">
+                <table class="w-full text-white table-fixed">
+                    <thead class="bg-[#115D5B] sticky top-0">
+                        <tr>
+                            <th class="px-2 py-1 text-sm w-1/5">Date</th>
+                            <th class="w-1/5">Pest Type</th>
+                            <th class="w-1/5">Area</th>
+                            <th class="w-1/5">Severity</th>
+                            <th class="w-1/5">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (!empty($pest_data)): ?>
+                            <?php foreach ($pest_data as $pest): ?>
+                                <tr class="text-center border-b border-[#115D5B]">
+                                    <td class="p-2 truncate"><?= htmlspecialchars($pest['date']) ?></td>
+                                    <td class="truncate"><?= htmlspecialchars($pest['type']) ?></td>
+                                    <td class="truncate"><?= htmlspecialchars($pest['area']) ?></td>
+                                    <td class="truncate"><?= htmlspecialchars($pest['severity']) ?></td>
+                                    <td>
+                                        <form method="POST" style="display: inline;">
+                                            <input type="hidden" name="pest_id" value="<?= $pest['id'] ?>">
+                                            <button type="submit" name="reset_pest" class="font-bold text-red-400 hover:text-red-600 bg-[#CAEED5] p-1 rounded-lg text-xs">Reset</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-gray-400">No pest records found</td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="flex items-center gap-2 mt-4">
+                <form method="POST" style="display: inline;">
+                    <button type="submit" name="reset_all_pests" class="bg-[#FCAE36] px-3 py-1 rounded text-black font-medium text-sm whitespace-nowrap">Reset All</button>
+                </form>
+                <input 
+                    type="text" 
+                    placeholder="+" 
+                    class="flex-grow bg-white rounded p-1 text-left cursor-pointer min-w-0"
+                    onclick="openPestForm()"
+                    readonly
+                >
+            </div>
+        </div>
+
+        <!-- Row 3: Harvest Chart (Full Width) -->
+        <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4 overflow-hidden">
+        <div class="flex justify-center h-40 md:h-48 lg:h-40 relative">
+            <canvas id="harvestChart" class="max-w-full max-h-full"></canvas>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-xl font-bold">
+                <?= $harvested_percent ?>% Harvested
+            </div>
+        </div>
+        <div class="flex justify-center mt-2 text-white">
+            <div class="flex flex-col items-center">
+                <div class="flex flex-wrap justify-center gap-4 mb-1">
+                    <div class="flex items-center">
+                        <div class="w-3 h-3 bg-[#4CAF50] mr-1"></div>
+                        <span>Harvested (<?= $harvested_percent ?>%)</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-3 h-3 bg-[#FCAE36] mr-1"></div>
+                        <span>Damaged (<?= $damaged_percent ?>%)</span>
+                    </div>
+                </div>
+                <div>Total Harvest: <?= $actual_harvest ?></div>
+                <form method="POST" class="mt-2">
+                    <button name="harvest_button" type="submit" class="bg-[#4CAF50] px-4 py-2 rounded text-white font-medium">Harvest</button>
+                </form>
+            </div>
         </div>
     </div>
-
+</div>
+</main>
 
 <!-- Fertilizer Form Modal -->
 <div id="fertilizerForm" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -549,37 +588,6 @@ $profile_pic = displayProfileImage($farmer_data['profile_picture']);
     </div>
 </div>
 
-
- <!-- Row 3: Harvest Chart (Full Width) -->
- <div class="bg-[#0D3D3B] rounded-lg shadow-lg p-4 md:col-span-1 lg:col-span-3">
-        <div class="flex justify-center h-40 md:h-48 lg:h-40 relative">
-            <canvas id="harvestChart" class="max-w-full max-h-full"></canvas>
-            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-xl font-bold">
-                <?= $harvested_percent ?>% Harvested
-            </div>
-        </div>
-        <div class="flex justify-center mt-2 text-white">
-            <div class="flex flex-col items-center">
-                <div class="flex justify-center gap-4 mb-1">
-                    <div class="flex items-center">
-                        <div class="w-3 h-3 bg-[#4CAF50] mr-1"></div>
-                        <span>Harvested (<?= $harvested_percent ?>%)</span>
-                    </div>
-                    <div class="flex items-center">
-                        <div class="w-3 h-3 bg-[#FCAE36] mr-1"></div>
-                        <span>Damaged (<?= $damaged_percent ?>%)</span>
-                    </div>
-                </div>
-                <div>Total Harvest: <?= $actual_harvest ?></div>
-                <form method="POST" class="mt-2">
-                    <button name="harvest_button" type="submit" class="bg-[#4CAF50] px-4 py-2 rounded text-white font-medium">Harvest</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-
 <script>
 function openFertilizerForm() {
     document.getElementById('fertilizerForm').classList.remove('hidden');
@@ -596,6 +604,43 @@ function openPestForm() {
 function closePestForm() {
     document.getElementById('pestForm').classList.add('hidden');
 }
+
+// Sidebar toggle functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const mainContent = document.querySelector('main');
+    
+    // Toggle sidebar on button click
+    sidebarToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('-translate-x-full');
+        
+        // If sidebar is visible, add a click event listener to the document
+        if (!sidebar.classList.contains('-translate-x-full')) {
+            setTimeout(() => {
+                document.addEventListener('click', closeSidebarOnClickOutside);
+            }, 100);
+        }
+    });
+    
+    // Function to close sidebar when clicking outside
+    function closeSidebarOnClickOutside(event) {
+        // Check if clicked element is not part of the sidebar or toggle button
+        if (!sidebar.contains(event.target) && !sidebarToggle.contains(event.target)) {
+            sidebar.classList.add('-translate-x-full');
+            document.removeEventListener('click', closeSidebarOnClickOutside);
+        }
+    }
+    
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        if (window.innerWidth >= 768) { // md breakpoint
+            sidebar.classList.remove('-translate-x-full');
+        } else {
+            sidebar.classList.add('-translate-x-full');
+        }
+    });
+});
 </script>
 
 </main>
