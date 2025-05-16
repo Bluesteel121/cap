@@ -1,52 +1,56 @@
 <?php
-session_start();
-$conn = new mysqli("localhost", "root", "", "capstone");
+// Include the centralized database connection file
+require_once('db_connect.php');
 
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-if (!isset($_SESSION['username']) && !isset($_SESSION['email'])) {
+// Check if the user is logged in
+if (!isset($_SESSION['username']) && !isset($_SESSION['email']) && !isset($_SESSION['contact_num'])) {
     header("Location: account.php");
     exit();
 }
 
-$login_identifier = isset($_SESSION['username']) ? $_SESSION['username'] : $_SESSION['email'];
-$sql = isset($_SESSION['username']) ?
-    "SELECT full_name, email, profile_pic FROM client_acc WHERE username = ?" :
-    "SELECT full_name, email, profile_pic FROM client_acc WHERE email = ?";
+// We'll use the existing client_acc table to get user data
+$login_identifier = isset($_SESSION['username']) ? $_SESSION['username'] : 
+                   (isset($_SESSION['email']) ? $_SESSION['email'] : 
+                   (isset($_SESSION['contact_num']) ? $_SESSION['contact_num'] : null));
 
+if ($login_identifier === null) {
+    // No valid login credentials
+    header("Location: account.php");
+    exit();
+}
+
+// Determine which field to use for the query
+$field = isset($_SESSION['username']) ? "username" : 
+        (isset($_SESSION['email']) ? "email" : "contact_num");
+
+// Query the client_acc table
+$sql = "SELECT * FROM client_acc WHERE $field = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $login_identifier);
 $stmt->execute();
 $result = $stmt->get_result();
 
-if ($result->num_rows > 0) {
+if ($result && $result->num_rows > 0) {
     $user_data = $result->fetch_assoc();
-    $full_name = $user_data['full_name'];
-    $email = $user_data['email'];
-    $profile_pic = $user_data['profile_pic'];
+    $full_name = $user_data['full_name'] ?? "Client User";
+    $email = $user_data['email'] ?? "No email provided";
+    $profile_pic = $user_data['profile_pic'] ?? null;
     $user_type = "Client";
+    
+    // Store client_id in session for future use
+    if (isset($user_data['client_id'])) {
+        $_SESSION['client_id'] = $user_data['client_id'];
+    }
 } else {
-    $full_name = "User";
+    // Default values if no data is found
+    $full_name = "Client User";
     $email = $login_identifier;
     $profile_pic = null;
-    $user_type = "User";
+    $user_type = "Client";
 }
 $stmt->close();
 
-function displayProfileImage($profile_pic) {
-    if ($profile_pic) {
-        if (is_string($profile_pic) && (strpos($profile_pic, 'images/') === 0 || strpos($profile_pic, 'profile.jpg') === 0)) {
-            return $profile_pic;
-        } else {
-            $base64Image = base64_encode($profile_pic);
-            return "data:image/jpeg;base64,$base64Image";
-        }
-    } else {
-        return "profile.jpg";
-    }
-}
+// Use the profile image display function from db_connect.php
 $profileImageSrc = displayProfileImage($profile_pic);
 
 // Fetch all harvest data for the current month and later months
