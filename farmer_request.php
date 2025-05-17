@@ -9,6 +9,7 @@ $farmer_id = $farmer_data['farmer_id'];
 // Set default values for profile picture and contact number
 $profile_pic = $farmer_data['profile_pic'] ?? '/api/placeholder/50/50';
 $contact_num = $farmer_data['contact_num'] ?? 'N/A';
+$profile_pic = displayProfileImage($farmer_data['profile_picture']);
 ?>
 
 <!DOCTYPE html>
@@ -21,9 +22,16 @@ $contact_num = $farmer_data['contact_num'] ?? 'N/A';
 </head>
 <body class="bg-gray-100">
     <div class="flex">
-        <!-- Sidebar -->
-        <aside id="sidebar" class="w-full md:w-64 lg:w-1/4 bg-[#115D5B] p-6 h-screen fixed top-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col justify-between text-white z-40">
-            <div>
+        <!-- Mobile Sidebar Toggle Button -->
+<button id="sidebarToggle" class="fixed top-4 left-4 z-50 bg-[#0D3D3B] p-2 rounded-lg text-white md:hidden">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+</button>
+
+<!-- Sidebar green - with responsive classes -->
+<aside id="sidebar" class="w-full md:w-64 lg:w-1/4 bg-[#115D5B] p-6 h-screen fixed top-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col justify-between text-white z-40">
+    <div>
                 <div class="flex flex-col items-center text-center">
                     <img src="<?= htmlspecialchars($profile_pic) ?>" alt="Profile" class="w-20 h-20 rounded-full border mb-2">
                     <h2 class="font-bold"><?= htmlspecialchars($farmer_data['name'] ?? $farmer_data['username'] ?? 'Farmer') ?></h2>
@@ -45,12 +53,11 @@ $contact_num = $farmer_data['contact_num'] ?? 'N/A';
                             </svg>
                             Home</a>
                         </li>
-
-                        <li><a href="farmerprofile.php" class="flex items-center p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">
+<li><a href="farmerprofile.php" class="flex items-center p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                             </svg>
-                            Profile</a>
+                            Profile</a></li>
                         </li>
 
                         <li><a href="farmer_request.php" class="flex items-center p-2 rounded bg-[#CAEED5] text-green-800">
@@ -60,11 +67,11 @@ $contact_num = $farmer_data['contact_num'] ?? 'N/A';
                             Request</a>
                         </li>
 
-                        <li><a href="farmernotif.php" class="flex items-center p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">
+                          <li><a href="farmernotif.php" class="flex items-center  p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                             </svg>
-                            Notifications</a>
+                            Notifications</a></li>
                         </li>
                         
                         <li><a href="#" class="flex items-center p-2 text-red-500 hover:text-red-700" onclick="openLogoutModal()">

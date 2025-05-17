@@ -187,7 +187,7 @@ if (isset($_GET['mark_read']) && !empty($_GET['mark_read'])) {
         <aside class="w-1/4 bg-[#115D5B] p-6 h-screen fixed top-0 left-0 flex flex-col justify-between text-white">
             <div>
                 <div class="flex flex-col items-center text-center">
-                    <img src="<?php echo htmlspecialchars($profileImageSrc); ?>" alt="Profile" class="w-20 h-20 rounded-full border mb-2 object-cover bg-white">
+                    <img src="<?php echo htmlspecialchars($profileImageSrc); ?>" alt="Profile" class="w-20 h-20 rounded-full border mb-2">
                     <h2 class="font-bold"><?php echo htmlspecialchars($farmer_data['name']); ?></h2>
                     <p class="text-sm"><?php echo htmlspecialchars($farmer_data['contact_num']); ?></p>
                     <p class="text-sm italic">Farmer</p>

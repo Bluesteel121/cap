@@ -308,11 +308,18 @@ if (isset($_GET['message'])) {
 </head>
 <body class="bg-green-50 font-sans">
     <div class="flex min-h-screen">
-        <!-- Sidebar -->
-        <aside class="w-1/4 bg-[#115D5B] p-6 h-screen fixed top-0 left-0 flex flex-col justify-between text-white">
-            <div>
+      <!-- Mobile Sidebar Toggle Button -->
+<button id="sidebarToggle" class="fixed top-4 left-4 z-50 bg-[#0D3D3B] p-2 rounded-lg text-white md:hidden">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+</button>
+
+<!-- Sidebar green - with responsive classes -->
+<aside id="sidebar" class="w-full md:w-64 lg:w-1/4 bg-[#115D5B] p-6 h-screen fixed top-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col justify-between text-white z-40">
+    <div>
                 <div class="flex flex-col items-center text-center">
-                    <img src="<?php echo htmlspecialchars($profileImageSrc); ?>" alt="Profile" class="w-20 h-20 rounded-full border mb-2 object-cover bg-white">
+                    <img src="<?php echo htmlspecialchars($profileImageSrc); ?>" alt="Profile" class="w-20 h-20 rounded-full border mb-2">
                     <h2 class="font-bold"><?php echo htmlspecialchars($farmer_data['name']); ?></h2>
                     <p class="text-sm"><?php echo htmlspecialchars($farmer_data['contact_num']); ?></p>
                     <p class="text-sm italic">Farmer</p>
@@ -322,6 +329,7 @@ if (isset($_GET['message'])) {
                         </p>
                     <?php endif; ?>
                 </div>
+                
                 <nav class="mt-6">
                     <ul class="space-y-2">
                         <li><a href="farmerpage.php" class="flex items-center  p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">
@@ -347,6 +355,7 @@ if (isset($_GET['message'])) {
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                             </svg>
                             Notifications</a></li>
+
                         <li><a href="#" class="flex items-center  p-2 text-red-500 hover:text-red-700" onclick="openLogoutModal()">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
