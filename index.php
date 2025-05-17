@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>CNLRRS</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
 <body class="bg-gray-100 pt-20">
@@ -26,7 +27,8 @@
       <ul class="flex flex-col xl:flex-row xl:space-x-6 bg-[#115D5B] xl:bg-transparent xl:static absolute left-0 top-full w-full xl:w-auto p-4 xl:p-0 shadow-md xl:shadow-none">
         <li><a href="#" class="hover:text-gray-300 block py-2">Home</a></li>
         <li><a href="#" class="hover:text-gray-300 block py-2">Our Services</a></li>
-        <li><a href="#" class="hover:text-gray-300 block py-2">Contact Us</a></li>
+        <li><a href="#contact" class="hover:text-gray-300 block py-2">Contact Us</a></li>
+        <li><a href="#faq" class="hover:text-gray-300 block py-2">FAQ</a></li>
         <li><a href="elibrary.html" class="bg-green-1000 px-4 py-2 rounded-lg hover:text-gray-300 block py-2">Library</a></li>
         <li><a href="account.php" class="bg-green-900 px-6 py-2 rounded-lg hover:text-gray-300 block py-2">Log In</a></li>
       </ul>
@@ -56,9 +58,133 @@
     </div>
   </section>
 
+  <!-- FAQ Section -->
+  <section id="faq" class="container mx-auto my-12 px-4">
+    <h2 class="text-3xl font-bold text-center text-[#115D5B] mb-8">Frequently Asked Questions</h2>
+    
+    <div class="max-w-3xl mx-auto">
+      <div class="bg-white rounded-lg shadow-md overflow-hidden mb-4">
+        <button class="faq-question w-full text-left p-4 bg-[#115D5B] text-white font-semibold flex justify-between items-center">
+          <span>What is the main focus of your research station?</span>
+          <i class="fas fa-chevron-down transition-transform duration-300"></i>
+        </button>
+        <div class="faq-answer p-4 hidden">
+          <p>Our research station primarily focuses on improving pineapple cultivation techniques, developing sustainable farming practices, and enhancing the quality of lowland rainfed crops in the region.</p>
+        </div>
+      </div>
+      
+      <div class="bg-white rounded-lg shadow-md overflow-hidden mb-4">
+        <button class="faq-question w-full text-left p-4 bg-[#115D5B] text-white font-semibold flex justify-between items-center">
+          <span>Can visitors tour the research facility?</span>
+          <i class="fas fa-chevron-down transition-transform duration-300"></i>
+        </button>
+        <div class="faq-answer p-4 hidden">
+          <p>Yes, we offer guided tours by appointment. Please contact us at least one week in advance to schedule your visit.</p>
+        </div>
+      </div>
+      
+      <div class="bg-white rounded-lg shadow-md overflow-hidden mb-4">
+        <button class="faq-question w-full text-left p-4 bg-[#115D5B] text-white font-semibold flex justify-between items-center">
+          <span>How can local farmers benefit from your research?</span>
+          <i class="fas fa-chevron-down transition-transform duration-300"></i>
+        </button>
+        <div class="faq-answer p-4 hidden">
+          <p>We regularly publish our findings and offer training programs for local farmers. Our research helps improve crop yields, reduce costs, and implement sustainable practices.</p>
+        </div>
+      </div>
+      
+      <div class="bg-white rounded-lg shadow-md overflow-hidden mb-4">
+        <button class="faq-question w-full text-left p-4 bg-[#115D5B] text-white font-semibold flex justify-between items-center">
+          <span>Do you offer educational programs for students?</span>
+          <i class="fas fa-chevron-down transition-transform duration-300"></i>
+        </button>
+        <div class="faq-answer p-4 hidden">
+          <p>Yes, we collaborate with schools and universities to provide educational programs, internships, and research opportunities for students interested in agriculture.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Us Section -->
+  <section id="contact" class="bg-[#115D5B] text-white py-12">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-8">Contact Us</h2>
+      
+      <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div>
+          <h3 class="text-xl font-semibold mb-4">Get in Touch</h3>
+          <p class="mb-6">Have questions or want to learn more about our research? Reach out to us using the information below or fill out the contact form.</p>
+          
+          <div class="space-y-4">
+            <div class="flex items-start">
+              <i class="fas fa-map-marker-alt mt-1 mr-4"></i>
+              <div>
+                <h4 class="font-semibold">Address</h4>
+                <p>123 Research Station Road, Camarines Norte, Philippines 4600</p>
+              </div>
+            </div>
+            
+            <div class="flex items-start">
+              <i class="fas fa-phone-alt mt-1 mr-4"></i>
+              <div>
+                <h4 class="font-semibold">Phone</h4>
+                <p>+63 (054) 123-4567</p>
+              </div>
+            </div>
+            
+            <div class="flex items-start">
+              <i class="fas fa-envelope mt-1 mr-4"></i>
+              <div>
+                <h4 class="font-semibold">Email</h4>
+                <p>info@cnlrrstation.gov.ph</p>
+              </div>
+            </div>
+            
+            <div class="flex items-start">
+              <i class="fas fa-clock mt-1 mr-4"></i>
+              <div>
+                <h4 class="font-semibold">Operating Hours</h4>
+                <p>Monday to Friday: 8:00 AM - 5:00 PM</p>
+                <p>Saturday: 8:00 AM - 12:00 PM</p>
+                <p>Sunday: Closed</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-xl font-semibold mb-4">Send Us a Message</h3>
+          <form class="space-y-4">
+            <div>
+              <label for="name" class="block mb-1">Name</label>
+              <input type="text" id="name" class="w-full px-4 py-2 rounded text-gray-800" required>
+            </div>
+            
+            <div>
+              <label for="email" class="block mb-1">Email</label>
+              <input type="email" id="email" class="w-full px-4 py-2 rounded text-gray-800" required>
+            </div>
+            
+            <div>
+              <label for="subject" class="block mb-1">Subject</label>
+              <input type="text" id="subject" class="w-full px-4 py-2 rounded text-gray-800" required>
+            </div>
+            
+            <div>
+              <label for="message" class="block mb-1">Message</label>
+              <textarea id="message" rows="4" class="w-full px-4 py-2 rounded text-gray-800" required></textarea>
+            </div>
+            
+            <button type="submit" class="bg-white text-[#115D5B] px-6 py-2 rounded font-semibold hover:bg-gray-200 transition">Send Message</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Footer -->
-  <footer class="bg-[#115D5B] text-white text-center py-4 mt-6">
-    <p>&copy; 2025 My Simple Website. All rights reserved.</p>
+  <footer class="bg-[#115D5B] text-white text-center py-4">
+    <p>&copy; 2025 Camarines Norte Lowland Rainfed Research Station. All rights reserved.</p>
   </footer>
 
   <!-- Scripts -->
@@ -82,6 +208,29 @@
         header.style.transform = 'translateY(0)'; // show
       }
       lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // For Mobile
+    });
+
+    // FAQ accordion functionality
+    document.querySelectorAll('.faq-question').forEach(button => {
+      button.addEventListener('click', () => {
+        const answer = button.nextElementSibling;
+        const icon = button.querySelector('i');
+        
+        // Toggle answer visibility
+        answer.classList.toggle('hidden');
+        
+        // Toggle icon rotation
+        icon.classList.toggle('transform');
+        icon.classList.toggle('rotate-180');
+        
+        // Close other open answers
+        document.querySelectorAll('.faq-question').forEach(otherButton => {
+          if (otherButton !== button) {
+            otherButton.nextElementSibling.classList.add('hidden');
+            otherButton.querySelector('i').classList.remove('transform', 'rotate-180');
+          }
+        });
+      });
     });
   </script>
 </body>
