@@ -39,9 +39,9 @@ $login_identifier = isset($_SESSION['username']) ? $_SESSION['username'] : $_SES
 
 // Get user data from database using the login identifier
 if (isset($_SESSION['username'])) {
-    $sql = "SELECT full_name, email, profile_pic FROM client_acc WHERE username = ?";
+    $sql = "SELECT client_ID, full_name, email, profile_pic FROM client_acc WHERE username = ?";
 } else {
-    $sql = "SELECT full_name, email, profile_pic FROM client_acc WHERE email = ?";
+    $sql = "SELECT client_ID, full_name, email, profile_pic FROM client_acc WHERE email = ?";
 }
 
 $stmt = $conn->prepare($sql);
@@ -51,6 +51,7 @@ $result = $stmt->get_result();
 
 if ($result->num_rows > 0) {
     $user_data = $result->fetch_assoc();
+    $client_ID = $user_data['client_ID'];
     $full_name = $user_data['full_name'];
     $email = $user_data['email'];
     $profile_pic = $user_data['profile_pic'];
@@ -58,6 +59,7 @@ if ($result->num_rows > 0) {
     $user_type = "Client"; 
 } else {
     // Handle case where user data is not found
+    $client_ID = null;
     $full_name = "User";
     $email = $login_identifier; // Show the login identifier as email if full name not found
     $profile_pic = null;

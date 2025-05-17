@@ -44,9 +44,9 @@ if ($result && $result->num_rows > 0) {
     $user_type = "Client";
     $status = $user_data['status'] ?? "Active";
     
-    // Store client_id in session for future use
-    if (isset($user_data['client_id'])) {
-        $_SESSION['client_id'] = $user_data['client_id'];
+    // Store client_ID in session for future use - CHANGED FROM client_id TO client_ID
+    if (isset($user_data['client_ID'])) {
+        $_SESSION['client_ID'] = $user_data['client_ID'];
     }
 } else {
     // Default values if no data is found
