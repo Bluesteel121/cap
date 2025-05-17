@@ -404,3 +404,21 @@
 [2025-05-17 08:34:53] Submitted Password: pass
 [2025-05-17 08:34:53] Password match. Redirecting to index.php
 >>>>>>> 3ea8e255ad588958ae07cc6418d5b33fe68902d5
+[2025-05-17 07:41:19] Database Connection Status: Connected
+[2025-05-17 07:41:19] Attempting login - Username: nemz, Role: staff
+[2025-05-17 07:41:19] Total users in database: 3
+[2025-05-17 07:41:19] Existing User - Username: dave, Role: dev
+[2025-05-17 07:41:19] Existing User - Username: john, Role: staff
+[2025-05-17 07:41:19] Existing User - Username: buddy, Role: staff
+[2025-05-17 07:41:19] Query result rows: 0
+[2025-05-17 07:41:19] No matching user found for Username: nemz, Role: staff
+[2025-05-17 07:41:24] Database Connection Status: Connected
+[2025-05-17 07:41:24] Attempting login - Username: buddy, Role: staff
+[2025-05-17 07:41:24] Total users in database: 3
+[2025-05-17 07:41:24] Existing User - Username: dave, Role: dev
+[2025-05-17 07:41:24] Existing User - Username: john, Role: staff
+[2025-05-17 07:41:24] Existing User - Username: buddy, Role: staff
+[2025-05-17 07:41:24] Query result rows: 1
+[2025-05-17 07:41:24] Stored Password: pass
+[2025-05-17 07:41:24] Submitted Password: pass
+[2025-05-17 07:41:24] Password match. Redirecting to index.php
