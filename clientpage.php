@@ -2,6 +2,11 @@
 // Include the centralized database connection file
 require_once('db_connect.php');
 
+// Start session if not already started
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
 // Check if the user is logged in
 if (!isset($_SESSION['username']) && !isset($_SESSION['email']) && !isset($_SESSION['contact_num'])) {
     header("Location: account.php");
@@ -35,7 +40,9 @@ if ($result && $result->num_rows > 0) {
     $full_name = $user_data['full_name'] ?? "Client User";
     $email = $user_data['email'] ?? "No email provided";
     $profile_pic = $user_data['profile_pic'] ?? null;
+    $contact_num = $user_data['contact_num'] ?? null;
     $user_type = "Client";
+    $status = $user_data['status'] ?? "Active";
     
     // Store client_id in session for future use
     if (isset($user_data['client_id'])) {
@@ -46,7 +53,9 @@ if ($result && $result->num_rows > 0) {
     $full_name = "Client User";
     $email = $login_identifier;
     $profile_pic = null;
+    $contact_num = null;
     $user_type = "Client";
+    $status = "Active";
 }
 $stmt->close();
 
@@ -80,6 +89,7 @@ $harvest_result = $stmt->get_result();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pineapple Crops Price</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script>
         // Global variable to store the currently selected product
         let selectedProduct = '';
@@ -198,13 +208,21 @@ $harvest_result = $stmt->get_result();
 </head>
 <body class="flex">
     <!-- Sidebar -->
-    <aside class="w-1/4 bg-[#115D5B] p-6 h-screen flex flex-col justify-between text-white fixed">
+    <aside class="w-1/4 bg-gradient-to-b from-[#115D5B] to-[#0F3D3A] p-6 h-screen fixed top-0 left-0 flex flex-col justify-between text-white shadow-xl">
         <div>
-            <div class="flex flex-col items-center text-center">
-                <img src="<?php echo htmlspecialchars($profileImageSrc); ?>" alt="Profile" class="w-20 h-20 rounded-full border mb-2 object-cover">
-                <h2 class="font-bold"><?php echo htmlspecialchars($full_name); ?></h2>
+            <div class="flex flex-col items-center text-center mb-8">
+                <div class="relative">
+                    <img src="<?php echo htmlspecialchars($profileImageSrc); ?>" alt="Profile" class="w-24 h-24 rounded-full border-4 border-[#CAEED5] mb-3 object-cover shadow-md">
+                    <?php if(isset($user_data['status']) && $user_data['status'] == 'Active'): ?>
+                        <span class="absolute bottom-3 right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-[#115D5B] status-active"></span>
+                    <?php endif; ?>
+                </div>
+                <h2 class="font-bold text-lg"><?php echo htmlspecialchars($full_name); ?></h2>
+                <p class="text-sm italic text-[#CAEED5]"><?php echo htmlspecialchars($user_type); ?></p>
+                <?php if(isset($user_data['contact_num'])): ?>
+                    <p class="text-sm mt-1"><i class="fas fa-phone-alt text-xs mr-1"></i><?php echo htmlspecialchars($user_data['contact_num']); ?></p>
+                <?php endif; ?>
                 <p class="text-sm"><?php echo htmlspecialchars($email); ?></p>
-                <p class="text-sm italic"><?php echo htmlspecialchars($user_type); ?></p>
             </div>
             <nav class="mt-6">
                 <ul class="space-y-2">
@@ -221,32 +239,32 @@ $harvest_result = $stmt->get_result();
 
     <!-- Main Content -->
     <main class="w-3/4 p-6 bg-white ml-[25%]">
-        <header class="flex justify-between items-center mb-6">
+        <header class="flex justify-between items-center mb-6 bg-white p-4 rounded-lg shadow-md">
             <h1 class="text-2xl font-bold text-green-700">Pineapple Crops Price</h1>
-            <button class="bg-blue-600 text-white px-4 py-2 rounded">Place Order</button>
+            <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow transition-all">Place Order</button>
         </header>
 
         <!-- Product Cards - Now clickable -->
         <div class="grid grid-cols-3 gap-6 text-white font-bold mb-6">
-            <div class="product-card bg-[#115D5B] p-4 rounded-lg flex items-center cursor-pointer transition-transform transform hover:scale-105" 
+            <div class="product-card bg-gradient-to-br from-[#115D5B] to-[#0F3D3A] p-4 rounded-lg flex items-center cursor-pointer transition-transform transform hover:scale-105 shadow-lg" 
                  onclick="filterByProduct('Pineapple Fruit')" data-product="Pineapple Fruit">
-                <img src="Images/pineapple-fruit.jpg" alt="Pineapple Fruit" class="w-16 h-16 rounded-lg mr-4">
+                <img src="Images/pineapple-fruit.jpg" alt="Pineapple Fruit" class="w-16 h-16 rounded-lg mr-4 object-cover border-2 border-[#CAEED5]">
                 <div>
                     <h3>Pineapple Fruit</h3>
                     <p class="text-lg">₱50-60 Per Piece</p>
                 </div>
             </div>
-            <div class="product-card bg-[#115D5B] p-4 rounded-lg flex items-center cursor-pointer transition-transform transform hover:scale-105" 
+            <div class="product-card bg-gradient-to-br from-[#115D5B] to-[#0F3D3A] p-4 rounded-lg flex items-center cursor-pointer transition-transform transform hover:scale-105 shadow-lg" 
                  onclick="filterByProduct('Pineapple Juice')" data-product="Pineapple Juice">
-                <img src="Images/pineapple-juice.jpg" alt="Pineapple Juice" class="w-16 h-16 rounded-lg mr-4">
+                <img src="Images/pineapple-juice.jpg" alt="Pineapple Juice" class="w-16 h-16 rounded-lg mr-4 object-cover border-2 border-[#CAEED5]">
                 <div>
                     <h3>Pineapple Juice</h3>
                     <p class="text-lg">₱50-60 Per Liter</p>
                 </div>
             </div>
-            <div class="product-card bg-[#115D5B] p-4 rounded-lg flex items-center cursor-pointer transition-transform transform hover:scale-105" 
+            <div class="product-card bg-gradient-to-br from-[#115D5B] to-[#0F3D3A] p-4 rounded-lg flex items-center cursor-pointer transition-transform transform hover:scale-105 shadow-lg" 
                  onclick="filterByProduct('Pineapple Fiber')" data-product="Pineapple Fiber">
-                <img src="Images/pineapple-fiber2.png" alt="Pineapple Fiber" class="w-16 h-16 rounded-lg mr-4">
+                <img src="Images/pineapple-fiber2.png" alt="Pineapple Fiber" class="w-16 h-16 rounded-lg mr-4 object-cover border-2 border-[#CAEED5]">
                 <div>
                     <h3>Pineapple Fiber</h3>
                     <p class="text-lg">₱50-60 Per Yard</p>
