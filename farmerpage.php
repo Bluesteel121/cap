@@ -286,7 +286,7 @@ $profile_pic = displayProfileImage($farmer_data['profile_picture']);
                     </svg>
                     Profile</a></li>
 
-                    <li><a href="farmernotif.php" class="flex items-center p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">
+                    <li><a href="farmer_request.php" class="flex items-center p-2 hover:bg-[#CAEED5] hover:text-green-700 rounded">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                     </svg>
