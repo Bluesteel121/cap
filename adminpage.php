@@ -74,19 +74,17 @@ if ($user_id) {
             
             <nav class="mt-6 px-3 flex-grow">
                 <ul class="space-y-1">
-                     <li><a href="#" class="flex items-center p-2 rounded bg-[#CAEED5] text-green-800">
+                    <li><a href="#" class="flex items-center p-2 rounded bg-[#CAEED5] text-green-800">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                         </svg>
                         Home</a>
-
-                    <li><a href="#" class="flex items-center p-2 rounded hover:bg-[#115D5B]">
+                    </li>
+                    <li><a href="sucker_request.php" class="flex items-center p-2 rounded hover:bg-[#115D5B]">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                         </svg>
                         Request</a>
-                    </li>
-                   
                     </li>
                     <li><a href="#" class="flex items-center p-2 rounded hover:bg-[#115D5B]">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -99,13 +97,6 @@ if ($user_id) {
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                         </svg>
                         Profile</a>
-                    </li>
-                    
-                    <li><a href="log.php" class="flex items-center p-2 rounded hover:bg-[#115D5B]">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                        </svg>
-                        System Logs</a>
                     </li>
 
                      <li><a href="#" class="flex items-center p-2 text-red-500 hover:text-red-700" onclick="openLogoutModal()">
@@ -145,59 +136,59 @@ if ($user_id) {
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Empty rows with proper spacing -->
-                        <tr class="h-16 border-b border-green-900">
-                            <td class="px-4"></td>
-                            <td class="px-4"></td>
-                            <td class="px-4"></td>
+                        <!-- Sample data rows - make these clickable -->
+                        <tr class="h-16 border-b border-green-900 hover:bg-[#115D5B] cursor-pointer" onclick="window.location='request_details.php?id=1'">
+                            <td class="px-4">CL001</td>
+                            <td class="px-4">Pineapple Suckers - July</td>
+                            <td class="px-4 text-right"><span class="text-blue-300 hover:underline">View</span></td>
                         </tr>
-                        <tr class="h-16 border-b border-green-900">
-                            <td class="px-4"></td>
-                            <td class="px-4"></td>
-                            <td class="px-4"></td>
+                        <tr class="h-16 border-b border-green-900 hover:bg-[#115D5B] cursor-pointer" onclick="window.location='request_details.php?id=2'">
+                            <td class="px-4">CL002</td>
+                            <td class="px-4">Organic Fertilizer - August</td>
+                            <td class="px-4 text-right"><span class="text-blue-300 hover:underline">View</span></td>
                         </tr>
-                        <tr class="h-16">
-                            <td class="px-4"></td>
-                            <td class="px-4"></td>
-                            <td class="px-4"></td>
+                        <tr class="h-16 hover:bg-[#115D5B] cursor-pointer" onclick="window.location='request_details.php?id=3'">
+                            <td class="px-4">CL003</td>
+                            <td class="px-4">Pineapple Suckers - September</td>
+                            <td class="px-4 text-right"><span class="text-blue-300 hover:underline">View</span></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
             
-            <!-- Stats Cards -->
+            <!-- Stats Cards - Make these clickable -->
             <div class="grid grid-cols-4 gap-4 mb-6">
-                <div class="bg-[#0F3D3A] rounded-lg p-4 text-white">
+                <a href="sucker_request.php" class="bg-[#0F3D3A] rounded-lg p-4 text-white hover:bg-[#115D5B] transition cursor-pointer">
                     <h3 class="text-center mb-2 text-sm border-b pb-2">Suckers Request:</h3>
                     <p class="text-center text-4xl font-bold mb-4">15</p>
                     <div class="text-center">
-                        <button class="text-sm hover:underline">View More</button>
+                        <span class="text-sm hover:underline">View More</span>
                     </div>
-                </div>
+                </a>
                 
-                <div class="bg-[#0F3D3A] rounded-lg p-4 text-white">
+                <a href="fertilizer_request.php" class="bg-[#0F3D3A] rounded-lg p-4 text-white hover:bg-[#115D5B] transition cursor-pointer">
                     <h3 class="text-center mb-2 text-sm border-b pb-2">Fertilizer Request:</h3>
                     <p class="text-center text-4xl font-bold mb-4">30</p>
                     <div class="text-center">
-                        <button class="text-sm hover:underline">View More</button>
+                        <span class="text-sm hover:underline">View More</span>
                     </div>
-                </div>
+                </a>
                 
-                <div class="bg-[#0F3D3A] rounded-lg p-4 text-white">
+                <a href="customer_request.php" class="bg-[#0F3D3A] rounded-lg p-4 text-white hover:bg-[#115D5B] transition cursor-pointer">
                     <h3 class="text-center mb-2 text-sm border-b pb-2">Customer Request:</h3>
                     <p class="text-center text-4xl font-bold mb-4">30</p>
                     <div class="text-center">
-                        <button class="text-sm hover:underline">View More</button>
+                        <span class="text-sm hover:underline">View More</span>
                     </div>
-                </div>
+                </a>
                 
-                <div class="bg-[#0F3D3A] rounded-lg p-4 text-white">
+                <a href="clients_served.php" class="bg-[#0F3D3A] rounded-lg p-4 text-white hover:bg-[#115D5B] transition cursor-pointer">
                     <h3 class="text-center mb-2 text-sm border-b pb-2">Clients Served:</h3>
                     <p class="text-center text-4xl font-bold mb-4">15</p>
                     <div class="text-center">
-                        <button class="text-sm hover:underline">View More</button>
+                        <span class="text-sm hover:underline">View More</span>
                     </div>
-                </div>
+                </a>
             </div>
             
             <!-- Status and Chart -->
@@ -257,7 +248,7 @@ if ($user_id) {
             <h2 class="text-lg font-bold mb-4">Confirm Logout</h2>
             <p class="mb-6">Are you sure you want to logout?</p>
             <div class="flex justify-center gap-4">
-                <button onclick="confirmLogout()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded transition">Yes, Logout</button>
+                <button onclick="window.location.href='account.php'" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded transition">Yes, Logout</button>
                 <button onclick="closeLogoutModal()" class="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded transition">Cancel</button>
             </div>
         </div>
@@ -274,10 +265,11 @@ if ($user_id) {
         }
 
         function confirmLogout() {
-           
+            // Here you would typically redirect to a logout endpoint
+            // For now, we'll just close the modal and show an alert
             closeLogoutModal();
             alert('You have been logged out successfully.');
-            window.location.href = 'account.php';
+            // window.location.href = '/logout'; // Uncomment this to actually log out
         }
 
         // Close modal when clicking outside of it
