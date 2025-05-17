@@ -276,7 +276,7 @@ if (isset($_GET['message'])) {
             document.getElementById('logout-modal').classList.add('hidden');
         }
         function confirmLogout() {
-            window.location.href = 'logout.php'; // Changed to logout.php
+            window.location.href = 'account.php'; // Changed to logout.php
         }
         function previewImage(event) {
             const file = event.target.files[0];
