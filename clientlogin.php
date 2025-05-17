@@ -34,7 +34,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
             
             // Verify password (use password_verify if using password_hash)
             if ($password === $row['password']) {
-                // Create session with user's email
+                // Store client_ID in session
+                $_SESSION["client_ID"] = $row['client_ID'];
                 $_SESSION["email"] = $row['email'];
                 
                 debugLog("Login successful for user: $user_input");

@@ -4,7 +4,17 @@
 [2025-05-06 18:09:41] Login successful for identifier: bbnos
 [2025-05-16 12:33:09] Attempting farmer login - Identifier: bbnos
 [2025-05-16 12:33:09] Login successful for identifier: bbnos
+<<<<<<< HEAD
+[2025-05-17 07:47:56] Attempting farmer login - Identifier: dave
+[2025-05-17 07:47:56] Login failed for identifier: dave - User not found
+[2025-05-17 07:47:59] Attempting farmer login - Identifier: bbnos
+[2025-05-17 07:47:59] Login successful for identifier: bbnos
+=======
 [2025-05-17 08:40:12] Attempting farmer login - Identifier: bbnos
 [2025-05-17 08:40:13] Login successful for identifier: bbnos
+<<<<<<< HEAD
 [2025-05-17 10:10:47] Attempting farmer login - Identifier: bbnos
 [2025-05-17 10:10:47] Login successful for identifier: bbnos
+=======
+>>>>>>> d29cfb745d52e864898be99e8fe57268c79549c3
+>>>>>>> fdad737ee3805a46ff7ea95a858a350111f561b6
