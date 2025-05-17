@@ -324,9 +324,14 @@
 [2025-05-16 21:55:51] Login successful for user: nemz
 [2025-05-17 02:09:56] Attempting login - User input: dave
 [2025-05-17 02:09:56] Login successful for user: dave
+<<<<<<< HEAD
 [2025-05-17 09:51:50] Attempting login - User input: bbnos
 [2025-05-17 09:51:50] Login failed for user: bbnos - User not found
 [2025-05-17 09:51:54] Attempting login - User input: dave
 [2025-05-17 09:51:54] Login successful for user: dave
 [2025-05-17 09:52:22] Attempting login - User input: dave
 [2025-05-17 09:52:22] Login successful for user: dave
+=======
+[2025-05-17 08:48:39] Attempting login - User input: dave
+[2025-05-17 08:48:39] Login successful for user: dave
+>>>>>>> 68a16c8270876d3005cc98d715288da29ca39b31
