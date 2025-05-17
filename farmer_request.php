@@ -79,7 +79,7 @@ $contact_num = $farmer_data['contact_num'] ?? 'N/A';
         </aside>
         
         <!-- Main Content Area -->
-        <main class="w-full md:w-4/5 p-6 ml-0 md:ml-64 lg:ml-1/4">
+     <main class="w-full md:w-[calc(100%-256px)] lg:w-3/4 bg-white md:ml-64 lg:ml-[25%] p-4 md:p-6 transition-all duration-300 ease-in-out">
             <div class="bg-white rounded-lg shadow p-6">
                 <h1 class="text-2xl font-bold text-[#0F3D3A] mb-6">Fertilizer Request Form</h1>
                 
