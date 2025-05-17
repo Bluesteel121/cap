@@ -1,3 +1,49 @@
+<?php
+// Start session if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Get user ID from session
+$user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+
+// Initialize variables with default values
+$user_name = "Guest User";
+$user_position = "Not logged in";
+$profile_pic = "default_avatar.png";
+$status = "Inactive";
+$contact_num = "";
+
+// Database connection
+if ($user_id) {
+    require_once 'config.php'; // Include your database connection file
+    
+    // Updated query to match the actual table structure
+    $sql = "SELECT username, name, position, profile_pic, status, contact_number 
+            FROM accounts 
+            WHERE ID = ?";
+    
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows > 0) {
+        $user_data = $result->fetch_assoc();
+        // Use the name field instead of username for display
+        $user_name = $user_data['name'];
+        $user_position = $user_data['position'];
+        $profile_pic = !empty($user_data['profile_pic']) ? $user_data['profile_pic'] : "default_avatar.png";
+        $status = $user_data['status'];
+        $contact_num = $user_data['contact_number'];
+    }
+    
+    $stmt->close();
+    $conn->close();
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,13 +56,18 @@
     <div class="flex">
         <!-- Sidebar -->
         <aside class="w-1/5 bg-[#0F3D3A] min-h-screen text-white flex flex-col">
-            <div class="flex p-4 items-center space-x-3">
-                <img src="/api/placeholder/50/50" alt="Profile" class="rounded-full w-12 h-12 border-2 border-green-300">
-                <div>
-                    <h2 class="font-bold">Ricardo Dela Cruz</h2>
-                    <p class="text-xs text-gray-300">pjpcnyg@gmail.com</p>
-                    <p class="text-xs italic">Farmer</p>
-                </div>
+            <div class="flex flex-col items-center text-center mb-3 p-4">                 
+                <div class="relative">                     
+                    <img src="<?= isset($profile_pic) ? htmlspecialchars($profile_pic) : 'default_avatar.png' ?>" alt="Profile" class="w-24 h-24 rounded-full border-4 border-[#CAEED5] mb-3 object-cover shadow-md">                     
+                    <?php if(isset($status) && $status == 'Active'): ?>                         
+                        <span class="absolute bottom-3 right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-[#115D5B] status-active"></span>                     
+                    <?php endif; ?>                 
+                </div>                 
+                <h2 class="font-bold text-lg"><?= htmlspecialchars($user_name) ?></h2>                 
+                <p class="text-sm italic text-[#CAEED5]"><?= htmlspecialchars($user_position) ?></p>                 
+                <?php if(isset($contact_num)): ?>                     
+                    <p class="text-sm mt-1"><i class="fas fa-phone-alt text-xs mr-1"></i><?= htmlspecialchars($contact_num) ?></p>                 
+                <?php endif; ?>             
             </div>
             
             <div class="border-t border-green-900 mt-2"></div>
