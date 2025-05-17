@@ -13,6 +13,9 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// Debug - Log session variables
+error_log("Session variables: " . print_r($_SESSION, true));
+
 // Check if user is logged in
 if (!isset($_SESSION['username']) && !isset($_SESSION['email'])) {
     // Redirect to login page if not logged in
@@ -22,6 +25,7 @@ if (!isset($_SESSION['username']) && !isset($_SESSION['email'])) {
 
 // Get the login identifier (either username or email)
 $login_identifier = isset($_SESSION['username']) ? $_SESSION['username'] : $_SESSION['email'];
+error_log("Login identifier: " . $login_identifier);
 
 // Get user data from database using the login identifier
 if (isset($_SESSION['username'])) {
@@ -35,6 +39,9 @@ $stmt->bind_param("s", $login_identifier);
 $stmt->execute();
 $result = $stmt->get_result();
 
+error_log("SQL Query executed: " . $sql . " with parameter: " . $login_identifier);
+error_log("Result rows: " . $result->num_rows);
+
 if ($result->num_rows > 0) {
     $user_data = $result->fetch_assoc();
     $full_name = $user_data['full_name'];
@@ -44,8 +51,11 @@ if ($result->num_rows > 0) {
     $profile_pic = $user_data['profile_pic'];
     // Setting a default user type
     $user_type = "Client"; 
+    
+    error_log("User data found: " . print_r($user_data, true));
 } else {
     // Handle case where user data is not found
+    error_log("No user data found for " . $login_identifier);
     $full_name = "User";
     $email = $login_identifier;
     $username = "";
@@ -88,7 +98,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($new_password !== $confirm_password) {
             $update_error = "Passwords do not match!";
         }
-        // Remove password hashing
     }
     
     // Proceed with update if no errors
@@ -200,29 +209,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $param_types .= "s";
             $param_values[] = $login_identifier;
             
+            // Debug - Log SQL
+            error_log("Update SQL: " . $sql);
+            error_log("Param types: " . $param_types);
+            error_log("Param values: " . print_r($param_values, true));
+            
             // Prepare the statement
             $stmt = $conn->prepare($sql);
             
             if ($stmt) {
-                // Create a reference array for bind_param
-                $bind_params = array();
-                $bind_params[] = $param_types;
-                
-                // Create references for the parameter values
+                // Bind parameters dynamically
+                $params = array($param_types);
                 for ($i = 0; $i < count($param_values); $i++) {
-                    $bind_params[] = &$param_values[$i];
+                    $params[] = &$param_values[$i];
                 }
+                call_user_func_array(array($stmt, 'bind_param'), $params);
                 
-                // Call bind_param with the reference array
-                call_user_func_array(array($stmt, 'bind_param'), $bind_params);
-                
+                // Execute the statement
                 if ($stmt->execute()) {
                     $update_message .= "Profile updated successfully!";
                     
                     // Update session variables if username or email changed
-                    if ($login_identifier == $_SESSION['username'] && $new_username != $login_identifier) {
+                    if (isset($_SESSION['username']) && $new_username != $_SESSION['username']) {
                         $_SESSION['username'] = $new_username;
-                    } else if ($login_identifier == $_SESSION['email'] && $new_email != $login_identifier) {
+                    }
+                    if (isset($_SESSION['email']) && $new_email != $_SESSION['email']) {
                         $_SESSION['email'] = $new_email;
                     }
                     
@@ -231,11 +242,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     exit();
                 } else {
                     $update_error = "Error executing update: " . $stmt->error;
+                    error_log("SQL execution error: " . $stmt->error);
                 }
                 
                 $stmt->close();
             } else {
                 $update_error = "Error preparing statement: " . $conn->error;
+                error_log("SQL preparation error: " . $conn->error);
             }
         }
     }
@@ -263,7 +276,7 @@ if (isset($_GET['message'])) {
             document.getElementById('logout-modal').classList.add('hidden');
         }
         function confirmLogout() {
-            window.location.href = 'account.php'; // Change this to your logout URL
+            window.location.href = 'logout.php'; // Changed to logout.php
         }
         function previewImage(event) {
             const file = event.target.files[0];
