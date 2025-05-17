@@ -47,12 +47,12 @@
                         </svg>
                         Profile</a>
                     </li>
-                    <li><a href="#" class="flex items-center p-2 text-red-500 hover:text-red-700" onclick="openLogoutModal()">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                        </svg>
-                        Logout</a>
-                    </li>
+
+                     <li><a href="#" class="flex items-center p-2 text-red-500 hover:text-red-700" onclick="openLogoutModal()">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    </svg>
+                    Logout</a></li>
                 </ul>
             </nav>
         </aside>
@@ -211,6 +211,14 @@
 
         function closeLogoutModal() {
             document.getElementById('logout-modal').classList.add('hidden');
+        }
+
+        function confirmLogout() {
+            // Here you would typically redirect to a logout endpoint
+            // For now, we'll just close the modal and show an alert
+            closeLogoutModal();
+            alert('You have been logged out successfully.');
+            // window.location.href = '/logout'; // Uncomment this to actually log out
         }
 
         // Close modal when clicking outside of it
