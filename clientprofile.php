@@ -148,7 +148,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     if (in_array($file_ext, $allowed_exts)) {
                         // Create unique filename
                         $new_filename = "profile_" . $new_username . "_" . time() . "." . $file_ext;
-                        $local_upload_dir = "images/";
+                        $local_upload_dir = sys_get_temp_dir() . "/images/";
                         $github_upload_dir = "images/";
                         
                         // Create local directory if it doesn't exist
