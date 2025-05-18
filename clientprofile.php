@@ -4,9 +4,10 @@ session_start();
 
 // Include GitHub upload function
 require_once 'github_upload.php'; // Save the previous function in this file
+require_once 'db_connect.php';
 
 // Database connection
-$conn = new mysqli("localhost", "root", "", "capstone");
+// $conn = new mysqli("localhost", "root", "", "capstone");
 
 // Check connection
 if ($conn->connect_error) {
