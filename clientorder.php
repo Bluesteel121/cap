@@ -21,7 +21,7 @@ function displayProfileImage($profile_pic) {
 
 // Database connection
 // $conn = new mysqli("localhost", "root", "", "capstone"); local testing
-$conn = new mysqli("mysql-database-i4g8gso0goc8cws8cocc4ks0", "root", "uz9Fb2ZvJVlwLYYoGwTieloCHFY0Yv3uqN9XUDkDJlHy8QZL4x6jdZQDOvW3cZDV", "capstone"); //prod connection
+$conn = new mysqli("i4g8gso0goc8cws8cocc4ks0", "root", "uz9Fb2ZvJVlwLYYoGwTieloCHFY0Yv3uqN9XUDkDJlHy8QZL4x6jdZQDOvW3cZDV", "capstone"); //prod connection
 
 
 // Check connection
