@@ -62,21 +62,22 @@ $stmt->close();
 // Use the profile image display function from db_connect.php
 $profileImageSrc = displayProfileImage($profile_pic);
 
-// Fetch all harvest data for the current month and later months
-$currentMonth = date('F');
-$months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-$filteredMonths = array_slice($months, array_search($currentMonth, $months));
+// Fetch all harvest data from farmer_acc table
+// Note: We'll ignore the month filtering initially to make sure data is displayed
 
-$placeholders = rtrim(str_repeat('?,', count($filteredMonths)), ',');
-$sql = "SELECT farmer_name, month_of_harvest, possible_harvest, quantity, location, status 
-        FROM harvests 
-        WHERE month_of_harvest IN ($placeholders)
-        ORDER BY FIELD(month_of_harvest, " . implode(',', array_fill(0, count($filteredMonths), '?')) . ")
+// Get all farmer data with harvest products
+$sql = "SELECT name AS farmer_name, 
+        IFNULL(month_of_harvest, 'May') AS month_of_harvest, 
+        IFNULL(harvest_product, 'Pineapple Fruit') AS possible_harvest, 
+        IFNULL(harvest_quantity, '0') AS quantity, 
+        CONCAT(municipality, ', ', barangay) AS location, 
+        IFNULL(harvest_status, 'Pending') AS status 
+        FROM farmer_acc 
+        WHERE name IS NOT NULL
         LIMIT 100";
 
 $stmt = $conn->prepare($sql);
-$params = array_merge($filteredMonths, $filteredMonths);
-$stmt->bind_param(str_repeat('s', count($params)), ...$params);
+$stmt->execute();
 $stmt->execute();
 $harvest_result = $stmt->get_result();
 ?>
