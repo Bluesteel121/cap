@@ -6,7 +6,7 @@
 
 session_start();
 // $conn = new mysqli("localhost", "root", "", "capstone"); //Development connection
-$conn = new mysqli("mysql-database-i4g8gso0goc8cws8cocc4ks0", "root", "uz9Fb2ZvJVlwLYYoGwTieloCHFY0Yv3uqN9XUDkDJlHy8QZL4x6jdZQDOvW3cZDV", "capstone"); //prod connection
+$conn = new mysqli("i4g8gso0goc8cws8cocc4ks0", "root", "uz9Fb2ZvJVlwLYYoGwTieloCHFY0Yv3uqN9XUDkDJlHy8QZL4x6jdZQDOvW3cZDV", "capstone"); //prod connection
 
 
 if ($conn->connect_error) {
