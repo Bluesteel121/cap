@@ -5,10 +5,17 @@ session_start();
 // Include GitHub upload function
 require_once 'github_upload.php'; // Save the previous function in this file
 
-// Database connection
-// $conn = new mysqli("localhost", "root", "", "capstone");
-$conn = new mysqli("i4g8gso0goc8cws8cocc4ks0", "root", "uz9Fb2ZvJVlwLYYoGwTieloCHFY0Yv3uqN9XUDkDJlHy8QZL4x6jdZQDOvW3cZDV", "capstone"); //prod connection
+require_once __DIR__ . '/vendor/autoload.php';
 
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
+$conn = new mysqli(
+    $_ENV['DB_HOST'],
+    $_ENV['DB_USER'],
+    $_ENV['DB_PASS'],
+    $_ENV['DB_NAME']
+);
 
 // Check connection
 if ($conn->connect_error) {
