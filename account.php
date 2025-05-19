@@ -52,28 +52,33 @@
     </div>
 </div>
 
-  <!-- Right Section -->
-  <div class="w-full md:w-1/2 bg-[#1E3A34] text-white flex flex-col justify-center items-center p-6">
+ <!-- Right Section -->
+<div class="w-full md:w-1/2 bg-white text-black flex flex-col justify-center items-center p-6">
     <div class="flex justify-center space-x-4 mb-4 flex-wrap">
-      <img src="Images/logo1.png" alt="Logo 1" class="h-32 md:h-40" />
-      <img src="Images/logo2.png" alt="Logo 2" class="h-32 md:h-40" />
+        <img src="Images/logo1.png" alt="Logo 1" class="h-32 md:h-40" />
+        <img src="Images/logo2.png" alt="Logo 2" class="h-32 md:h-40" />
     </div>
-    <h2 class="text-center font-bold text-lg md:text-xl mt-4">DEPARTMENT OF AGRICULTURE RFO 5</h2>
-    <h3 class="text-center font-bold text-base md:text-lg mt-2">CAMARINES NORTE LOWLAND RAINFED RESEARCH STATION</h3>
+    <h2 class="text-center font-bold text-lg md:text-xl mt-4 text-gray-900">
+        DEPARTMENT OF AGRICULTURE RFO 5
+    </h2>
+    <h3 class="text-center font-bold text-base md:text-lg mt-2 text-gray-900">
+        CAMARINES NORTE LOWLAND RAINFED RESEARCH STATION
+    </h3>
     <div class="mt-6 text-center">
-      <p class="flex justify-center items-center gap-2">
-        <span>&#128205;</span> Calasgasan, Daet, Camarines Norte
-      </p>
-      <p class="flex justify-center items-center gap-2 mt-2">
-        <span>&#128231;</span> dacnlrrs@gmail.com
-      </p>
-      <p class="flex flex-col items-center gap-1 mt-2">
-        <span>&#128100; Engr. Bella B. Frias</span>
-        <span class="text-sm">Superintendent/Agricultural Center Chief III</span>
-      </p>
+        <p class="flex justify-center items-center gap-2 font-semibold text-gray-800">
+            <span class="text-gray-700">&#128205;</span> Calasgasan, Daet, Camarines Norte
+        </p>
+        <p class="flex justify-center items-center gap-2 mt-2 font-semibold text-gray-800">
+            <span class="text-gray-700">&#128231;</span> dacnlrrs@gmail.com
+        </p>
+        <p class="flex flex-col items-center gap-1 mt-2 font-semibold text-gray-800">
+            <span>&#128100; Engr. Bella B. Frias</span>
+            <span class="text-sm font-medium text-gray-600">
+                Superintendent/Agricultural Center Chief III
+            </span>
+        </p>
     </div>
-  </div>
-
+</div>
   <script>
     function redirectToLogin(role) {
       const routes = {
