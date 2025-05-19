@@ -182,7 +182,7 @@ if ($user_id) {
                     </div>
                 </a>
                 
-                <a href="customer_request.php" class="bg-[#0F3D3A] rounded-lg p-4 text-white hover:bg-[#115D5B] transition cursor-pointer">
+                <a href="client_request.php" class="bg-[#0F3D3A] rounded-lg p-4 text-white hover:bg-[#115D5B] transition cursor-pointer">
                     <h3 class="text-center mb-2 text-sm border-b pb-2">Customer Request:</h3>
                     <p class="text-center text-4xl font-bold mb-4">30</p>
                     <div class="text-center">
