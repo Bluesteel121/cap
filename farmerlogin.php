@@ -176,11 +176,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="h-screen flex relative bg-gray-100">
-    <!-- Back Button -->
-    <a href="account.php" class="absolute top-4 left-4 bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300">
-        ← Back 
-    </a>
-
     <!-- Login/Signup Container -->
     <div class="m-auto bg-white p-8 rounded-lg shadow-lg w-96">
         <img src="Images/logo.png" alt="Logo" class="mx-auto h-16 mb-4">
@@ -231,34 +226,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
                     Login
                 </button>
             </form>
+            
+            <!-- Centered Back Button -->
+            <div class="mt-6 text-center">
+                <a href="account.php" class="inline-block bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors duration-200">
+                    ← Back to Account Selection
+                </a>
+            </div>
         </div>
+    </div>
 
-        
     <script>
     // Disable any browser validation
     document.addEventListener('DOMContentLoaded', function() {
         // Disable HTML5 validation
         document.getElementById('login-form').setAttribute('novalidate', '');
-        document.getElementById('signup-form').setAttribute('novalidate', '');
         
         // Override submit behavior to prevent any validation
-        document.getElementById('signup-form').addEventListener('submit', function(e) {
+        document.getElementById('login-form').addEventListener('submit', function(e) {
             // Allow form submission without any client-side validation
         });
     });
-
-    function showSection(section) {
-        const login = document.getElementById('login-section');
-        const signup = document.getElementById('signup-section');
-        
-        if(section === 'signup') {
-            login.classList.add('hidden');
-            signup.classList.remove('hidden');
-        } else {
-            signup.classList.add('hidden');
-            login.classList.remove('hidden');
-        }
-    }
 
     function togglePassword(passwordFieldId, iconId) {
         const passwordField = document.getElementById(passwordFieldId);

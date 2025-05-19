@@ -129,11 +129,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="h-screen flex relative bg-gray-100">
-    <!-- Back Button -->
-    <a href="account.php" class="absolute top-4 left-4 bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300">
-        ← Back 
-    </a>
-
     <!-- Login/Signup Container -->
     <div class="m-auto bg-white p-8 rounded-lg shadow-lg w-96">
         <img src="Images/logo.png" alt="Logo" class="mx-auto h-16 mb-4">
@@ -184,10 +179,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
                     Login
                 </button>
             </form>
-            <p class="mt-4 text-center">
-                New client? 
-                <a href="#" onclick="showSection('signup')" class="text-green-500 hover:underline">Create Account</a>
-            </p>
+            <div class="mt-4 text-center space-y-3">
+                <p>
+                    New client? 
+                    <a href="#" onclick="showSection('signup')" class="text-green-500 hover:underline">Create Account</a>
+                </p>
+                <!-- Back Button moved here -->
+                <a href="account.php" class="inline-block bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors duration-200">
+                    ← Back to Account Selection
+                </a>
+            </div>
         </div>
 
         <!-- Signup Form -->
@@ -236,6 +237,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
             </p>
         </div>
     </div>
+</body>
+</html>
 
     <script>
     // Disable any browser validation

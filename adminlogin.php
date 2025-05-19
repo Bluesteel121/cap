@@ -94,11 +94,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Admin Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-green-7   00 flex justify-center items-center h-screen">
+<body class="bg-[#1E3A34] flex justify-center items-center h-screen">
 
-    <a href="account.php" class="absolute top-4 left-4 bg-gray-200 text-gray-800 px-4 py-2 rounded-lg shadow-md hover:bg-gray-300">← Back</a>
-
-    <div id="main-container" class="bg-white p-8 rounded-lg shadow-lg text-center w-96">
+    <div id="main-container" class="bg-white p-8 rounded-lg shadow-lg text-center w-96 relative">
         <img src="Images/logo.png" alt="Logo" class="mx-auto h-16">
         <h2 class="text-2xl font-bold mt-4">ADMINISTRATOR</h2>
         <p class="text-gray-500 mt-2">Admin</p>
@@ -114,11 +112,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         ?>
 
-        <button onclick="showSection('developers')" class="bg-green-500 text-white w-full py-2 mt-4 rounded-lg hover:bg-green-700">Developers</button>
+        <button onclick="showSection('developers')" class="bg-green-500 text-white w-full py-2 mt-4 rounded-lg hover:bg-green-700">Head Admin</button>
         <button onclick="showSection('staff')" class="bg-green-500 text-white w-full py-2 mt-2 rounded-lg hover:bg-green-700">Staff</button>
+        
+        <!-- Back Button for Main Container -->
+        <div class="mt-6 text-center">
+            <a href="account.php" class="inline-block bg-gray-200 text-gray-800 px-4 py-2 rounded-lg shadow-md hover:bg-gray-300 transition-colors duration-200">
+                ← Back to Account Selection
+            </a>
+        </div>
     </div>
 
-    <div id="developers-container" class="bg-white p-8 rounded-lg shadow-lg text-center w-96 hidden">
+    <div id="developers-container" class="bg-white p-8 rounded-lg shadow-lg text-center w-96 hidden relative">
         <img src="Images/logo.png" alt="Logo" class="mx-auto h-16">
         <h2 class="text-2xl font-bold mt-4">Developers</h2>
         <p class="text-gray-500 mt-2">Admin</p>
@@ -129,9 +134,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <input type="hidden" name="role" value="dev">
             <button type="submit" class="bg-green-500 text-white w-full py-2 mt-4 rounded-lg hover:bg-green-700">Login</button>
         </form>
+        
+        <!-- Back Button for Developers -->
+        <div class="mt-6 text-center">
+            <button onclick="showSection('main')" class="inline-block bg-gray-200 text-gray-800 px-4 py-2 rounded-lg shadow-md hover:bg-gray-300 transition-colors duration-200">
+                ← Back to Admin Selection
+            </button>
+        </div>
     </div>
 
-    <div id="staff-container" class="bg-white p-8 rounded-lg shadow-lg text-center w-96 hidden">
+    <div id="staff-container" class="bg-white p-8 rounded-lg shadow-lg text-center w-96 hidden relative">
         <img src="Images/logo.png" alt="Logo" class="mx-auto h-16">
         <h2 class="text-2xl font-bold mt-4">Staff</h2>
         <p class="text-gray-500 mt-2">Admin</p>
@@ -142,6 +154,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <input type="hidden" name="role" value="staff">
             <button type="submit" class="bg-green-500 text-white w-full py-2 mt-4 rounded-lg hover:bg-green-700">Login</button>
         </form>
+        
+        <!-- Back Button for Staff -->
+        <div class="mt-6 text-center">
+            <button onclick="showSection('main')" class="inline-block bg-gray-200 text-gray-800 px-4 py-2 rounded-lg shadow-md hover:bg-gray-300 transition-colors duration-200">
+                ← Back to Admin Selection
+            </button>
+        </div>
     </div>
 
     <script>
@@ -154,6 +173,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             document.getElementById("developers-container").classList.remove("hidden");
         } else if (section === "staff") {
             document.getElementById("staff-container").classList.remove("hidden");
+        } else if (section === "main") {
+            document.getElementById("main-container").classList.remove("hidden");
         }
     }
     </script>
