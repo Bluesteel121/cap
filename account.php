@@ -9,43 +9,48 @@
 </head>
 <body class="min-h-screen flex flex-col md:flex-row relative">
 
-  <!-- Back to Home Button -->
-  <a href="index.php" class="absolute top-4 left-4 bg-gray-200 text-gray-800 px-4 py-2 rounded-lg shadow-md hover:bg-gray-300 z-10">
-    ← Back to Home
-  </a>
-
   <!-- Left Section -->
-  <div class="w-full md:w-1/2 bg-[#115D5B] text-white flex flex-col justify-center items-center p-6">
+<div class="w-full md:w-1/2 bg-[#115D5B] text-white flex flex-col justify-center items-center p-6">
     <h1 class="text-2xl md:text-4xl font-bold mb-6 text-center">WELCOME TO CNLRRS</h1>
     <div class="flex flex-col md:flex-row items-center md:space-x-6 space-y-4 md:space-y-0">
-      <!-- Admin Button -->
-      <button onclick="redirectToLogin('admin')" class="flex flex-col items-center">
-        <div class="bg-white w-[150px] h-[140px] p-4 rounded-lg shadow-lg flex flex-col items-center justify-center">
-          <img src="Images/adminlogo.png" alt="Admin Logo" class="h-20" />
-          <i class="fas fa-user-cog text-[#115D5B] text-4xl"></i>
-        </div>
-        <p class="mt-2 text-lg font-semibold">Admin</p>
-      </button>
-
-      <!-- Farmer Button -->
-      <button onclick="redirectToLogin('farmer')" class="flex flex-col items-center">
-        <div class="bg-white w-[150px] h-[140px] p-4 rounded-lg shadow-lg flex flex-col items-center justify-center">
-          <img src="Images/farmerlogo.png" alt="Farmer Logo" class="h-20" />
-          <i class="fas fa-users text-[#115D5B] text-4xl"></i>
-        </div>
-        <p class="mt-2 text-lg font-semibold">Farmers</p>
-      </button>
-
-      <!-- Client Button -->
-      <button onclick="redirectToLogin('client')" class="flex flex-col items-center">
-        <div class="bg-white w-[150px] h-[140px] p-4 rounded-lg shadow-lg flex flex-col items-center justify-center">
-          <img src="Images/customer.png" alt="Client Logo" class="h-20" />
-          <i class="fas fa-handshake text-[#115D5B] text-4xl"></i>
-        </div>
-        <p class="mt-2 text-lg font-semibold">Client</p>
-      </button>
+        <!-- Admin Button -->
+        <button onclick="redirectToLogin('admin')" class="flex flex-col items-center">
+            <div class="bg-white w-[150px] h-[140px] p-4 rounded-lg shadow-lg flex flex-col items-center justify-center">
+                <img src="Images/adminlogo.png" alt="Admin Logo" class="h-20" />
+                <i class="fas fa-user-cog text-[#115D5B] text-4xl"></i>
+            </div>
+            <p class="mt-2 text-lg font-semibold">Admin</p>
+        </button>
+        
+        <!-- Farmer Button -->
+        <button onclick="redirectToLogin('farmer')" class="flex flex-col items-center">
+            <div class="bg-white w-[150px] h-[140px] p-4 rounded-lg shadow-lg flex flex-col items-center justify-center">
+                <img src="Images/farmerlogo.png" alt="Farmer Logo" class="h-20" />
+                <i class="fas fa-users text-[#115D5B] text-4xl"></i>
+            </div>
+            <p class="mt-2 text-lg font-semibold">Farmers</p>
+        </button>
+        
+        <!-- Client Button -->
+        <button onclick="redirectToLogin('client')" class="flex flex-col items-center">
+            <div class="bg-white w-[150px] h-[140px] p-4 rounded-lg shadow-lg flex flex-col items-center justify-center">
+                <img src="Images/customer.png" alt="Client Logo" class="h-20" />
+                <i class="fas fa-handshake text-[#115D5B] text-4xl"></i>
+            </div>
+            <p class="mt-2 text-lg font-semibold">Client</p>
+        </button>
     </div>
-  </div>
+    
+    <!-- Back to Home Button (now centered below all buttons) -->
+    <div class="mt-6 flex justify-center">
+        <a href="index.php" class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 hover:text-gray-900 transition-all duration-300 ease-in-out group">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5 text-gray-500 group-hover:text-gray-700 transform group-hover:-translate-x-0.5 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Back to Home
+        </a>
+    </div>
+</div>
 
   <!-- Right Section -->
   <div class="w-full md:w-1/2 bg-[#1E3A34] text-white flex flex-col justify-center items-center p-6">

@@ -29,8 +29,8 @@
         <li><a href="services.php" class="text-white xl:text-black font-bold hover:text-gray-300 block py-2">Our Services</a></li>
         <li><a href="#contact" class="text-white xl:text-black font-bold hover:text-gray-300 block py-2">Contact Us</a></li>
         <li><a href="#faq" class="text-white xl:text-black font-bold hover:text-gray-300 block py-2">FAQ</a></li>
-        <li><a href="elibrary.php" class="text-white xl:text-black font-bold bg-green-1000 px-4 py-2 rounded-lg hover:text-gray-300 block py-2">Library</a></li>
-        <li><a href="account.php" class="text-white xl:text-black font-bold bg-green-900 px-6 py-2 rounded-lg hover:text-gray-300 block py-2">Log In</a></li>
+        <li><a href="elibrary.php" class="text-white xl:text-white font-bold bg-yellow-600 px-6 py-2 rounded-lg hover:text-gray-300 block py-2">E-Library</a></li>
+        <li><a href="account.php" class="text-white xl:text-white font-bold bg-green-900 px-6 py-2 rounded-lg hover:text-gray-300 block py-2">Log In</a></li>
       </ul>
     </nav>
   </div>
@@ -42,7 +42,7 @@
     <div class="absolute inset-0 flex flex-col items-center justify-center text-center text-white bg-black bg-opacity-50">
       <h2 class="text-3xl font-bold">Welcome to Camarines Norte Lowland Rainfed Research Station</h2>
       <p class="mt-2 text-lg">Learn and Discover the Secrets Behind the Sweetest Pineapple in Camarines Norte</p>
-      <a href="about.html" class="mt-4 bg-green-500 px-4 py-2 rounded-md text-white font-semibold hover:bg-green-700">Explore More</a>
+      <a href="services.php" class="mt-4 bg-green-500 px-4 py-2 rounded-md text-white font-semibold hover:bg-green-700">Explore More</a>
     </div>
   </section>
 
