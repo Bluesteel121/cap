@@ -29,7 +29,7 @@
         <li><a href="#" class="hover:text-gray-300 block py-2">Our Services</a></li>
         <li><a href="#contact" class="hover:text-gray-300 block py-2">Contact Us</a></li>
         <li><a href="#faq" class="hover:text-gray-300 block py-2">FAQ</a></li>
-        <li><a href="elibrary.html" class="bg-green-1000 px-4 py-2 rounded-lg hover:text-gray-300 block py-2">Library</a></li>
+        <li><a href="elibrary.php" class="bg-green-1000 px-4 py-2 rounded-lg hover:text-gray-300 block py-2">Library</a></li>
         <li><a href="account.php" class="bg-green-900 px-6 py-2 rounded-lg hover:text-gray-300 block py-2">Log In</a></li>
       </ul>
     </nav>
