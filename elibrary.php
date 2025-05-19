@@ -17,29 +17,27 @@
             </a>
             <div class="text-2xl font-bold">CNLRRS Queen Pineapple Research E-Library</div>
             <div class="flex items-center space-x-4">
-                <button id="loginBtn" class="bg-yellow-600 hover:bg-yellow-700 px-4 py-2 rounded-lg">Login</button>
-                <button id="signupBtn" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg">Sign Up</button>
             </div>
         </div>
     </nav>
 
     <!-- Main Content -->
-    <div class="container mx-auto p-4">
-        <!-- Hero Section -->
-        <div class="flex flex-col md:flex-row items-center justify-between bg-white rounded-lg p-6 mb-8 shadow-md">
-            <div class="md:w-1/2 mb-4 md:mb-0">
-                <h1 class="text-3xl font-bold text-[#115D5B] mb-2">CNLRRS Queen Pineapple Research Repository</h1>
-                <p class="text-gray-700 mb-4">Access the latest research, studies, and publications about Queen Pineapple varieties, cultivation, health benefits, and more.</p>
-                <div class="flex space-x-2">
-                    <button class="bg-[#115D5B] hover:bg-green-600 text-white px-6 py-2 rounded-lg">Browse Research</button>
-                    <button class="bg-[#115D5B] hover:bg-green-600 text-white px-6 py-2 rounded-lg">Submit Paper</button>
-                </div>
-            </div>
-            <div class="md:w-1/3">
-                <img src="/api/placeholder/400/300" alt="Queen Pineapple" class="rounded-lg shadow-md" />
+   <div class="container mx-auto p-4">
+    <!-- Hero Section -->
+    <div class="flex flex-col md:flex-row items-center justify-between bg-white rounded-lg p-6 mb-8 shadow-md">
+        <div class="md:w-1/2 mb-4 md:mb-0">
+            <h1 class="text-3xl font-bold text-[#115D5B] mb-2">CNLRRS Queen Pineapple Research Repository</h1>
+            <p class="text-gray-700 mb-4">Access the latest research, studies, and publications about Queen Pineapple varieties, cultivation, health benefits, and more.</p>
+            <div class="flex space-x-2">
+                <button class="bg-[#115D5B] hover:bg-green-600 text-white px-6 py-2 rounded-lg">Browse Research</button>
+                <button class="bg-[#115D5B] hover:bg-green-600 text-white px-6 py-2 rounded-lg">Submit Paper</button>
             </div>
         </div>
-
+        <div class="md:w-1/3">
+ <img src="Images/md2.jpg" alt="Queen Pineapple" class="rounded-lg shadow-md w-full h-auto max-w-md" />
+        </div>
+    </div>
+</div>
         <!-- Search Section -->
         <div class="bg-white rounded-lg p-6 mb-8 shadow-md">
             <h2 class="text-xl font-bold text-gray-800 mb-4">Advanced Search</h2>
