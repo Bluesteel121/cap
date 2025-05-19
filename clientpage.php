@@ -235,48 +235,48 @@ $harvest_result = $stmt->get_result();
         </div>
         
         <!-- Harvest Table -->
-        <div class="bg-[#115D5B] p-6 rounded-lg border border-gray-300 overflow-hidden">
-            <div class="flex justify-center">
-                <!--Search Bar -->
-                <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search by Name, Month, or Location"
-                    class="bg-[#103635] w-full sm:w-3/4 p-3 rounded-full mb-4 text-white border-[2.5px] border-[#4CAF50] mt-4 focus:border-green-700 focus:ring-2 focus:ring-green-700 focus:outline-none text-center">
-            </div>
+       <div class="bg-[#115D5B] p-6 rounded-lg border border-gray-300 overflow-hidden">
+    <div class="flex justify-center">
+        <!--Search Bar -->
+        <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search by Name, Month, or Location"
+            class="bg-[#103635] w-full sm:w-3/4 p-3 rounded-full mb-4 text-white border-[2.5px] border-[#4CAF50] mt-4 focus:border-green-700 focus:ring-2 focus:ring-green-700 focus:outline-none text-center">
+    </div>
 
-            <div class="space-y-4 mt-10">
-                <?php
-                if ($harvest_result->num_rows > 0) {
-                    while ($row = $harvest_result->fetch_assoc()) {
-                        echo "<a href='clientorder.php?farmer=" . urlencode($row['farmer_name']) . "' class='block'>
-                                <div class='harvest-row bg-[#103635] bg-opacity-50 border-[2.5px] border-[#4CAF50] p-4 rounded-lg shadow-md flex flex-col sm:flex-row items-start sm:items-center sm:justify-between hover:bg-[#4CAF50] hover:bg-opacity-80' data-product='" . htmlspecialchars($row['possible_harvest']) . "'>
-                                    <div class='mb-2 sm:mb-0'>
-                                        <p class='font-bold text-white'>{$row['farmer_name']}</p>
-                                        <p class='font-bold text-sm text-[#4CAF50]'>{$row['month_of_harvest']}</p>
-                                    </div>
-                                    <div class='flex flex-col sm:flex-row sm:space-x-4 w-full sm:w-auto'>
-                                        <div class='text-left sm:text-center mb-2 sm:mb-0'>
-                                            <p class='text-white'>{$row['possible_harvest']}</p>
-                                            <p class='text-sm text-gray-500'>Possible Harvest</p>
-                                        </div>
-                                        <div class='text-left sm:text-center mb-2 sm:mb-0'>
-                                            <p class='text-white'>{$row['quantity']} kg</p>
-                                            <p class='text-sm text-gray-500'>Quantity</p>
-                                        </div>
-                                        <div class='text-left sm:text-center mb-2 sm:mb-0'>
-                                            <p class='text-white'>{$row['location']}</p>
-                                            <p class='text-sm text-gray-500'>Location</p>
-                                        </div>
-                                        <div class='text-center'>
-                                            <span class='px-3 py-1 rounded-full text-white " . 
-                                            ($row['status'] == 'Available' ? 'bg-green-500' : ($row['status'] == 'Sold' ? 'bg-red-500' : 'bg-yellow-500')) . "'>
-                                                {$row['status']}
-                                            </span>
-                                        </div>
-                                    </div>
+    <div class="space-y-4 mt-10">
+        <?php
+        if ($harvest_result->num_rows > 0) {
+            while ($row = $harvest_result->fetch_assoc()) {
+                echo "<a href='clientorder.php?farmer=" . urlencode($row['farmer_name']) . "' class='block'>
+                        <div class='harvest-row bg-[#103635] bg-opacity-50 border-[2.5px] border-[#4CAF50] p-4 rounded-lg shadow-md hover:bg-[#4CAF50] hover:bg-opacity-80' data-product='" . htmlspecialchars($row['possible_harvest']) . "'>
+                            <div class='flex flex-col md:flex-row md:items-center md:justify-between gap-4'>
+                                <div class='flex-1 min-w-[150px]'>
+                                    <p class='font-bold text-white'>{$row['farmer_name']}</p>
+                                    <p class='font-bold text-sm text-[#4CAF50]'>{$row['month_of_harvest']}</p>
                                 </div>
-                              </a>";
-                    }
-                }
-                ?>
+                                <div class='flex-1 min-w-[150px]'>
+                                    <p class='text-white'>{$row['possible_harvest']}</p>
+                                    <p class='text-sm text-gray-500'>Possible Harvest</p>
+                                </div>
+                                <div class='flex-1 min-w-[100px]'>
+                                    <p class='text-white'>{$row['quantity']} kg</p>
+                                    <p class='text-sm text-gray-500'>Quantity</p>
+                                </div>
+                                <div class='flex-1 min-w-[150px]'>
+                                    <p class='text-white'>{$row['location']}</p>
+                                    <p class='text-sm text-gray-500'>Location</p>
+                                </div>
+                                <div class='flex-1 min-w-[100px] text-center md:text-right'>
+                                    <span class='inline-block px-3 py-1 rounded-full text-white " . 
+                                    ($row['status'] == 'Available' ? 'bg-green-500' : ($row['status'] == 'Sold' ? 'bg-red-500' : 'bg-yellow-500')) . "'>
+                                        {$row['status']}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                      </a>";
+            }
+        }
+        ?>
                 <!-- No results message -->
                 <div id="no-results" class="p-4 text-center text-white bg-[#103635] rounded-lg shadow-md" style="display: none;">
                     No matching results found.
