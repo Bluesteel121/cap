@@ -99,7 +99,7 @@
                             <td class="py-3 px-4">Quorni Pineapple</td>
                             <td class="py-3 px-4">2016 Sucker</td>
                             <td class="py-3 px-4">9 July 2014</td>
-                            <td class="py-3 px-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">WINNER</span></td>
+                            <td class="py-3 px-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">APROVED</span></td>
                             <td class="py-3 px-4"><button class="text-blue-500 hover:underline">View</button></td>
                         </tr>
                         <tr>
@@ -108,7 +108,7 @@
                             <td class="py-3 px-4">Quorni Pineapple</td>
                             <td class="py-3 px-4">2016 Sucker</td>
                             <td class="py-3 px-4">9 July 2014</td>
-                            <td class="py-3 px-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">WINNER</span></td>
+                            <td class="py-3 px-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">APROVED</span></td>
                             <td class="py-3 px-4"><button class="text-blue-500 hover:underline">View</button></td>
                         </tr>
                         <tr>
@@ -117,7 +117,7 @@
                             <td class="py-3 px-4">Quorni Pineapple</td>
                             <td class="py-3 px-4">405 Sucker</td>
                             <td class="py-3 px-4">9 July 2014</td>
-                            <td class="py-3 px-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">WINNER</span></td>
+                            <td class="py-3 px-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">APROVED</span></td>
                             <td class="py-3 px-4"><button class="text-blue-500 hover:underline">View</button></td>
                         </tr>
                         <tr>
@@ -126,7 +126,7 @@
                             <td class="py-3 px-4">Quorni Pineapple</td>
                             <td class="py-3 px-4">415 Sucker</td>
                             <td class="py-3 px-4">9 July 2014</td>
-                            <td class="py-3 px-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">WINNER</span></td>
+                            <td class="py-3 px-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">APROVED</span></td>
                             <td class="py-3 px-4"><button class="text-blue-500 hover:underline">View</button></td>
                         </tr>
                         <tr>
@@ -135,7 +135,7 @@
                             <td class="py-3 px-4">Quorni Pineapple</td>
                             <td class="py-3 px-4">115 Sucker</td>
                             <td class="py-3 px-4">9 July 2004</td>
-                            <td class="py-3 px-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">WINNER</span></td>
+                            <td class="py-3 px-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">APROVED</span></td>
                             <td class="py-3 px-4"><button class="text-blue-500 hover:underline">View</button></td>
                         </tr>
                     </tbody>

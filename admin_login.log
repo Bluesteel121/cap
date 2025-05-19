@@ -458,3 +458,13 @@
 [2025-05-18 17:43:30] Stored Password: pass
 [2025-05-18 17:43:30] Submitted Password: pass
 [2025-05-18 17:43:30] Password match. Redirecting to index.php
+[2025-05-19 22:05:56] Database Connection Status: Connected
+[2025-05-19 22:05:56] Attempting login - Username: john, Role: staff
+[2025-05-19 22:05:56] Total users in database: 3
+[2025-05-19 22:05:56] Existing User - Username: dave, Role: dev
+[2025-05-19 22:05:56] Existing User - Username: john, Role: staff
+[2025-05-19 22:05:56] Existing User - Username: buddy, Role: staff
+[2025-05-19 22:05:56] Query result rows: 1
+[2025-05-19 22:05:56] Stored Password: pass
+[2025-05-19 22:05:56] Submitted Password: pass
+[2025-05-19 22:05:56] Password match. Redirecting to index.php

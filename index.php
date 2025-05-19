@@ -120,7 +120,7 @@
               <i class="fas fa-map-marker-alt mt-1 mr-4"></i>
               <div>
                 <h4 class="font-semibold">Address</h4>
-                <p>123 Research Station Road, Camarines Norte, Philippines 4600</p>
+                <p>Calasgasan, Daet, Camarines Norte, Philippines 4600</p>
               </div>
             </div>
             
@@ -128,7 +128,7 @@
               <i class="fas fa-phone-alt mt-1 mr-4"></i>
               <div>
                 <h4 class="font-semibold">Phone</h4>
-                <p>+63 (054) 123-4567</p>
+                <p>(+63) 951 609 9599</p>
               </div>
             </div>
             
@@ -136,7 +136,7 @@
               <i class="fas fa-envelope mt-1 mr-4"></i>
               <div>
                 <h4 class="font-semibold">Email</h4>
-                <p>info@cnlrrstation.gov.ph</p>
+                <p>dacnlrrs@gmail.com</p>
               </div>
             </div>
             
