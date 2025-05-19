@@ -1,25 +1,47 @@
 <?php
 // Start the session if it's not already started
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Include GitHub upload function
 require_once 'github_upload.php'; // Save the previous function in this file
 
+// Load environment variables
 require_once __DIR__ . '/vendor/autoload.php';
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-$dotenv->load();
+// Load environment variables with error handling
+try {
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+    $dotenv->load();
+} catch (Exception $e) {
+    error_log("Error loading .env file: " . $e->getMessage());
+    die("Configuration error. Please contact the administrator.");
+}
 
-$conn = new mysqli(
-    $_ENV['DB_HOST'],
-    $_ENV['DB_USER'],
-    $_ENV['DB_PASS'],
-    $_ENV['DB_NAME']
-);
+// Debug - Log environment variables (redact sensitive info)
+error_log("DB_HOST set: " . (isset($_ENV['DB_HOST']) ? 'Yes' : 'No'));
+error_log("DB_USER set: " . (isset($_ENV['DB_USER']) ? 'Yes' : 'No'));
+error_log("DB_NAME set: " . (isset($_ENV['DB_NAME']) ? 'Yes' : 'No'));
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+// Database connection with better error handling
+try {
+    $conn = new mysqli(
+        $_ENV['DB_HOST'],
+        $_ENV['DB_USER'],
+        $_ENV['DB_PASS'],
+        $_ENV['DB_NAME']
+    );
+    
+    // Check connection
+    if ($conn->connect_error) {
+        throw new Exception("Connection failed: " . $conn->connect_error);
+    }
+    
+    error_log("Database connection successful");
+} catch (Exception $e) {
+    error_log("Database connection error: " . $e->getMessage());
+    die("Database connection error. Please try again later or contact support.");
 }
 
 // Debug - Log session variables
@@ -28,6 +50,7 @@ error_log("Session variables: " . print_r($_SESSION, true));
 // Check if user is logged in
 if (!isset($_SESSION['username']) && !isset($_SESSION['email'])) {
     // Redirect to login page if not logged in
+    error_log("User not logged in, redirecting to account.php");
     header("Location: account.php");
     exit();
 }
@@ -37,43 +60,52 @@ $login_identifier = isset($_SESSION['username']) ? $_SESSION['username'] : $_SES
 error_log("Login identifier: " . $login_identifier);
 
 // Get user data from database using the login identifier
-if (isset($_SESSION['username'])) {
-    $sql = "SELECT full_name, email, username, phone_number, profile_pic FROM client_acc WHERE username = ?";
-} else {
-    $sql = "SELECT full_name, email, username, phone_number, profile_pic FROM client_acc WHERE email = ?";
-}
+try {
+    if (isset($_SESSION['username'])) {
+        $sql = "SELECT full_name, email, username, phone_number, profile_pic FROM client_acc WHERE username = ?";
+    } else {
+        $sql = "SELECT full_name, email, username, phone_number, profile_pic FROM client_acc WHERE email = ?";
+    }
 
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $login_identifier);
-$stmt->execute();
-$result = $stmt->get_result();
-
-error_log("SQL Query executed: " . $sql . " with parameter: " . $login_identifier);
-error_log("Result rows: " . $result->num_rows);
-
-if ($result->num_rows > 0) {
-    $user_data = $result->fetch_assoc();
-    $full_name = $user_data['full_name'];
-    $email = $user_data['email'];
-    $username = $user_data['username'];
-    $phone_number = $user_data['phone_number'];
-    $profile_pic = $user_data['profile_pic'];
-    // Setting a default user type
-    $user_type = "Client"; 
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) {
+        throw new Exception("Prepare statement failed: " . $conn->error);
+    }
     
-    error_log("User data found: " . print_r($user_data, true));
-} else {
-    // Handle case where user data is not found
-    error_log("No user data found for " . $login_identifier);
+    $stmt->bind_param("s", $login_identifier);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    error_log("SQL Query executed: " . $sql . " with parameter: " . $login_identifier);
+    error_log("Result rows: " . $result->num_rows);
+
+    if ($result->num_rows > 0) {
+        $user_data = $result->fetch_assoc();
+        $full_name = $user_data['full_name'];
+        $email = $user_data['email'];
+        $username = $user_data['username'];
+        $phone_number = $user_data['phone_number'];
+        $profile_pic = $user_data['profile_pic'];
+        // Setting a default user type
+        $user_type = "Client"; 
+        
+        error_log("User data found: " . print_r($user_data, true));
+    } else {
+        // Handle case where user data is not found
+        error_log("No user data found for " . $login_identifier);
+        throw new Exception("User account not found. Please contact support.");
+    }
+
+    $stmt->close();
+} catch (Exception $e) {
+    error_log("Error retrieving user data: " . $e->getMessage());
     $full_name = "User";
-    $email = $login_identifier;
+    $email = $login_identifier ?? "Unknown";
     $username = "";
     $phone_number = "";
     $profile_pic = null;
     $user_type = "User";
 }
-
-$stmt->close();
 
 // Function to display profile image
 function displayProfileImage($profile_pic) {
@@ -94,23 +126,35 @@ $update_message = "";
 $update_error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Collect form data
-    $new_full_name = $_POST['full_name'];
-    $new_email = $_POST['email'];
-    $new_username = $_POST['username'];
-    $new_phone_number = $_POST['phone_number'];
-    $new_password = isset($_POST['password']) && !empty($_POST['password']) ? $_POST['password'] : null;
-    $confirm_password = isset($_POST['confirm_password']) ? $_POST['confirm_password'] : null;
-    
-    // Validate password if provided
-    if ($new_password !== null) {
-        if ($new_password !== $confirm_password) {
-            $update_error = "Passwords do not match!";
+    try {
+        // Collect form data
+        $new_full_name = $_POST['full_name'];
+        $new_email = $_POST['email'];
+        $new_username = $_POST['username'];
+        $new_phone_number = $_POST['phone_number'];
+        $new_password = isset($_POST['password']) && !empty($_POST['password']) ? $_POST['password'] : null;
+        $confirm_password = isset($_POST['confirm_password']) ? $_POST['confirm_password'] : null;
+        
+        // Validate form data
+        if (empty($new_full_name) || empty($new_email) || empty($new_username)) {
+            throw new Exception("Name, email and username are required fields.");
         }
-    }
-    
-    // Proceed with update if no errors
-    if (empty($update_error)) {
+        
+        if (!filter_var($new_email, FILTER_VALIDATE_EMAIL)) {
+            throw new Exception("Please enter a valid email address.");
+        }
+        
+        // Validate password if provided
+        if ($new_password !== null) {
+            if ($new_password !== $confirm_password) {
+                throw new Exception("Passwords do not match!");
+            }
+            
+            if (strlen($new_password) < 6) {
+                throw new Exception("Password must be at least 6 characters long.");
+            }
+        }
+        
         // Start building the SQL query
         $sql_parts = [];
         $param_types = "";
@@ -155,12 +199,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     if (in_array($file_ext, $allowed_exts)) {
                         // Create unique filename
                         $new_filename = "profile_" . $new_username . "_" . time() . "." . $file_ext;
-                        $local_upload_dir = sys_get_temp_dir() . "/images/";
+                        $local_upload_dir = "images/"; // Change to a relative path that exists
                         $github_upload_dir = "images/";
                         
                         // Create local directory if it doesn't exist
                         if (!file_exists($local_upload_dir)) {
-                            mkdir($local_upload_dir, 0777, true);
+                            if (!mkdir($local_upload_dir, 0777, true)) {
+                                error_log("Failed to create directory: " . $local_upload_dir);
+                                throw new Exception("Failed to create upload directory.");
+                            }
                         }
                         
                         $local_path = $local_upload_dir . $new_filename;
@@ -169,97 +216,106 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         // Move the uploaded file to the local images directory
                         if (move_uploaded_file($file["tmp_name"], $local_path)) {
                             // Try to upload to GitHub
-                            $github_result = uploadToGitHub($local_path, $github_path);
-                            
-                            if ($github_result === true) {
-                                // GitHub upload successful
-                                // Add profile_pic path to SQL update
-                                $sql_parts[] = "profile_pic = ?";
-                                $param_types .= "s"; // string for file path
-                                $param_values[] = $github_path;
-                            } else {
-                                // GitHub upload failed, but we still have the local file
-                                // Log the error but continue with the local path
-                                error_log("GitHub upload failed: " . $github_result);
+                            try {
+                                $github_result = uploadToGitHub($local_path, $github_path);
                                 
+                                if ($github_result === true) {
+                                    // GitHub upload successful
+                                    // Add profile_pic path to SQL update
+                                    $sql_parts[] = "profile_pic = ?";
+                                    $param_types .= "s"; // string for file path
+                                    $param_values[] = $github_path;
+                                } else {
+                                    // GitHub upload failed, but we still have the local file
+                                    // Log the error but continue with the local path
+                                    error_log("GitHub upload failed: " . $github_result);
+                                    
+                                    $sql_parts[] = "profile_pic = ?";
+                                    $param_types .= "s";
+                                    $param_values[] = $local_path;
+                                    
+                                    // Add a warning to the user
+                                    $update_message = "Profile will be updated, but GitHub sync failed. ";
+                                }
+                            } catch (Exception $e) {
+                                error_log("GitHub upload exception: " . $e->getMessage());
+                                // Continue with local path
                                 $sql_parts[] = "profile_pic = ?";
                                 $param_types .= "s";
                                 $param_values[] = $local_path;
-                                
-                                // Add a warning to the user
-                                $update_message = "Profile will be updated, but GitHub sync failed. ";
                             }
                         } else {
-                            $update_error = "Failed to save the image.";
+                            throw new Exception("Failed to save the image. Check directory permissions.");
                         }
                     } else {
-                        $update_error = "Only JPG, JPEG, PNG & GIF files are allowed.";
+                        throw new Exception("Only JPG, JPEG, PNG & GIF files are allowed.");
                     }
                 } else {
-                    $update_error = "File is too large. Maximum file size is 2MB.";
+                    throw new Exception("File is too large. Maximum file size is 2MB.");
                 }
             } else {
-                $update_error = "Error uploading file. Error code: " . $file["error"];
+                throw new Exception("Error uploading file. Error code: " . $file["error"]);
             }
         }
         
-        // If still no errors, proceed with update
-        if (empty($update_error)) {
-            // Complete the SQL query
-            $sql = "UPDATE client_acc SET " . implode(", ", $sql_parts) . " WHERE ";
-            
-            // Determine which field to use for the WHERE clause
-            if (isset($_SESSION['username'])) {
-                $sql .= "username = ?";
-            } else {
-                $sql .= "email = ?";
-            }
-            
-            $param_types .= "s";
-            $param_values[] = $login_identifier;
-            
-            // Debug - Log SQL
-            error_log("Update SQL: " . $sql);
-            error_log("Param types: " . $param_types);
-            error_log("Param values: " . print_r($param_values, true));
-            
-            // Prepare the statement
-            $stmt = $conn->prepare($sql);
-            
-            if ($stmt) {
-                // Bind parameters dynamically
-                $params = array($param_types);
-                for ($i = 0; $i < count($param_values); $i++) {
-                    $params[] = &$param_values[$i];
-                }
-                call_user_func_array(array($stmt, 'bind_param'), $params);
-                
-                // Execute the statement
-                if ($stmt->execute()) {
-                    $update_message .= "Profile updated successfully!";
-                    
-                    // Update session variables if username or email changed
-                    if (isset($_SESSION['username']) && $new_username != $_SESSION['username']) {
-                        $_SESSION['username'] = $new_username;
-                    }
-                    if (isset($_SESSION['email']) && $new_email != $_SESSION['email']) {
-                        $_SESSION['email'] = $new_email;
-                    }
-                    
-                    // Redirect to refresh the page with new data
-                    header("Location: clientprofile.php?message=" . urlencode($update_message));
-                    exit();
-                } else {
-                    $update_error = "Error executing update: " . $stmt->error;
-                    error_log("SQL execution error: " . $stmt->error);
-                }
-                
-                $stmt->close();
-            } else {
-                $update_error = "Error preparing statement: " . $conn->error;
-                error_log("SQL preparation error: " . $conn->error);
-            }
+        // Complete the SQL query
+        $sql = "UPDATE client_acc SET " . implode(", ", $sql_parts) . " WHERE ";
+        
+        // Determine which field to use for the WHERE clause
+        if (isset($_SESSION['username'])) {
+            $sql .= "username = ?";
+        } else {
+            $sql .= "email = ?";
         }
+        
+        $param_types .= "s";
+        $param_values[] = $login_identifier;
+        
+        // Debug - Log SQL
+        error_log("Update SQL: " . $sql);
+        error_log("Param types: " . $param_types);
+        error_log("Param values: " . print_r($param_values, true));
+        
+        // Prepare the statement
+        $stmt = $conn->prepare($sql);
+        
+        if ($stmt) {
+            // Create a reference array for binding parameters
+            $bind_params = array();
+            $bind_params[] = &$param_types;
+            
+            for ($i = 0; $i < count($param_values); $i++) {
+                $bind_params[] = &$param_values[$i];
+            }
+            
+            // Bind parameters dynamically
+            call_user_func_array(array($stmt, 'bind_param'), $bind_params);
+            
+            // Execute the statement
+            if ($stmt->execute()) {
+                $update_message .= "Profile updated successfully!";
+                
+                // Update session variables if username or email changed
+                if (isset($_SESSION['username']) && $new_username != $_SESSION['username']) {
+                    $_SESSION['username'] = $new_username;
+                }
+                if (isset($_SESSION['email']) && $new_email != $_SESSION['email']) {
+                    $_SESSION['email'] = $new_email;
+                }
+                
+                // Redirect to refresh the page with new data
+                header("Location: clientprofile.php?message=" . urlencode($update_message));
+                $stmt->close();
+                exit();
+            } else {
+                throw new Exception("Error executing update: " . $stmt->error);
+            }
+        } else {
+            throw new Exception("Error preparing statement: " . $conn->error);
+        }
+    } catch (Exception $e) {
+        $update_error = $e->getMessage();
+        error_log("Update error: " . $update_error);
     }
 }
 
@@ -285,7 +341,7 @@ if (isset($_GET['message'])) {
             document.getElementById('logout-modal').classList.add('hidden');
         }
         function confirmLogout() {
-            window.location.href = 'account.php'; // Changed to logout.php
+            window.location.href = 'logout.php'; // Changed to logout.php
         }
         function previewImage(event) {
             const file = event.target.files[0];
@@ -360,7 +416,7 @@ if (isset($_GET['message'])) {
                     <!-- Full Name -->
                     <div>
                         <label for="full_name" class="block text-sm font-medium">Full Name</label>
-                        <input type="text" name="full_name" id="full_name" value="<?php echo htmlspecialchars($full_name); ?>" 
+                        <input type="text" name="full_name" id="full_name" value="<?php echo htmlspecialchars($full_name); ?>" required
                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring focus:ring-green-500 focus:ring-opacity-50 
                                       bg-white text-gray-800 px-3 py-2">
                     </div>
@@ -368,7 +424,7 @@ if (isset($_GET['message'])) {
                     <!-- Username -->
                     <div>
                         <label for="username" class="block text-sm font-medium">Username</label>
-                        <input type="text" name="username" id="username" value="<?php echo htmlspecialchars($username); ?>" 
+                        <input type="text" name="username" id="username" value="<?php echo htmlspecialchars($username); ?>" required
                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring focus:ring-green-500 focus:ring-opacity-50 
                                       bg-white text-gray-800 px-3 py-2">
                     </div>
@@ -376,7 +432,7 @@ if (isset($_GET['message'])) {
                     <!-- Email -->
                     <div>
                         <label for="email" class="block text-sm font-medium">Email</label>
-                        <input type="email" name="email" id="email" value="<?php echo htmlspecialchars($email); ?>" 
+                        <input type="email" name="email" id="email" value="<?php echo htmlspecialchars($email); ?>" required
                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring focus:ring-green-500 focus:ring-opacity-50 
                                       bg-white text-gray-800 px-3 py-2">
                     </div>
